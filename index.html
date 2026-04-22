@@ -2499,34 +2499,508 @@ function updateRelBars() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// IMAGE PORTRAIT LIBRARY
+// SVG PORTRAIT LIBRARY
 // ═══════════════════════════════════════════════════════════════════
 const PORTRAITS = {
 
-  ARIA: 'assets/aria_portrait.png',
-  CHEN: 'assets/chen_portrait.png',
-  MALIK: 'assets/malik_portrait.png',
-  VOSS: 'assets/voss_portrait.png',
+  ARIA: `<svg viewBox="0 0 136 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="ariaBg" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#001a2e"/>
+        <stop offset="100%" stop-color="#000508"/>
+      </radialGradient>
+      <filter id="ariaGlow">
+        <feGaussianBlur stdDeviation="2" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect width="136" height="170" fill="url(#ariaBg)"/>
+    <!-- grid lines bg -->
+    <line x1="0" y1="85" x2="136" y2="85" stroke="#00f5ff08" stroke-width="1"/>
+    <line x1="68" y1="0" x2="68" y2="170" stroke="#00f5ff08" stroke-width="1"/>
+    <!-- neck/shoulders -->
+    <path d="M30 170 Q30 130 50 120 L68 115 L86 120 Q106 130 106 170Z" fill="#0a1a1a"/>
+    <!-- collar/uniform -->
+    <path d="M36 170 Q38 138 55 128 L68 124 L81 128 Q98 138 100 170Z" fill="#0d2020"/>
+    <path d="M60 124 L68 132 L76 124" fill="none" stroke="#00f5ff44" stroke-width="1"/>
+    <!-- head shape — angular, AI aesthetic -->
+    <ellipse cx="68" cy="78" rx="30" ry="36" fill="#0a1818"/>
+    <!-- face highlight -->
+    <ellipse cx="68" cy="68" rx="22" ry="26" fill="#0d2020"/>
+    <!-- forehead circuit lines -->
+    <path d="M50 58 L58 58 L60 54 L64 58 L72 58 L74 54 L78 58 L86 58" fill="none" stroke="#00f5ff33" stroke-width="0.8"/>
+    <path d="M54 62 L62 62" fill="none" stroke="#00f5ff22" stroke-width="0.6"/>
+    <path d="M74 62 L82 62" fill="none" stroke="#00f5ff22" stroke-width="0.6"/>
+    <!-- eyes — glowing geometric -->
+    <rect x="51" y="70" width="14" height="7" rx="1" fill="#001a2e"/>
+    <rect x="71" y="70" width="14" height="7" rx="1" fill="#001a2e"/>
+    <rect x="53" y="71.5" width="10" height="4" rx="0.5" fill="#00f5ff" filter="url(#ariaGlow)" opacity="0.9"/>
+    <rect x="73" y="71.5" width="10" height="4" rx="0.5" fill="#00f5ff" filter="url(#ariaGlow)" opacity="0.9"/>
+    <!-- eye shine -->
+    <rect x="53" y="71.5" width="10" height="4" rx="0.5" fill="#00f5ff" opacity="0.3"/>
+    <!-- nose — subtle -->
+    <path d="M65 82 L68 88 L71 82" fill="none" stroke="#1a3333" stroke-width="1"/>
+    <!-- mouth — thin line, neutral -->
+    <path d="M59 95 Q68 97 77 95" fill="none" stroke="#00f5ff55" stroke-width="1.2"/>
+    <!-- ear details -->
+    <ellipse cx="38" cy="80" rx="4" ry="6" fill="#0a1818"/>
+    <ellipse cx="38" cy="80" rx="2" ry="4" fill="#0d2020"/>
+    <ellipse cx="98" cy="80" rx="4" ry="6" fill="#0a1818"/>
+    <ellipse cx="98" cy="80" rx="2" ry="4" fill="#0d2020"/>
+    <!-- hair — angular, dark with cyan sheen -->
+    <path d="M38 72 Q40 45 68 42 Q96 45 98 72 Q90 48 68 46 Q46 48 38 72Z" fill="#050f0f"/>
+    <path d="M40 65 Q42 48 68 45 Q94 48 96 65" fill="none" stroke="#00f5ff22" stroke-width="1"/>
+    <!-- temple data port -->
+    <circle cx="42" cy="75" r="3" fill="#001a2e" stroke="#00f5ff66" stroke-width="0.8"/>
+    <circle cx="42" cy="75" r="1.5" fill="#00f5ff" opacity="0.7"/>
+    <!-- collar tech detail -->
+    <rect x="58" y="128" width="20" height="3" rx="1" fill="#00f5ff22"/>
+    <rect x="64" y="131" width="8" height="2" rx="0.5" fill="#00f5ff33"/>
+    <!-- ambient glow behind eyes -->
+    <ellipse cx="58" cy="74" rx="8" ry="4" fill="#00f5ff" opacity="0.06"/>
+    <ellipse cx="78" cy="74" rx="8" ry="4" fill="#00f5ff" opacity="0.06"/>
+    <!-- label -->
+    <text x="68" y="164" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f5ff66" letter-spacing="3">A.R.I.A</text>
+  </svg>`,
 
-  PLAYER_P: 'assets/pilot_portrait.png',
-  PLAYER_E: 'assets/engineer_portrait.png',
-  PLAYER_S: 'assets/psion_portrait.png',
-  PLAYER_M: 'assets/mercenary_portrait.png',
-  PLAYER_X: 'assets/experiment_portrait.png',
+  CHEN: `<svg viewBox="0 0 136 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="chenBg" cx="50%" cy="35%" r="65%">
+        <stop offset="0%" stop-color="#0d0a1a"/>
+        <stop offset="100%" stop-color="#050408"/>
+      </radialGradient>
+      <filter id="chenGlow">
+        <feGaussianBlur stdDeviation="1.5" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect width="136" height="170" fill="url(#chenBg)"/>
+    <!-- shoulders/uniform — medic white trim -->
+    <path d="M20 170 Q22 128 48 118 L68 113 L88 118 Q114 128 116 170Z" fill="#0a0812"/>
+    <path d="M28 170 Q32 135 54 124 L68 120 L82 124 Q104 135 108 170Z" fill="#0f0d1a"/>
+    <!-- medic cross on collar -->
+    <rect x="62" y="122" width="12" height="4" rx="0.5" fill="#ffe60022"/>
+    <rect x="65" y="119" width="6" height="10" rx="0.5" fill="#ffe60022"/>
+    <!-- head -->
+    <ellipse cx="68" cy="76" rx="28" ry="34" fill="#1a0f10"/>
+    <!-- face skin -->
+    <ellipse cx="68" cy="72" rx="22" ry="28" fill="#2a1820"/>
+    <!-- cheekbone shadow -->
+    <ellipse cx="54" cy="80" rx="8" ry="6" fill="#1a1015" opacity="0.5"/>
+    <ellipse cx="82" cy="80" rx="8" ry="6" fill="#1a1015" opacity="0.5"/>
+    <!-- eyes — determined, focused -->
+    <ellipse cx="57" cy="70" rx="9" ry="6" fill="#0d080e"/>
+    <ellipse cx="79" cy="70" rx="9" ry="6" fill="#0d080e"/>
+    <!-- iris -->
+    <ellipse cx="57" cy="70" rx="5" ry="5" fill="#1a0a20"/>
+    <ellipse cx="79" cy="70" rx="5" ry="5" fill="#1a0a20"/>
+    <!-- pupil -->
+    <circle cx="57" cy="70" r="3" fill="#080608"/>
+    <circle cx="79" cy="70" r="3" fill="#080608"/>
+    <!-- eye highlight -->
+    <circle cx="59" cy="68.5" r="1.2" fill="#ffe60088"/>
+    <circle cx="81" cy="68.5" r="1.2" fill="#ffe60088"/>
+    <!-- amber eye ring glow -->
+    <ellipse cx="57" cy="70" rx="5" ry="5" fill="none" stroke="#ffe600" stroke-width="0.6" opacity="0.5" filter="url(#chenGlow)"/>
+    <ellipse cx="79" cy="70" rx="5" ry="5" fill="none" stroke="#ffe600" stroke-width="0.6" opacity="0.5" filter="url(#chenGlow)"/>
+    <!-- eyebrows — sharp, high arched -->
+    <path d="M49 63 Q57 59 65 62" fill="none" stroke="#3a2025" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M71 62 Q79 59 87 63" fill="none" stroke="#3a2025" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- nose -->
+    <path d="M65 78 L63 86 Q68 88 73 86 L71 78" fill="none" stroke="#2a1820" stroke-width="1.2"/>
+    <!-- mouth — slight tension -->
+    <path d="M58 94 Q68 97 78 94" fill="none" stroke="#3a2028" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M60 94 Q68 92 76 94" fill="#2a1525" opacity="0.4"/>
+    <!-- ears -->
+    <ellipse cx="40" cy="76" rx="5" ry="7" fill="#1a0f10"/>
+    <ellipse cx="96" cy="76" rx="5" ry="7" fill="#1a0f10"/>
+    <!-- hair — pulled back, severe, dark -->
+    <path d="M40 68 Q42 38 68 34 Q94 38 96 68 Q88 42 68 40 Q48 42 40 68Z" fill="#150a10"/>
+    <!-- hair detail -->
+    <path d="M44 60 Q46 42 68 38 Q90 42 92 60" fill="none" stroke="#220f18" stroke-width="1.5"/>
+    <path d="M52 45 Q60 38 68 37" fill="none" stroke="#2a1020" stroke-width="1"/>
+    <!-- small earring -->
+    <circle cx="40" cy="82" r="2" fill="#ffe60066"/>
+    <!-- diagnostic scanner on cheek — subtle -->
+    <path d="M84 74 L90 70 L92 74 L90 78Z" fill="none" stroke="#ffe60033" stroke-width="0.8"/>
+    <text x="68" y="164" text-anchor="middle" font-family="monospace" font-size="7" fill="#ffe60055" letter-spacing="2">DR. CHEN</text>
+  </svg>`,
+
+  MALIK: `<svg viewBox="0 0 136 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="malikBg" cx="45%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#100a00"/>
+        <stop offset="100%" stop-color="#060402"/>
+      </radialGradient>
+      <filter id="malikGlow">
+        <feGaussianBlur stdDeviation="2" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect width="136" height="170" fill="url(#malikBg)"/>
+    <!-- broad shoulders — engineer build -->
+    <path d="M10 170 Q12 122 44 112 L68 107 L92 112 Q124 122 126 170Z" fill="#0d0900"/>
+    <path d="M18 170 Q22 132 50 120 L68 116 L86 120 Q114 132 118 170Z" fill="#120d02"/>
+    <!-- worn jacket detail -->
+    <path d="M54 120 L68 128 L82 120" fill="none" stroke="#ffe60022" stroke-width="0.8"/>
+    <rect x="48" y="123" width="6" height="2" rx="0.5" fill="#ffe60033"/>
+    <!-- head — strong jaw -->
+    <ellipse cx="67" cy="75" rx="31" ry="36" fill="#1a1005"/>
+    <!-- face -->
+    <path d="M38 72 Q40 44 67 40 Q94 44 96 72 Q94 95 82 104 Q75 108 67 108 Q59 108 52 104 Q40 95 38 72Z" fill="#2a1e08"/>
+    <!-- beard shadow -->
+    <path d="M47 96 Q52 108 67 110 Q82 108 87 96 Q80 104 67 105 Q54 104 47 96Z" fill="#1a1205" opacity="0.7"/>
+    <!-- cheek scar — old, faded -->
+    <path d="M86 82 L90 88 L88 90" fill="none" stroke="#3a2808" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- eyes — steady, watchful -->
+    <ellipse cx="55" cy="70" rx="10" ry="7" fill="#100c02"/>
+    <ellipse cx="79" cy="70" rx="10" ry="7" fill="#100c02"/>
+    <ellipse cx="55" cy="70" rx="6" ry="5.5" fill="#1a1205"/>
+    <ellipse cx="79" cy="70" rx="6" ry="5.5" fill="#1a1205"/>
+    <circle cx="55" cy="70" r="3.5" fill="#080600"/>
+    <circle cx="79" cy="70" r="3.5" fill="#080600"/>
+    <!-- amber highlights -->
+    <circle cx="57" cy="68" r="1.5" fill="#ffe60055"/>
+    <circle cx="81" cy="68" r="1.5" fill="#ffe60055"/>
+    <!-- eyebrows — heavy, furrowed slightly -->
+    <path d="M46 62 Q55 58 64 62" fill="none" stroke="#2a1c06" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M70 62 Q79 58 88 62" fill="none" stroke="#2a1c06" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- crease between brows -->
+    <path d="M66 62 L67 66 L68 62" fill="none" stroke="#1a1205" stroke-width="0.8"/>
+    <!-- nose — broad, prominent -->
+    <path d="M62 76 L60 86 Q67 90 74 86 L72 76" fill="none" stroke="#2a1e08" stroke-width="1.5"/>
+    <ellipse cx="63" cy="87" rx="4" ry="3" fill="#201808" opacity="0.5"/>
+    <ellipse cx="73" cy="87" rx="4" ry="3" fill="#201808" opacity="0.5"/>
+    <!-- mouth — set, quiet strength -->
+    <path d="M54 98 Q67 103 80 98" fill="none" stroke="#2a1e08" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- ears -->
+    <ellipse cx="36" cy="76" rx="5" ry="8" fill="#1a1005"/>
+    <ellipse cx="98" cy="76" rx="5" ry="8" fill="#1a1005"/>
+    <!-- hair — close cropped -->
+    <path d="M37 68 Q40 38 67 34 Q94 38 97 68 Q90 45 67 42 Q44 45 37 68Z" fill="#150e02"/>
+    <!-- burn scar on forearm — referenced in story -->
+    <path d="M22 148 Q28 145 34 148 Q30 152 26 152 Q23 150 22 148Z" fill="#3a1a05" opacity="0.8"/>
+    <path d="M24 148 Q28 146 33 148" fill="none" stroke="#ffe60022" stroke-width="0.8"/>
+    <!-- tool belt hint -->
+    <rect x="30" y="138" width="4" height="8" rx="1" fill="#ffe60033"/>
+    <text x="68" y="164" text-anchor="middle" font-family="monospace" font-size="7" fill="#ffe60055" letter-spacing="2">MALIK</text>
+  </svg>`,
+
+  VOSS: `<svg viewBox="0 0 136 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="vossBg" cx="50%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#080c14"/>
+        <stop offset="100%" stop-color="#030508"/>
+      </radialGradient>
+      <filter id="vossGlow">
+        <feGaussianBlur stdDeviation="1.5" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect width="136" height="170" fill="url(#vossBg)"/>
+    <!-- command uniform — structured shoulders -->
+    <path d="M8 170 Q10 120 42 110 L68 105 L94 110 Q126 120 128 170Z" fill="#080c14"/>
+    <path d="M16 170 Q20 130 48 118 L68 114 L88 118 Q116 130 120 170Z" fill="#0c1020"/>
+    <!-- rank insignia -->
+    <rect x="50" y="118" width="36" height="3" rx="0.5" fill="#00f5ff33"/>
+    <rect x="56" y="114" width="6" height="6" rx="0.5" fill="#00f5ff55"/>
+    <rect x="74" y="114" width="6" height="6" rx="0.5" fill="#00f5ff55"/>
+    <rect x="65" y="114" width="6" height="6" rx="0.5" fill="#00f5ff33"/>
+    <!-- head — older, angular, commanding -->
+    <ellipse cx="68" cy="74" rx="30" ry="36" fill="#0c1018"/>
+    <!-- face -->
+    <path d="M39 72 Q41 44 68 40 Q95 44 97 72 Q95 97 82 106 Q75 110 68 110 Q61 110 54 106 Q41 97 39 72Z" fill="#1e2430"/>
+    <!-- age lines — experience -->
+    <path d="M43 72 Q46 70 50 72" fill="none" stroke="#151c28" stroke-width="0.8"/>
+    <path d="M86 72 Q90 70 93 72" fill="none" stroke="#151c28" stroke-width="0.8"/>
+    <!-- under-eye -->
+    <path d="M50 78 Q57 80 63 78" fill="none" stroke="#151c28" stroke-width="0.7"/>
+    <path d="M73 78 Q79 80 86 78" fill="none" stroke="#151c28" stroke-width="0.7"/>
+    <!-- eyes — grey-blue, heavy lidded, seen things -->
+    <ellipse cx="56" cy="70" rx="10" ry="7" fill="#0c1018"/>
+    <ellipse cx="80" cy="70" rx="10" ry="7" fill="#0c1018"/>
+    <ellipse cx="56" cy="70" rx="6" ry="5" fill="#1a2030"/>
+    <ellipse cx="80" cy="70" rx="6" ry="5" fill="#1a2030"/>
+    <circle cx="56" cy="70" r="3.5" fill="#0a0e16"/>
+    <circle cx="80" cy="70" r="3.5" fill="#0a0e16"/>
+    <!-- blue-grey iris ring -->
+    <ellipse cx="56" cy="70" rx="5" ry="4.5" fill="none" stroke="#4a6080" stroke-width="0.8" opacity="0.7"/>
+    <ellipse cx="80" cy="70" rx="5" ry="4.5" fill="none" stroke="#4a6080" stroke-width="0.8" opacity="0.7"/>
+    <circle cx="58" cy="68.5" r="1.2" fill="#8aaabb55"/>
+    <circle cx="82" cy="68.5" r="1.2" fill="#8aaabb55"/>
+    <!-- eyebrows — strong, slightly greying -->
+    <path d="M47 62 Q56 57 65 61" fill="none" stroke="#2a3040" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M71 61 Q80 57 89 62" fill="none" stroke="#2a3040" stroke-width="2.2" stroke-linecap="round"/>
+    <!-- grey streak in brow -->
+    <path d="M50 61 Q54 58 58 61" fill="none" stroke="#555" stroke-width="0.8" opacity="0.6"/>
+    <path d="M78 61 Q82 58 86 62" fill="none" stroke="#555" stroke-width="0.8" opacity="0.6"/>
+    <!-- nose — straight, strong -->
+    <path d="M65 78 L64 88 Q68 91 72 88 L71 78" fill="none" stroke="#1a2030" stroke-width="1.2"/>
+    <!-- mouth — held tight, weight of command -->
+    <path d="M56 98 Q68 100 80 98" fill="none" stroke="#2a3040" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- jaw line — strong -->
+    <path d="M41 85 Q44 98 54 106" fill="none" stroke="#151c28" stroke-width="1"/>
+    <path d="M95 85 Q92 98 82 106" fill="none" stroke="#151c28" stroke-width="1"/>
+    <!-- ears -->
+    <ellipse cx="38" cy="76" rx="5" ry="7" fill="#0c1018"/>
+    <ellipse cx="98" cy="76" rx="5" ry="7" fill="#0c1018"/>
+    <!-- hair — silver-grey, short, authoritative -->
+    <path d="M39 66 Q42 38 68 35 Q94 38 97 66 Q90 44 68 42 Q46 44 39 66Z" fill="#1a2030"/>
+    <!-- silver grey highlights -->
+    <path d="M42 58 Q46 44 68 41 Q90 44 94 58" fill="none" stroke="#3a4a5a" stroke-width="1.2" opacity="0.7"/>
+    <path d="M48 50 Q58 42 68 40" fill="none" stroke="#4a5a6a" stroke-width="0.8" opacity="0.5"/>
+    <text x="68" y="164" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f5ff44" letter-spacing="2">CAPTAIN VOSS</text>
+  </svg>`,
+
+  // Player class portraits
+  PLAYER_P: `<svg viewBox="0 0 136 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="pilBg" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#001818"/>
+        <stop offset="100%" stop-color="#000808"/>
+      </radialGradient>
+    </defs>
+    <rect width="136" height="170" fill="url(#pilBg)"/>
+    <!-- flight suit -->
+    <path d="M15 170 Q18 125 46 114 L68 110 L90 114 Q118 125 121 170Z" fill="#091212"/>
+    <path d="M25 170 Q28 135 52 122 L68 118 L84 122 Q108 135 111 170Z" fill="#0d1a1a"/>
+    <!-- pilot helmet visor hint at top -->
+    <rect x="40" y="36" width="56" height="8" rx="4" fill="#00f5ff11" stroke="#00f5ff22" stroke-width="0.8"/>
+    <!-- head -->
+    <ellipse cx="68" cy="76" rx="29" ry="35" fill="#0a1414"/>
+    <path d="M40 74 Q42 46 68 42 Q94 46 96 74 Q94 98 82 107 Q75 111 68 111 Q61 111 54 107 Q42 98 40 74Z" fill="#182828"/>
+    <!-- eyes — calm, calculating -->
+    <ellipse cx="56" cy="70" rx="9" ry="6" fill="#091212"/>
+    <ellipse cx="80" cy="70" rx="9" ry="6" fill="#091212"/>
+    <ellipse cx="56" cy="70" rx="5.5" ry="5" fill="#0f2020"/>
+    <ellipse cx="80" cy="70" rx="5.5" ry="5" fill="#0f2020"/>
+    <circle cx="56" cy="70" r="3" fill="#050e0e"/>
+    <circle cx="80" cy="70" r="3" fill="#050e0e"/>
+    <ellipse cx="56" cy="70" rx="5" ry="4.5" fill="none" stroke="#00f5ff" stroke-width="0.6" opacity="0.6"/>
+    <ellipse cx="80" cy="70" rx="5" ry="4.5" fill="none" stroke="#00f5ff" stroke-width="0.6" opacity="0.6"/>
+    <circle cx="58" cy="68.5" r="1.2" fill="#00f5ff55"/>
+    <circle cx="82" cy="68.5" r="1.2" fill="#00f5ff55"/>
+    <path d="M48 63 Q56 59 64 62" fill="none" stroke="#1a3030" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M72 62 Q80 59 88 63" fill="none" stroke="#1a3030" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M64 78 L63 86 Q68 89 73 86 L72 78" fill="none" stroke="#182828" stroke-width="1.2"/>
+    <path d="M57 96 Q68 100 79 96" fill="none" stroke="#1a3030" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="39" cy="77" rx="4" ry="6" fill="#0a1414"/>
+    <ellipse cx="97" cy="77" rx="4" ry="6" fill="#0a1414"/>
+    <path d="M40 68 Q42 40 68 37 Q94 40 96 68 Q88 44 68 42 Q48 44 40 68Z" fill="#0d1a1a"/>
+    <!-- nav hud element on temple -->
+    <path d="M96 70 L104 65 L108 68 L104 72Z" fill="none" stroke="#00f5ff44" stroke-width="0.8"/>
+    <circle cx="108" cy="68" r="2" fill="#00f5ff" opacity="0.5"/>
+    <text x="68" y="164" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f5ff44" letter-spacing="2">PILOT</text>
+  </svg>`,
+
+  PLAYER_E: `<svg viewBox="0 0 136 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="engBg" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#181200"/>
+        <stop offset="100%" stop-color="#080600"/>
+      </radialGradient>
+    </defs>
+    <rect width="136" height="170" fill="url(#engBg)"/>
+    <path d="M15 170 Q18 125 46 114 L68 110 L90 114 Q118 125 121 170Z" fill="#120e00"/>
+    <path d="M25 170 Q28 135 52 122 L68 118 L84 122 Q108 135 111 170Z" fill="#1a1502"/>
+    <!-- engineer patch -->
+    <rect x="46" y="124" width="16" height="10" rx="1" fill="#ffe60011" stroke="#ffe60033" stroke-width="0.8"/>
+    <path d="M50 128 L54 132 L58 128 L54 124Z" fill="#ffe60033"/>
+    <ellipse cx="68" cy="76" rx="29" ry="35" fill="#120e00"/>
+    <path d="M40 74 Q42 46 68 42 Q94 46 96 74 Q94 98 82 107 Q75 111 68 111 Q61 111 54 107 Q42 98 40 74Z" fill="#241c04"/>
+    <!-- eyes — analytical, slightly squinting -->
+    <ellipse cx="56" cy="71" rx="9" ry="5.5" fill="#100c00"/>
+    <ellipse cx="80" cy="71" rx="9" ry="5.5" fill="#100c00"/>
+    <ellipse cx="56" cy="71" rx="5.5" ry="4.5" fill="#1c1600"/>
+    <ellipse cx="80" cy="71" rx="5.5" ry="4.5" fill="#1c1600"/>
+    <circle cx="56" cy="71" r="3" fill="#080600"/>
+    <circle cx="80" cy="71" r="3" fill="#080600"/>
+    <ellipse cx="56" cy="71" rx="5" ry="4" fill="none" stroke="#ffe600" stroke-width="0.6" opacity="0.5"/>
+    <ellipse cx="80" cy="71" rx="5" ry="4" fill="none" stroke="#ffe600" stroke-width="0.6" opacity="0.5"/>
+    <circle cx="58" cy="69.5" r="1.2" fill="#ffe60055"/>
+    <circle cx="82" cy="69.5" r="1.2" fill="#ffe60055"/>
+    <path d="M48 63 Q56 60 64 62" fill="none" stroke="#2a2005" stroke-width="2" stroke-linecap="round"/>
+    <path d="M72 62 Q80 60 88 63" fill="none" stroke="#2a2005" stroke-width="2" stroke-linecap="round"/>
+    <path d="M64 79 L62 87 Q68 90 74 87 L72 79" fill="none" stroke="#241c04" stroke-width="1.2"/>
+    <path d="M57 97 Q68 100 79 97" fill="none" stroke="#2a2005" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="39" cy="77" rx="4" ry="6" fill="#120e00"/>
+    <ellipse cx="97" cy="77" rx="4" ry="6" fill="#120e00"/>
+    <path d="M40 68 Q42 40 68 37 Q94 40 96 68 Q88 44 68 42 Q48 44 40 68Z" fill="#1a1502"/>
+    <!-- AR monocle over one eye -->
+    <ellipse cx="80" cy="71" rx="11" ry="8" fill="none" stroke="#ffe60066" stroke-width="1"/>
+    <path d="M91 66 L100 60" stroke="#ffe60044" stroke-width="0.8"/>
+    <circle cx="100" cy="59" r="2" fill="#ffe600" opacity="0.4"/>
+    <text x="68" y="164" text-anchor="middle" font-family="monospace" font-size="7" fill="#ffe60044" letter-spacing="2">ENGINEER</text>
+  </svg>`,
+
+  PLAYER_S: `<svg viewBox="0 0 136 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="psBg" cx="50%" cy="35%" r="65%">
+        <stop offset="0%" stop-color="#0e0018"/>
+        <stop offset="100%" stop-color="#050008"/>
+      </radialGradient>
+      <filter id="psGlow">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect width="136" height="170" fill="url(#psBg)"/>
+    <path d="M15 170 Q18 125 46 114 L68 110 L90 114 Q118 125 121 170Z" fill="#0a0012"/>
+    <path d="M25 170 Q28 135 52 122 L68 118 L84 122 Q108 135 111 170Z" fill="#100018"/>
+    <ellipse cx="68" cy="76" rx="29" ry="35" fill="#0a0012"/>
+    <path d="M40 74 Q42 46 68 42 Q94 46 96 74 Q94 98 82 107 Q75 111 68 111 Q61 111 54 107 Q42 98 40 74Z" fill="#1a0828"/>
+    <!-- psion aura — subtle glow around head -->
+    <ellipse cx="68" cy="74" rx="36" ry="42" fill="none" stroke="#bf00ff" stroke-width="0.6" opacity="0.15" filter="url(#psGlow)"/>
+    <ellipse cx="68" cy="74" rx="32" ry="38" fill="none" stroke="#bf00ff" stroke-width="0.4" opacity="0.1"/>
+    <!-- eyes — unsettling depth, purple -->
+    <ellipse cx="56" cy="70" rx="9" ry="6.5" fill="#0a0012"/>
+    <ellipse cx="80" cy="70" rx="9" ry="6.5" fill="#0a0012"/>
+    <ellipse cx="56" cy="70" rx="5.5" ry="5.5" fill="#160020"/>
+    <ellipse cx="80" cy="70" rx="5.5" ry="5.5" fill="#160020"/>
+    <circle cx="56" cy="70" r="3.5" fill="#0a0010"/>
+    <circle cx="80" cy="70" r="3.5" fill="#0a0010"/>
+    <ellipse cx="56" cy="70" rx="5.5" ry="5.5" fill="none" stroke="#bf00ff" stroke-width="0.8" opacity="0.8" filter="url(#psGlow)"/>
+    <ellipse cx="80" cy="70" rx="5.5" ry="5.5" fill="none" stroke="#bf00ff" stroke-width="0.8" opacity="0.8" filter="url(#psGlow)"/>
+    <circle cx="56" cy="70" r="2" fill="#bf00ff" opacity="0.6"/>
+    <circle cx="80" cy="70" r="2" fill="#bf00ff" opacity="0.6"/>
+    <circle cx="57.5" cy="68.5" r="1" fill="#e088ff88"/>
+    <circle cx="81.5" cy="68.5" r="1" fill="#e088ff88"/>
+    <path d="M48 63 Q56 60 64 62" fill="none" stroke="#2a1040" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M72 62 Q80 60 88 63" fill="none" stroke="#2a1040" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M64 78 L63 86 Q68 89 73 86 L72 78" fill="none" stroke="#1a0828" stroke-width="1.2"/>
+    <path d="M57 96 Q68 99 79 96" fill="none" stroke="#2a1040" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="39" cy="77" rx="4" ry="6" fill="#0a0012"/>
+    <ellipse cx="97" cy="77" rx="4" ry="6" fill="#0a0012"/>
+    <path d="M40 68 Q42 40 68 37 Q94 40 96 68 Q88 44 68 42 Q48 44 40 68Z" fill="#100018"/>
+    <!-- third eye hint on forehead -->
+    <ellipse cx="68" cy="55" rx="5" ry="4" fill="#120018"/>
+    <circle cx="68" cy="55" r="2.5" fill="#bf00ff" opacity="0.25" filter="url(#psGlow)"/>
+    <circle cx="68" cy="55" r="1" fill="#bf00ff" opacity="0.5"/>
+    <text x="68" y="164" text-anchor="middle" font-family="monospace" font-size="7" fill="#bf00ff55" letter-spacing="2">PSION</text>
+  </svg>`,
+
+  PLAYER_M: `<svg viewBox="0 0 136 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="merBg" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#180008"/>
+        <stop offset="100%" stop-color="#080004"/>
+      </radialGradient>
+    </defs>
+    <rect width="136" height="170" fill="url(#merBg)"/>
+    <path d="M10 170 Q12 120 44 110 L68 106 L92 110 Q124 120 126 170Z" fill="#120006"/>
+    <path d="M18 170 Q22 132 50 120 L68 116 L86 120 Q114 132 118 170Z" fill="#1a000a"/>
+    <!-- merc gear — holster strap -->
+    <path d="M35 130 Q40 128 45 132 L45 155 Q40 158 35 155Z" fill="#200008" stroke="#ff2d7833" stroke-width="0.8"/>
+    <!-- scar across jaw -->
+    <path d="M82 102 L92 94 L94 97" fill="none" stroke="#3a1020" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="68" cy="76" rx="30" ry="36" fill="#120006"/>
+    <path d="M39 72 Q41 44 68 40 Q95 44 97 72 Q95 98 82 107 Q75 111 68 111 Q61 111 54 107 Q41 98 39 72Z" fill="#2a0e18"/>
+    <!-- eyes — calculating, cold, pink-tinted -->
+    <ellipse cx="56" cy="70" rx="10" ry="6.5" fill="#100006"/>
+    <ellipse cx="80" cy="70" rx="10" ry="6.5" fill="#100006"/>
+    <ellipse cx="56" cy="70" rx="6" ry="5" fill="#1e0010"/>
+    <ellipse cx="80" cy="70" rx="6" ry="5" fill="#1e0010"/>
+    <circle cx="56" cy="70" r="3.5" fill="#0a0006"/>
+    <circle cx="80" cy="70" r="3.5" fill="#0a0006"/>
+    <ellipse cx="56" cy="70" rx="5.5" ry="4.5" fill="none" stroke="#ff2d78" stroke-width="0.6" opacity="0.5"/>
+    <ellipse cx="80" cy="70" rx="5.5" ry="4.5" fill="none" stroke="#ff2d78" stroke-width="0.6" opacity="0.5"/>
+    <circle cx="57.5" cy="68.5" r="1.3" fill="#ff2d7844"/>
+    <circle cx="81.5" cy="68.5" r="1.3" fill="#ff2d7844"/>
+    <path d="M47 62 Q56 58 65 61" fill="none" stroke="#2a1020" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M71 61 Q80 58 89 62" fill="none" stroke="#2a1020" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M64 78 L62 86 Q68 90 74 86 L72 78" fill="none" stroke="#2a0e18" stroke-width="1.3"/>
+    <path d="M55 97 Q68 101 81 97" fill="none" stroke="#2a1020" stroke-width="1.6" stroke-linecap="round"/>
+    <!-- slight smirk -->
+    <path d="M72 99 Q77 97 80 98" fill="none" stroke="#3a1020" stroke-width="1" stroke-linecap="round"/>
+    <ellipse cx="38" cy="77" rx="5" ry="7" fill="#120006"/>
+    <ellipse cx="98" cy="77" rx="5" ry="7" fill="#120006"/>
+    <path d="M39 68 Q42 40 68 37 Q94 40 97 68 Q90 44 68 42 Q46 44 39 68Z" fill="#1a000a"/>
+    <text x="68" y="164" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff2d7844" letter-spacing="2">MERCENARY</text>
+  </svg>`,
+
+  PLAYER_X: `<svg viewBox="0 0 136 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="expBg" cx="50%" cy="35%" r="70%">
+        <stop offset="0%" stop-color="#001a0e"/>
+        <stop offset="100%" stop-color="#000808"/>
+      </radialGradient>
+      <filter id="expGlow">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect width="136" height="170" fill="url(#expBg)"/>
+    <!-- ghost overlay — second self -->
+    <ellipse cx="72" cy="73" rx="28" ry="34" fill="#00ff8806" stroke="#00ff8811" stroke-width="0.5"/>
+    <path d="M16 170 Q18 126 46 114 L68 110 L90 114 Q118 126 120 170Z" fill="#001a0e"/>
+    <path d="M24 170 Q28 135 52 122 L68 118 L84 122 Q108 135 112 170Z" fill="#002214"/>
+    <!-- experiment suit — no faction markings, unmarked -->
+    <ellipse cx="68" cy="76" rx="30" ry="36" fill="#001a0e"/>
+    <path d="M39 72 Q41 44 68 40 Q95 44 97 72 Q95 98 82 107 Q75 111 68 111 Q61 111 54 107 Q41 98 39 72Z" fill="#0a2418"/>
+    <!-- multi-timeline effect — faint echo face -->
+    <path d="M41 72 Q43 46 68 42 Q93 46 95 72" fill="none" stroke="#00ff8808" stroke-width="8"/>
+    <!-- eyes — green, eerie, dual pupil hint -->
+    <ellipse cx="56" cy="70" rx="10" ry="7" fill="#001a0e"/>
+    <ellipse cx="80" cy="70" rx="10" ry="7" fill="#001a0e"/>
+    <ellipse cx="56" cy="70" rx="6" ry="5.5" fill="#002a14"/>
+    <ellipse cx="80" cy="70" rx="6" ry="5.5" fill="#002a14"/>
+    <circle cx="56" cy="70" r="3.5" fill="#000e06"/>
+    <circle cx="80" cy="70" r="3.5" fill="#000e06"/>
+    <!-- green glow rings -->
+    <ellipse cx="56" cy="70" rx="6" ry="5.5" fill="none" stroke="#00ff88" stroke-width="0.8" opacity="0.7" filter="url(#expGlow)"/>
+    <ellipse cx="80" cy="70" rx="6" ry="5.5" fill="none" stroke="#00ff88" stroke-width="0.8" opacity="0.7" filter="url(#expGlow)"/>
+    <circle cx="56" cy="70" r="2" fill="#00ff88" opacity="0.5"/>
+    <circle cx="80" cy="70" r="2" fill="#00ff88" opacity="0.5"/>
+    <!-- second ghost pupil offset -->
+    <circle cx="57.5" cy="69" r="1" fill="#00ff88" opacity="0.2"/>
+    <circle cx="81.5" cy="69" r="1" fill="#00ff88" opacity="0.2"/>
+    <circle cx="54.5" cy="71" r="0.8" fill="#00ff88" opacity="0.15"/>
+    <circle cx="78.5" cy="71" r="0.8" fill="#00ff88" opacity="0.15"/>
+    <path d="M48 63 Q56 59 64 62" fill="none" stroke="#0a3020" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M72 62 Q80 59 88 63" fill="none" stroke="#0a3020" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M64 78 L63 86 Q68 89 73 86 L72 78" fill="none" stroke="#0a2418" stroke-width="1.2"/>
+    <path d="M57 97 Q68 100 79 97" fill="none" stroke="#0a3020" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="39" cy="77" rx="4" ry="6" fill="#001a0e"/>
+    <ellipse cx="97" cy="77" rx="4" ry="6" fill="#001a0e"/>
+    <path d="M40 68 Q42 40 68 37 Q94 40 96 68 Q88 44 68 42 Q48 44 40 68Z" fill="#002214"/>
+    <!-- classification mark on neck -->
+    <text x="68" y="116" text-anchor="middle" font-family="monospace" font-size="6" fill="#00ff8855" letter-spacing="2">Θ-7</text>
+    <!-- temporal distortion lines -->
+    <path d="M30 85 L35 83 L30 81" fill="none" stroke="#00ff8822" stroke-width="0.8"/>
+    <path d="M106 85 L101 83 L106 81" fill="none" stroke="#00ff8822" stroke-width="0.8"/>
+    <text x="68" y="164" text-anchor="middle" font-family="monospace" font-size="7" fill="#00ff8844" letter-spacing="2">EXPERIMENT</text>
+  </svg>`,
 };
 
-function getPortraitSrc(key) {
+function getPortraitSVG(key) {
   if (!key) {
-    const classMap = {
-      P: 'PLAYER_P',
-      E: 'PLAYER_E',
-      S: 'PLAYER_S',
-      M: 'PLAYER_M',
-      X: 'PLAYER_X',
-    };
-    return PORTRAITS[classMap[GS.playerClass]] || PORTRAITS.PLAYER_P;
+    const classPortraits = { P:'PLAYER_P', E:'PLAYER_E', S:'PLAYER_S', M:'PLAYER_M', X:'PLAYER_X' };
+    return PORTRAITS[classPortraits[GS.playerClass]] || PORTRAITS['PLAYER_P'];
   }
-  return PORTRAITS[key] || PORTRAITS.PLAYER_P;
+  return PORTRAITS[key] || PORTRAITS['PLAYER_P'];
+}
+
+function updatePortrait(npcName) {
+  const frame = document.getElementById('portrait-frame');
+  const nameEl = document.getElementById('portrait-name');
+
+  frame.classList.add('swap');
+  setTimeout(() => {
+    // Remove only previous SVG wrapper (first div child that isn't a named overlay)
+    const existing = frame.querySelector('div.portrait-svg-wrap');
+    if (existing) existing.remove();
+
+    const svgWrap = document.createElement('div');
+    svgWrap.className = 'portrait-svg-wrap';
+    svgWrap.style.cssText = 'position:absolute;inset:0;z-index:0;';
+    svgWrap.innerHTML = getPortraitSVG(npcName);
+    // Insert as first child so overlays render on top
+    frame.insertBefore(svgWrap, frame.firstChild);
+    frame.classList.remove('swap');
+  }, 180);
+
+  nameEl.textContent = npcName || 'OFFICER';
+  frame.className = 'portrait-frame' + (npcName ? ' active' : '');
 }
 
 function updatePathIndicator() {
