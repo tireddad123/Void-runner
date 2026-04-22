@@ -518,6 +518,7 @@ padding-bottom: env(safe-area-inset-bottom);
     background: #020808;
   }
 
+
   /* MAIN AREA STACKED */
   #main {
     flex-direction: column;
@@ -2689,10 +2690,10 @@ function getPortraitImage(key) {
   img.alt = key + ' portrait';
   img.style.width = '100%';
   img.style.height = '100%';
-  img.style.objectFit = 'cover'; // desktop default
   img.style.display = 'block';
   return img;
 }
+
 
 function updatePortrait(npcName) {
   const frame = document.getElementById('portrait-frame');
