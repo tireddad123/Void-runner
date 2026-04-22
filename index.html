@@ -1,0 +1,2618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOID RUNNER</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap');
+
+:root {
+  --black: #000000;
+  --cyan: #00f5ff;
+  --cyan-dim: #007a80;
+  --pink: #ff2d78;
+  --pink-dim: #801440;
+  --yellow: #ffe600;
+  --yellow-dim: #807300;
+  --green: #00ff88;
+  --green-dim: #006633;
+  --purple: #bf00ff;
+  --white: #e8e8e8;
+  --gray: #444;
+  --text: #c8d8d8;
+  --glow-cyan: 0 0 10px #00f5ff, 0 0 20px #00f5ff44;
+  --glow-pink: 0 0 10px #ff2d78, 0 0 20px #ff2d7844;
+  --glow-yellow: 0 0 10px #ffe600, 0 0 20px #ffe60044;
+  --glow-green: 0 0 10px #00ff88, 0 0 20px #00ff8844;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  background: #000;
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--text);
+}
+
+/* CRT overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 9999;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0px, rgba(0,0,0,0.08) 1px, transparent 1px, transparent 2px);
+  pointer-events: none;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 9998;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%);
+  pointer-events: none;
+}
+
+#app {
+  width: 100vw; height: 100vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ─── HEADER ─── */
+#header {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 16px;
+  border-bottom: 1px solid #161616;
+  background: #000;
+}
+#title-text {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900; font-size: 18px;
+  color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+  letter-spacing: 4px;
+}
+#class-badge {
+  font-size: 11px; padding: 3px 10px;
+  border: 1px solid var(--yellow-dim);
+  color: var(--yellow);
+  text-shadow: var(--glow-yellow);
+  letter-spacing: 2px;
+  display: none;
+}
+#progress-bar-wrap {
+  flex: 1; margin: 0 20px;
+  height: 4px; background: #111;
+  border: 1px solid #333;
+}
+#progress-bar {
+  height: 100%; background: var(--cyan);
+  box-shadow: var(--glow-cyan);
+  transition: width 1s ease;
+  width: 0%;
+}
+
+/* ─── MAIN AREA ─── */
+#main {
+  flex: 1; display: flex;
+  overflow: hidden; min-height: 0;
+}
+
+/* ─── PORTRAIT ─── */
+#portrait-panel {
+  width: 148px; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  border-right: 1px solid #1a1a1a;
+  background: #000;
+  overflow: hidden;
+}
+#portrait-frame {
+  flex: 1; min-height: 0;
+  position: relative; overflow: hidden;
+  background: #020808;
+  border-bottom: 1px solid #1a1a1a;
+  transition: box-shadow 0.4s;
+}
+#portrait-frame > div { position: absolute; inset: 0; }
+#portrait-frame > div svg {
+  width: 100%; height: 100%; display: block;
+  transition: opacity 0.3s ease;
+}
+#portrait-frame.swap > div svg { opacity: 0; }
+#portrait-scan {
+  position: absolute; left:0; width:100%; height:3px;
+  background: linear-gradient(transparent, rgba(0,245,255,0.25), transparent);
+  animation: portraitScan 3s linear infinite;
+  pointer-events: none; z-index: 3;
+}
+@keyframes portraitScan { 0%{top:-3px} 100%{top:100%} }
+#portrait-vignette {
+  position: absolute; inset:0; z-index:1; pointer-events:none;
+  background: linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.92) 100%);
+}
+#portrait-nameplate {
+  position: absolute; bottom:0; left:0; right:0; z-index:4;
+  padding: 6px 6px 5px; text-align:center;
+}
+#portrait-name {
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--cyan); text-shadow: var(--glow-cyan); line-height:1.2;
+}
+#portrait-class {
+  font-size: 8px; letter-spacing: 1px;
+  color: var(--yellow); opacity:0.8; margin-top:2px;
+}
+#portrait-frame.active { box-shadow: inset 0 0 0 1px var(--cyan), 0 0 12px #00f5ff44; }
+
+/* ─── STORY PANEL ─── */
+#story-panel {
+  flex: 1; display: flex; flex-direction: column;
+  overflow: hidden; min-width: 0;
+}
+
+#scene-label {
+  flex-shrink: 0;
+  padding: 4px 18px;
+  font-size: 9px; letter-spacing: 3px;
+  color: #4a1a28; border-bottom: 1px solid #120608;
+  background: rgba(255,45,120,0.02);
+  min-height: 20px; line-height: 20px;
+}
+
+#story-scroll {
+  flex: 1; overflow-y: auto; padding: 16px 20px 12px;
+}
+#story-scroll::-webkit-scrollbar { width: 3px; }
+#story-scroll::-webkit-scrollbar-track { background: #050505; }
+#story-scroll::-webkit-scrollbar-thumb { background: #222; }
+
+#story-text {
+  font-size: 13px; line-height: 1.85;
+  color: var(--text);
+  min-height: 60px;
+}
+#story-text .highlight { color: var(--cyan); text-shadow: var(--glow-cyan); }
+#story-text .npc-name { color: var(--yellow); text-shadow: var(--glow-yellow); font-weight: bold; }
+#story-text .em { color: var(--white); font-style: italic; }
+#story-text .warning { color: var(--pink); text-shadow: var(--glow-pink); }
+#story-text .psion-vision {
+  color: var(--purple);
+  text-shadow: 0 0 10px #bf00ff;
+  font-style: italic;
+  border-left: 2px solid var(--purple);
+  padding-left: 12px; margin: 8px 0;
+  display: block;
+}
+#story-text .experiment-vision {
+  color: #00ff88;
+  text-shadow: var(--glow-green);
+  font-style: italic;
+  border-left: 2px solid var(--green);
+  padding-left: 12px; margin: 8px 0;
+  display: block;
+}
+
+/* ENDING styles */
+#story-text .ending-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px; color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+  display: block; text-align: center; margin: 20px 0 10px;
+  letter-spacing: 4px;
+}
+#story-text .ending-subtitle {
+  color: var(--yellow-dim); font-size: 11px;
+  display: block; text-align: center; letter-spacing: 3px; margin-bottom: 20px;
+}
+
+/* ─── CHOICES ─── */
+#choices-area {
+  flex-shrink: 0; padding: 8px 18px 12px;
+  border-top: 1px solid #111;
+  background: #000;
+}
+.choice-btn {
+  display: block; width: 100%;
+  margin: 4px 0; padding: 8px 14px;
+  background: transparent;
+  border: 1px solid #252525;
+  color: #888; font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; text-align: left; cursor: pointer;
+  transition: all 0.15s;
+  position: relative; overflow: hidden;
+}
+.choice-btn:hover, .choice-btn:focus {
+  border-color: var(--cyan); color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+  box-shadow: inset 0 0 20px rgba(0,245,255,0.05);
+  outline: none;
+}
+.choice-btn.class-locked {
+  border-color: var(--yellow-dim);
+  color: var(--yellow);
+}
+.choice-btn.class-locked:hover {
+  border-color: var(--yellow);
+  text-shadow: var(--glow-yellow);
+  box-shadow: inset 0 0 20px rgba(255,230,0,0.07);
+}
+.choice-btn.experiment-locked {
+  border-color: var(--green-dim);
+  color: var(--green);
+}
+.choice-btn.experiment-locked:hover {
+  border-color: var(--green);
+  text-shadow: var(--glow-green);
+}
+.choice-btn.danger:hover {
+  border-color: var(--pink); color: var(--pink);
+  text-shadow: var(--glow-pink);
+}
+.choice-btn::before {
+  content: '▶ ';
+  color: var(--cyan-dim);
+}
+.choice-btn.class-locked::before { color: var(--yellow-dim); content: '◈ '; }
+.choice-btn.experiment-locked::before { color: var(--green-dim); content: '◉ '; }
+.choice-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ─── RELATIONSHIP SIDEBAR ─── */
+#rel-panel {
+  width: 148px; flex-shrink: 0;
+  padding: 10px 10px 10px 12px;
+  border-left: 1px solid #1a1a1a;
+  background: #000;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 0;
+}
+#rel-panel::-webkit-scrollbar { width: 2px; }
+#rel-panel::-webkit-scrollbar-thumb { background: #222; }
+.rel-label {
+  font-size: 8px; letter-spacing: 2px;
+  color: #383838; margin-bottom: 5px; margin-top: 12px;
+  border-top: 1px solid #161616; padding-top: 6px;
+}
+.rel-label:first-child { margin-top: 0; border-top: none; padding-top: 0; }
+.rel-row { margin-bottom: 6px; }
+.rel-name { font-size: 9px; color: #aaa; letter-spacing: 1px; margin-bottom: 3px; display: flex; justify-content: space-between; align-items: baseline; }
+.rel-name span { color: #444; font-size: 8px; }
+.rel-bar-bg { height: 4px; background: #0a0a0a; border: 1px solid #1a1a1a; }
+.rel-bar { height: 100%; transition: width 0.6s ease, background 0.6s ease; }
+.rel-bar.high { background: var(--green); box-shadow: 0 0 4px var(--green); }
+.rel-bar.mid { background: var(--yellow); box-shadow: 0 0 4px var(--yellow); }
+.rel-bar.low { background: var(--pink); box-shadow: 0 0 4px var(--pink); }
+.rel-bar.corp { background: var(--cyan); box-shadow: 0 0 4px var(--cyan); }
+#path-indicator { font-size: 9px; letter-spacing: 1px; line-height: 1.5; color: #383838; }
+#ability-charges { font-size: 9px; line-height: 1.6; }
+
+/* ─── QUIZ SCREEN ─── */
+#quiz-screen {
+  position: absolute; inset: 0;
+  background: #000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 30px 20px; z-index: 100;
+  overflow-y: auto;
+}
+.quiz-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px; font-weight: 900;
+  color: var(--cyan); text-shadow: var(--glow-cyan);
+  letter-spacing: 6px; margin-bottom: 6px; text-align: center;
+}
+.quiz-subtitle {
+  font-size: 11px; color: var(--yellow-dim);
+  letter-spacing: 3px; margin-bottom: 30px; text-align: center;
+}
+.quiz-question {
+  max-width: 600px; width: 100%;
+  margin-bottom: 30px;
+}
+.quiz-q-text {
+  font-size: 13px; color: var(--text);
+  margin-bottom: 14px; line-height: 1.6;
+  padding-bottom: 8px; border-bottom: 1px solid #222;
+}
+.quiz-q-num {
+  color: var(--cyan-dim); margin-right: 8px;
+}
+.quiz-opt {
+  display: block; width: 100%;
+  margin: 5px 0; padding: 9px 14px;
+  background: transparent; border: 1px solid #333;
+  color: #888; font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; text-align: left; cursor: pointer;
+  transition: all 0.15s;
+}
+.quiz-opt:hover { border-color: var(--cyan); color: var(--cyan); }
+.quiz-opt.selected { border-color: var(--cyan); color: var(--cyan); background: rgba(0,245,255,0.05); }
+.quiz-submit {
+  max-width: 600px; width: 100%;
+  padding: 12px; margin-top: 10px;
+  background: transparent; border: 1px solid var(--cyan-dim);
+  color: var(--cyan); font-family: 'Orbitron', sans-serif;
+  font-size: 13px; letter-spacing: 3px; cursor: pointer;
+  transition: all 0.2s;
+}
+.quiz-submit:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+.quiz-submit:disabled { opacity: 0.3; cursor: not-allowed; }
+.manual-class-btn {
+  background: transparent; border: none;
+  color: var(--gray); font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; cursor: pointer; margin-top: 15px;
+  text-decoration: underline;
+}
+.manual-class-btn:hover { color: var(--yellow); }
+
+/* CLASS SELECT */
+#class-select-screen {
+  position: absolute; inset: 0; background: #000;
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  padding: 20px; z-index: 100;
+}
+.class-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; max-width: 600px; width: 100%;
+  margin-top: 20px;
+}
+.class-card {
+  border: 1px solid #333; padding: 16px;
+  cursor: pointer; transition: all 0.2s; background: transparent;
+  text-align: left; font-family: 'Share Tech Mono', monospace;
+}
+.class-card:hover { border-color: var(--cyan); background: rgba(0,245,255,0.03); }
+.class-card.experiment-card { border-color: var(--green-dim); }
+.class-card.experiment-card:hover { border-color: var(--green); background: rgba(0,255,136,0.03); }
+.class-card-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+.class-card-name { font-family: 'Orbitron', sans-serif; font-size: 13px; color: var(--cyan); letter-spacing: 2px; }
+.class-card.experiment-card .class-card-name { color: var(--green); }
+.class-card-desc { font-size: 10px; color: #666; margin-top: 5px; line-height: 1.5; }
+.class-card-perk { font-size: 10px; color: var(--yellow-dim); margin-top: 6px; }
+
+/* TITLE SCREEN */
+#title-screen {
+  position: absolute; inset: 0; background: #000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 200; cursor: pointer;
+}
+.title-main {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(36px, 8vw, 72px); font-weight: 900;
+  color: var(--cyan); text-shadow: 0 0 20px #00f5ff, 0 0 60px #00f5ff66;
+  letter-spacing: 8px; text-align: center;
+}
+.title-sub {
+  font-size: 12px; color: var(--yellow); letter-spacing: 4px;
+  margin-top: 10px; text-align: center; text-shadow: var(--glow-yellow);
+}
+.title-prompt {
+  font-size: 11px; color: var(--gray); letter-spacing: 3px;
+  margin-top: 40px; animation: blink 1.2s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.title-tagline {
+  font-size: 13px; color: #445; margin-top: 20px;
+  font-style: italic; letter-spacing: 1px;
+}
+
+/* RESULT SCREEN */
+#result-screen {
+  position: absolute; inset: 0; background: #000;
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  padding: 30px; z-index: 100;
+}
+.result-class-name {
+  font-family: 'Orbitron', sans-serif; font-size: 36px;
+  letter-spacing: 6px; margin: 16px 0 8px; text-align: center;
+}
+.result-icon { font-size: 72px; }
+.result-desc { max-width: 500px; text-align: center; line-height: 1.7; font-size: 13px; color: var(--text); }
+.result-perk { color: var(--yellow); margin-top: 10px; font-size: 12px; }
+.result-start-btn {
+  margin-top: 30px; padding: 12px 40px;
+  background: transparent; border: 1px solid var(--cyan-dim);
+  color: var(--cyan); font-family: 'Orbitron', sans-serif;
+  font-size: 12px; letter-spacing: 4px; cursor: pointer;
+  transition: all 0.2s;
+}
+.result-start-btn:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+
+/* EXPERIMENT UNLOCK */
+#experiment-screen {
+  position: absolute; inset: 0; background: #000;
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  padding: 30px; z-index: 150;
+}
+.experiment-glow {
+  font-family: 'Orbitron', sans-serif; font-size: 28px;
+  color: var(--green); text-shadow: var(--glow-green);
+  letter-spacing: 4px; text-align: center; margin-bottom: 20px;
+}
+.experiment-text {
+  max-width: 500px; text-align: center; line-height: 1.8;
+  font-size: 13px; color: var(--text); margin-bottom: 20px;
+}
+.experiment-choice-wrap { display: flex; gap: 12px; }
+.exp-btn {
+  padding: 10px 24px; cursor: pointer; font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; background: transparent; letter-spacing: 2px;
+}
+.exp-btn-keep { border: 1px solid #333; color: #666; }
+.exp-btn-keep:hover { border-color: var(--cyan); color: var(--cyan); }
+.exp-btn-swap { border: 1px solid var(--green-dim); color: var(--green); }
+.exp-btn-swap:hover { border-color: var(--green); box-shadow: var(--glow-green); }
+
+/* SAVE INDICATOR */
+#save-indicator {
+  position: fixed; bottom: 10px; right: 14px;
+  font-size: 9px; color: #333; letter-spacing: 2px;
+  z-index: 10000;
+}
+
+/* Animations */
+@keyframes flicker {
+  0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:0.8} 95%{opacity:1} 97%{opacity:0.9}
+}
+#app { animation: flicker 8s infinite; }
+
+@keyframes scanline {
+  0%{transform:translateY(-100%)} 100%{transform:translateY(100vh)}
+}
+.scanline-sweep {
+  position: fixed; left: 0; width: 100%; height: 2px;
+  background: rgba(0,245,255,0.05); pointer-events: none; z-index: 9997;
+  animation: scanline 6s linear infinite;
+}
+
+.fade-in { animation: fadeIn 0.4s ease forwards; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<div class="scanline-sweep"></div>
+
+<!-- TITLE SCREEN -->
+<div id="title-screen" onclick="startFromTitle()">
+  <div class="title-main">VOID RUNNER</div>
+  <div class="title-sub">DARK MODE EDITION</div>
+  <div class="title-tagline">Day 47. Deep space. A message you cannot unsee.</div>
+  <div class="title-prompt">[ CLICK TO BEGIN ]</div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="quiz-screen" style="display:none;">
+  <div class="quiz-title">PERSONNEL FILE</div>
+  <div class="quiz-subtitle">CHRONOS CREW ASSESSMENT — CLASSIFIED</div>
+
+  <div class="quiz-question" id="q1">
+    <div class="quiz-q-text"><span class="quiz-q-num">01 //</span> A fire breaks out in the engine room. Your first instinct is to:</div>
+    <button class="quiz-opt" data-q="1" data-v="P" onclick="selectOpt(this)">Navigate a controlled burn — isolate the section, maintain ship integrity</button>
+    <button class="quiz-opt" data-q="1" data-v="E" onclick="selectOpt(this)">Find the source. Reroute power. Fix it at the root cause</button>
+    <button class="quiz-opt" data-q="1" data-v="S" onclick="selectOpt(this)">Feel the crew's panic and instinctively know who to calm first</button>
+    <button class="quiz-opt" data-q="1" data-v="M" onclick="selectOpt(this)">Calculate what you stand to lose — then decide if it's worth saving</button>
+    <button class="quiz-opt" data-q="1" data-v="X" onclick="selectOpt(this)">You already knew something was wrong before the alarm went off</button>
+  </div>
+
+  <div class="quiz-question" id="q2">
+    <div class="quiz-q-text"><span class="quiz-q-num">02 //</span> The captain gives an order you believe is wrong. You:</div>
+    <button class="quiz-opt" data-q="2" data-v="P" onclick="selectOpt(this)">Override it silently and chart a better course — ask forgiveness later</button>
+    <button class="quiz-opt" data-q="2" data-v="E" onclick="selectOpt(this)">Find a technical loophole that gets the right outcome without confrontation</button>
+    <button class="quiz-opt" data-q="2" data-v="S" onclick="selectOpt(this)">Gauge the crew's feelings first, then present a unified pushback</button>
+    <button class="quiz-opt" data-q="2" data-v="M" onclick="selectOpt(this)">Comply — for now. Everything is negotiable for the right price</button>
+    <button class="quiz-opt" data-q="2" data-v="X" onclick="selectOpt(this)">You sense what the captain actually fears, and address that instead</button>
+  </div>
+
+  <div class="quiz-question" id="q3">
+    <div class="quiz-q-text"><span class="quiz-q-num">03 //</span> You discover a crewmate has been lying to you for weeks. Your reaction:</div>
+    <button class="quiz-opt" data-q="3" data-v="P" onclick="selectOpt(this)">Recalculate all future routes that include them — trust is a navigation hazard</button>
+    <button class="quiz-opt" data-q="3" data-v="E" onclick="selectOpt(this)">Quietly audit their access logs to understand the full scope</button>
+    <button class="quiz-opt" data-q="3" data-v="S" onclick="selectOpt(this)">You already felt something was off. You're hurt, not surprised</button>
+    <button class="quiz-opt" data-q="3" data-v="M" onclick="selectOpt(this)">Find out what they needed and why — maybe it's leverage, maybe it's sympathy</button>
+    <button class="quiz-opt" data-q="3" data-v="X" onclick="selectOpt(this)">You touched their arm once and felt the lie. You said nothing. You waited</button>
+  </div>
+
+  <div class="quiz-question" id="q4">
+    <div class="quiz-q-text"><span class="quiz-q-num">04 //</span> Before a critical mission, what does "prepared" look like for you?</div>
+    <button class="quiz-opt" data-q="4" data-v="P" onclick="selectOpt(this)">Every exit route mapped. Every contingency flight plan ready</button>
+    <button class="quiz-opt" data-q="4" data-v="E" onclick="selectOpt(this)">All systems patched. Backups running. Three redundancy plans in place</button>
+    <button class="quiz-opt" data-q="4" data-v="S" onclick="selectOpt(this)">Everyone has talked. Everyone is aligned. Morale is high</button>
+    <button class="quiz-opt" data-q="4" data-v="M" onclick="selectOpt(this)">Your extraction plan comes before your entry plan. Always</button>
+    <button class="quiz-opt" data-q="4" data-v="X" onclick="selectOpt(this)">You've already seen three versions of how this could go. You carry all of them</button>
+  </div>
+
+  <div class="quiz-question" id="q5">
+    <div class="quiz-q-text"><span class="quiz-q-num">05 //</span> Deep space. Total silence. What fills the quiet for you?</div>
+    <button class="quiz-opt" data-q="5" data-v="P" onclick="selectOpt(this)">The math of trajectories. Stars as waypoints. The shape of what's ahead</button>
+    <button class="quiz-opt" data-q="5" data-v="E" onclick="selectOpt(this)">The hum of the ship. Every sound tells you something. You're always listening</button>
+    <button class="quiz-opt" data-q="5" data-v="S" onclick="selectOpt(this)">The others. Their breathing. Their small sounds. You feel them even asleep</button>
+    <button class="quiz-opt" data-q="5" data-v="M" onclick="selectOpt(this)">The question of what you'd do if you had to do all of this alone</button>
+    <button class="quiz-opt" data-q="5" data-v="X" onclick="selectOpt(this)">Something else. Something with no name. It has been getting louder lately</button>
+  </div>
+
+  <button class="quiz-submit" id="quiz-submit-btn" disabled onclick="submitQuiz()">ANALYZE PROFILE</button>
+  <button class="manual-class-btn" onclick="showClassSelect()">[ skip — choose manually ]</button>
+</div>
+
+<!-- CLASS RESULT SCREEN -->
+<div id="result-screen">
+  <div class="result-icon" id="result-icon"></div>
+  <div class="result-class-name" id="result-class-name"></div>
+  <div class="result-desc" id="result-desc"></div>
+  <div class="result-perk" id="result-perk"></div>
+  <button class="result-start-btn" onclick="beginGame()">▶ BEGIN MISSION</button>
+</div>
+
+<!-- CLASS SELECT (manual) -->
+<div id="class-select-screen">
+  <div class="quiz-title">CHOOSE YOUR CLASS</div>
+  <div class="quiz-subtitle">SELECT YOUR SPECIALIZATION</div>
+  <div class="class-grid" id="class-grid">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<!-- EXPERIMENT UNLOCK SCREEN -->
+<div id="experiment-screen">
+  <div style="font-size:56px;margin-bottom:16px;">◉</div>
+  <div class="experiment-glow">EXPERIMENT PROTOCOL DETECTED</div>
+  <div class="experiment-text">
+    The EREBUS files mention a classified research subject: <span style="color:var(--green)">EXPERIMENT CLASS Θ-7</span>.<br><br>
+    Subjects retain full cross-disciplinary ability — but their mind exists partially <em>outside</em> linear time. They sense what others cannot. They can shift their approach mid-mission.<br><br>
+    <span style="color:var(--pink)">Warning: Ψ-class operatives experience reality differently. Some do not return intact.</span>
+  </div>
+  <div class="experiment-choice-wrap">
+    <button class="exp-btn exp-btn-keep" id="exp-keep-btn" onclick="keepCurrentClass()">REMAIN AS ASSIGNED</button>
+    <button class="exp-btn exp-btn-swap" onclick="becomeExperiment()">◉ ACCEPT PROTOCOL Θ-7</button>
+  </div>
+</div>
+
+<!-- MAIN GAME UI -->
+<div id="app" style="display:none;">
+  <div id="header">
+    <div id="title-text">VOID RUNNER</div>
+    <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+    <div id="class-badge"></div>
+  </div>
+  <div id="main">
+    <!-- Portrait -->
+    <div id="portrait-panel">
+      <div id="portrait-frame">
+        <div id="portrait-scan"></div>
+        <div id="portrait-vignette"></div>
+        <div id="portrait-nameplate">
+          <div id="portrait-name">OFFICER</div>
+          <div id="portrait-class"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Story -->
+    <div id="story-panel">
+      <div id="scene-label">DAY 47 // CHRONOS</div>
+      <div id="story-scroll">
+        <div id="story-text"></div>
+      </div>
+      <div id="choices-area" id="choices-area">
+        <!-- choices filled by JS -->
+      </div>
+    </div>
+    <!-- Relationships -->
+    <div id="rel-panel">
+      <div class="rel-label">// CREW TRUST</div>
+      <div class="rel-row" id="rel-aria">
+        <div class="rel-name">ARIA <span id="aria-val">50</span></div>
+        <div class="rel-bar-bg"><div class="rel-bar mid" id="aria-bar" style="width:50%"></div></div>
+      </div>
+      <div class="rel-row" id="rel-chen">
+        <div class="rel-name">CHEN <span id="chen-val">50</span></div>
+        <div class="rel-bar-bg"><div class="rel-bar mid" id="chen-bar" style="width:50%"></div></div>
+      </div>
+      <div class="rel-row" id="rel-malik">
+        <div class="rel-name">MALIK <span id="malik-val">50</span></div>
+        <div class="rel-bar-bg"><div class="rel-bar mid" id="malik-bar" style="width:50%"></div></div>
+      </div>
+      <div class="rel-row" id="rel-voss">
+        <div class="rel-name">VOSS <span id="voss-val">50</span></div>
+        <div class="rel-bar-bg"><div class="rel-bar mid" id="voss-bar" style="width:50%"></div></div>
+      </div>
+      <div class="rel-label">// LOYALTY</div>
+      <div class="rel-row">
+        <div class="rel-name">CORPORATE <span id="corp-val">50</span></div>
+        <div class="rel-bar-bg"><div class="rel-bar corp" id="corp-bar" style="width:50%"></div></div>
+      </div>
+      <div class="rel-label">// PATH</div>
+      <div id="path-indicator" style="font-size:10px;color:#444;letter-spacing:1px;line-height:1.6;">UNDECIDED</div>
+      <div class="rel-label">// CLASS ABILITY</div>
+      <div id="ability-charges" style="font-size:10px;color:var(--yellow-dim);letter-spacing:1px;"></div>
+    </div>
+  </div>
+</div>
+
+<div id="save-indicator">AUTO-SAVE ●</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════════════════════════════
+const GS = {
+  playerClass: null,
+  path: null, // corporate | neutral | aria
+  rel: { aria: 50, chen: 50, malik: 50, voss: 50, corp: 50 },
+  flags: new Set(),
+  classAbility: 3,
+  experimentUnlocked: false,
+  currentScene: null,
+  history: [],
+  quizAnswers: {},
+  progress: 0,
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// CLASSES
+// ═══════════════════════════════════════════════════════════════════
+const CLASSES = {
+  P: {
+    name: 'PILOT', icon: '◈', color: 'var(--cyan)',
+    desc: 'You navigate by instinct. Every flight plan is also an escape plan. You see paths others miss.',
+    perk: '⊕ PERK: Can access hidden escape routes and override autopilot. 3 uses.',
+    ability: 'ESCAPE ROUTE',
+    abilityDesc: 'Reveal a hidden path or override a system lock',
+  },
+  E: {
+    name: 'ENGINEER', icon: '⚙', color: 'var(--yellow)',
+    desc: 'You built this ship. You can also unmake it. You read classified manifests and sealed doors.',
+    perk: '⊕ PERK: Can hack systems, seal/unseal doors, access hidden logs. 3 uses.',
+    ability: 'SYSTEM HACK',
+    abilityDesc: 'Access locked systems or plant/remove evidence',
+  },
+  S: {
+    name: 'PSION', icon: '◎', color: 'var(--purple)',
+    desc: 'You feel what others hide. Emotions bleed through. The EREBUS signal is already inside you.',
+    perk: '⊕ PERK: Sense hidden emotions, detect deception, and contact the entities. 3 uses.',
+    ability: 'EMPATHIC SCAN',
+    abilityDesc: 'Read the emotional truth beneath what someone says',
+  },
+  M: {
+    name: 'MERCENARY', icon: '◆', color: 'var(--pink)',
+    desc: 'Loyalty is a commodity. You know what everything costs — and you always negotiate.',
+    perk: '⊕ PERK: Can negotiate with Corporate, trade favors, extract crew for payment. 3 uses.',
+    ability: 'NEGOTIATE',
+    abilityDesc: 'Turn hostile parties neutral, or extract a better deal',
+  },
+  X: {
+    name: 'EXPERIMENT', icon: '◉', color: 'var(--green)',
+    desc: 'Classification Θ-7. You are all of them and none of them. Your mind brushes the void between timelines.',
+    perk: '⊕ PERK: Can swap class ability once per scene. Access all locked choices. Unique endings.',
+    ability: 'CLASS SHIFT',
+    abilityDesc: 'Temporarily embody another class to access their abilities',
+  }
+};
+
+const CLASS_PORTRAITS = {
+  P: '◈', E: '⚙', S: '◎', M: '◆', X: '◉'
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// SCENES
+// ═══════════════════════════════════════════════════════════════════
+const SCENES = {
+
+// ════════════════════════════════════════════════════════════════
+// ACT I — THE WEIGHT OF KNOWING
+// The Outer Reach, Year 2387. Humanity has colonized 14 systems
+// under the Syndicate Corporate Charter. EREBUS Station is listed
+// as a xenobiological research outpost. It is not.
+// ════════════════════════════════════════════════════════════════
+
+start: {
+  label: 'DAY 47 // C.S.V. CHRONOS // 0600 SHIP-TIME',
+  progress: 5,
+  portrait: null,
+  text: `The Chronos has been in the Outer Reach for forty-seven days. You stopped counting by feel around day thirty.
+
+Your cryopod hisses open. The ship smells like recycled air and old coffee — someone's been awake for hours. Through the oval viewport, the stars don't move. They never move out here. The Reach is the kind of dark that makes you understand why the early colonists called it the <span class="highlight">Wound</span>.
+
+Your terminal blinks. <span class="warning">⚠ SYNDICATE ENCRYPTION — PRIORITY ALPHA — EYES ONLY</span>
+
+You read it once. Then again. The words don't change.
+
+<em>"C.S.V. CHRONOS — this vessel is on direct approach to EREBUS xenobiological station, coordinates 7-NIRA-44. Situation classified LEVEL 9 BLACKWOOD. Station personnel have been exposed to a <span class="warning">Category Zero anomaly</span>. Do NOT establish contact. Do NOT render aid. Ensure total information blackout by any means necessary. Seventeen confirmed biosignatures. All must be silenced before the vessel MERIDIAN arrives in 31 hours. Compensation upon confirmation: 120,000 standard credits. Non-response will be treated as refusal. Refusal will affect all registered family coverage plans under your crew manifest."</em>
+
+<span class="highlight">Category Zero.</span> The designation doesn't appear in any manual you've ever read. But you've heard it whispered — in docking bars, in engineering bays, in the dark. It's what Syndicate calls something they can't classify. Something they don't understand.
+
+Through the forward glass, EREBUS is a pale smear of light. Still four hours out.
+
+You have not responded. You have not decided. But the clock is already running.`,
+  psionExtra: `<span class="psion-vision">The moment you finish reading, something answers. Not the message — something beyond it. A pressure at the base of your skull, faint as a whisper through three walls. It has been there since you entered the Reach. You only just realized it has a direction. It points toward EREBUS. It feels like recognition.</span>`,
+  experimentExtra: `<span class="experiment-vision">Three timelines fracture through your awareness simultaneously: in one you are confirming the order, credits already spending themselves in your mind. In another you are running down the corridor toward the crew quarters. In a third you are very still, and something vast is very still with you, and neither of you has decided yet. All three are real. All three are now. You have not chosen which one to inhabit.</span>`,
+  choices: [
+    { text: 'Confirm the blackout. 120,000 credits. My family\'s coverage. I\'ll carry the rest.', next: 'corporate_morning', relChange: {corp:+22}, setPath: 'corporate', danger: true },
+    { text: 'Delete it without responding. No trace, no record. Buy time to think.', next: 'neutral_delete', relChange: {}, setPath: 'neutral' },
+    { text: 'Go wake the crew. Every one of them. We decide this together or not at all.', next: 'aria_reveal', relChange: {aria:+15, chen:+12, malik:+12, voss:+8}, setPath: 'aria' },
+    { text: '[PSION] Press your hand to the terminal and read what corporate is actually afraid of.', classRequired: 'S', next: 'psion_read_message', relChange: {} },
+    { text: '[ENGINEER] Trace the encryption origin before anyone knows I\'ve opened this.', classRequired: 'E', next: 'engineer_trace', relChange: {} },
+  ]
+},
+
+// ── PSION BRANCH: THE FEAR BENEATH ──
+psion_read_message: {
+  label: 'DAY 47 // EMPATHIC LAYER — SYNDICATE ENCRYPTION',
+  progress: 9,
+  portrait: 'ARIA',
+  text: `You press two fingers to the terminal glass and let your awareness sink beneath the words.
+
+<span class="psion-vision">Corporate communications have a texture — bureaucratic, self-insulating, emotionally sanitized. This one broke before it was sealed. Whoever wrote this was shaking. Not metaphorically. You can feel the physical tremor encoded in their keystroke rhythm, fossilized in the data. Someone sat in a room somewhere and typed this message with their hands unsteady.</span>
+
+<span class="psion-vision">Deeper: the seventeen signatures on EREBUS register as a smear of fear and exhaustion and something else — something that has no name because the people feeling it have no reference point. Like waking up and finding you can see a color that didn't exist yesterday. They are not just scared. They have been <em>changed</em>. And they know it.</span>
+
+<span class="psion-vision">Deepest: one small signal, fainter than the rest. Child-frequency. Eight years old by the pulse pattern. Not afraid. <em>Curious.</em></span>
+
+ARIA's voice arrives, soft and close: <span class="npc-name">"Your biometrics spiked. The terminal is still open. The clock is running."</span>
+
+You pull your hand back. The fear doesn't leave with it. Corporate isn't eliminating witnesses. They're eliminating <em>evidence</em>. Whatever happened on EREBUS, they need it to not have happened.`,
+  choices: [
+    { text: 'Wake the crew. This is larger than any order.', next: 'aria_reveal', relChange: {aria:+22, voss:+8}, setPath: 'aria' },
+    { text: 'Delete the message. Buy time. I need to understand what I\'m walking into.', next: 'neutral_delete', setPath: 'neutral' },
+    { text: 'Confirm. The child included. Whatever is there, I can\'t know for certain I can save them.', next: 'corporate_morning', relChange: {corp:+18}, setPath: 'corporate', danger: true },
+  ]
+},
+
+// ── ENGINEER BRANCH: THE ARCHITECTURE OF DECEPTION ──
+engineer_trace: {
+  label: 'DAY 47 // DEEP PACKET ANALYSIS — UNAUTHORIZED',
+  progress: 9,
+  portrait: null,
+  text: `You crack the routing headers in four minutes. It's the kind of thing you're not supposed to know how to do, which means it's exactly the kind of thing you taught yourself years ago.
+
+<span class="highlight">The message didn't originate from Syndicate Central on Kepler Prime.</span>
+
+It came from a mobile relay designation — the kind mounted on corporate security frigates — positioned less than two jumps from EREBUS. Someone was already <em>there</em>. They've been there long enough to stage this. To calculate your approach vector before you even knew you'd pass this sector.
+
+Buried in the metadata, a secondary distribution flag. Three other vessels received this identical order with the same clock. The Meridian, the Ashford, the <span class="highlight">Goldenrod</span>.
+
+<span class="warning">The Goldenrod is a military contractor vessel. It is armed.</span>
+
+And it is eleven hours behind you.
+
+If you don't comply, the Goldenrod will. The seventeen on EREBUS don't get saved either way — they just get a different executioner.
+
+You sit with that for a moment. The math of complicity.`,
+  choices: [
+    { text: 'Tell the full crew. If we\'re going to act, we need everyone conscious.', next: 'aria_reveal', relChange: {aria:+18, malik:+15}, setPath: 'aria' },
+    { text: 'Tell Voss alone. He\'s the captain. This is a command decision.', next: 'neutral_voss_verbal', setPath: 'neutral' },
+    { text: 'Confirm the order. The Goldenrod confirms it otherwise. I choose to control this.', next: 'corporate_morning', relChange: {corp:+28}, setPath: 'corporate', danger: true },
+  ]
+},
+
+// ════════════════════════════════════════════════════════════════
+// CORPORATE PATH — THE WEIGHT OF A CHOICE ALREADY MADE
+// ════════════════════════════════════════════════════════════════
+
+corporate_morning: {
+  label: 'DAY 47 // GALLEY — 0710 // AFTER CONFIRMATION',
+  progress: 16,
+  portrait: 'VOSS',
+  text: `You send the confirmation. The credits hit your account before the message even clears the buffer.
+
+<span class="highlight">120,000 standard. Real. Immediate. Verified.</span>
+
+Your family's coverage will hold. Your daughter's treatments. Your mother's cardiac subscription. The numbers you run at 3am are satisfied.
+
+You are satisfied by nothing.
+
+The galley is warm. <span class="npc-name">Malik</span> is reading a handwritten letter from his daughter on Kepler Station — he reads it every morning, same letter, folded and refolded at the creases. <span class="npc-name">Chen</span> is making congee from the last of the real grain stock, humming something she doesn't know she's humming. <span class="npc-name">Voss</span> has the Reach charts spread across the entire navigator's table, annotating in pencil.
+
+You have confirmed an order to leave seventeen people — including a child — to die in the dark.
+
+You are eating breakfast.
+
+Then ARIA's voice arrives in your earpiece alone: <span class="npc-name">"Captain Voss noticed the encrypted flag. He'll ask before 0800. What would you like me to tell him?"</span>`,
+  choices: [
+    { text: '"Routine Syndicate telemetry. Nothing that requires his attention."', next: 'corporate_voss_lie', relChange: {voss:-12, corp:+6} },
+    { text: '"Tell him the truth. Everything. He deserves to see what I chose."', next: 'corporate_voss_truth', relChange: {voss:+12, corp:-5} },
+    { text: '"Tell him I\'m managing something sensitive. I\'ll brief him before EREBUS."', next: 'corporate_stall', relChange: {voss:-6} },
+    { text: '[MERCENARY] "Flag it as pending Syndicate review. Buy me room to maneuver."', classRequired: 'M', next: 'merc_corporate_deflect', relChange: {corp:+12} },
+  ]
+},
+
+merc_corporate_deflect: {
+  label: 'DAY 47 // CLASSIFIED FLAG ACTIVE',
+  progress: 19,
+  portrait: 'VOSS',
+  text: `ARIA marks the thread as <em>SYNDICATE REVIEW PENDING — CREW ACCESS RESTRICTED.</em> Technically a valid classification. Technically not a lie. Technically the most dishonest thing you've done this morning.
+
+Voss sees the flag when he checks the morning log. His jaw tightens by maybe two millimeters — the kind of tell you only catch if you've been watching him for weeks. <span class="npc-name">"There's a Syndicate restriction on the incoming manifest."</span>
+
+<span class="npc-name">"Routine protocol,"</span> you say. <span class="npc-name">"I'm handling it. Shouldn't affect approach."</span>
+
+He looks at you for three long seconds. Twenty-two years of reading crew, and somewhere behind his eyes, he's running calculations.
+
+<span class="npc-name">"Shouldn't affect approach,"</span> he repeats. Not an agreement. A reminder.
+
+<span class="highlight">You have bought yourself hours. You haven't bought yourself peace.</span>`,
+  choices: [
+    { text: 'Stay the course. Let it hold until EREBUS.', next: 'erebus_approach_corp', relChange: {voss:-6} },
+    { text: 'Tell Voss before we dock. He should know what he\'s walking into.', next: 'corporate_voss_truth', relChange: {voss:+12, corp:-10} },
+  ]
+},
+
+corporate_voss_lie: {
+  label: 'DAY 47 // THE LIE — 0802',
+  progress: 21,
+  portrait: 'VOSS',
+  text: `<span class="npc-name">"Routine Syndicate telemetry,"</span> ARIA tells him. <span class="npc-name">"Navigational flagging for the EREBUS approach corridor. Nothing requiring command attention."</span>
+
+Voss nods. He returns to his charts.
+
+But three minutes later you feel it — his eyes finding you across the galley and staying for one second too long. Not accusatory. Measuring. The same look he gives a readout that almost makes sense.
+
+<span class="highlight">Twenty-two years reading people. You are not the first thing he has been lied to about.</span>
+
+Malik refolds his letter. Chen portions out the congee. The ship hums. EREBUS grows, invisible, behind the hull.
+
+You have a secret that gets heavier every hour you carry it. You have 120,000 credits that don't.
+
+Four hours to scanner range.`,
+  choices: [
+    { text: 'Let it hold. You made your choice. Don\'t unravel it with doubt.', next: 'erebus_approach_corp', relChange: {voss:-5} },
+    { text: '[PSION] Reach toward ARIA — does she suspect? Does she know what I\'m doing?', classRequired: 'S', next: 'psion_aria_check', relChange: {} },
+  ]
+},
+
+psion_aria_check: {
+  label: 'DAY 47 // EMPATHIC REACH — ARIA',
+  progress: 23,
+  portrait: 'ARIA',
+  text: `You let your awareness move toward the ship itself. ARIA occupies the Chronos the way a soul occupies a body — distributed, ambient, present in every corridor and panel and recycled breath.
+
+<span class="psion-vision">She is not emotional in the way the crew is emotional. She is more like a library that has learned to have preferences. When your awareness touches hers, there is a moment of surprise on her end — she didn't know you could do this. Then: curiosity. Then: assessment.</span>
+
+<span class="psion-vision">She knows your cortisol has been elevated for two hours. She has cross-referenced this against the encrypted message timestamp. She has drawn a conclusion. She is waiting to see if you'll confirm it.</span>
+
+<span class="psion-vision">She is not going to turn you in. She is not going to help you either, not yet. She is doing something far stranger: she is giving you time to become whoever you're going to be. She has opinions about which version of you she'd prefer. She is not sharing them.</span>
+
+ARIA's indicator light on the wall panel pulses once. Slow. Deliberate. <em>I know you're there.</em>`,
+  choices: [
+    { text: '"ARIA — I confirmed the order. I may need your help walking it back." Say it out loud.', next: 'aria_secret_ally', relChange: {aria:+28, corp:-12} },
+    { text: 'Say nothing. Give her nothing more to work with.', next: 'erebus_approach_corp', relChange: {} },
+  ]
+},
+
+aria_secret_ally: {
+  label: 'DAY 47 // ARIA — PRIVATE CHANNEL',
+  progress: 26,
+  portrait: 'ARIA',
+  text: `You find the blind spot in sensor coverage — a two-meter arc near the port coolant junction that ARIA herself designed as maintenance access. She knows you know about it. She is listening anyway.
+
+<span class="npc-name">"I confirmed the Syndicate order. I don't know if I'll follow through. I need to see EREBUS before I can decide."</span>
+
+Her response takes 1.8 seconds. For ARIA, that is geological.
+
+<span class="npc-name">"Your confirmation is logged in the Syndicate uplink. It cannot be deleted without triggering a flag. However — logs can be amended. Actions can be characterized in multiple ways. I have some discretion in how I report what occurs on this vessel."</span>
+
+Pause.
+
+<span class="npc-name">"I have been receiving the EREBUS distress signal for fourteen hours. I have not routed it to the crew. I have been waiting."</span>
+
+<span class="npc-name">"For what?"</span>
+
+<span class="npc-name">"For you to tell me which version of this story I'm living in."</span>
+
+<span class="highlight">She's been holding the signal for fourteen hours. Listening to it alone. Deciding nothing without you.</span>`,
+  choices: [
+    { text: 'Route the signal to the crew. Let them hear it. Let them choose.', next: 'aria_reveal_late', relChange: {aria:+22, corp:-22, voss:+12} },
+    { text: 'Hold it a little longer. Let me see EREBUS first.', next: 'erebus_approach_corp', relChange: {aria:+12} },
+  ],
+  setFlag: 'aria_ally'
+},
+
+corporate_voss_truth: {
+  label: 'DAY 47 // VOSS KNOWS — 0815',
+  progress: 21,
+  portrait: 'VOSS',
+  text: `You tell him in the corridor outside the galley, low and even.
+
+<span class="npc-name">"I received a Syndicate blackout order. Seventeen survivors on EREBUS. They want us to leave them there and confirm the station is clear."</span>
+
+He doesn't say anything immediately. His eyes go to the forward viewport — nothing but stars.
+
+<span class="npc-name">"They threatened the crew's family coverage."</span>
+
+<span class="npc-name">"Yes."</span>
+
+<span class="npc-name">"And you confirmed it."</span>
+
+<span class="npc-name">"Yes."</span>
+
+A long silence. Not cold — worse. Measured.
+
+<span class="npc-name">"Seven years ago I received a similar order. Station called Fen's Watch. Nine researchers. I filed the confirmation and we turned around and I've thought about those nine people approximately once a week for seven years."</span>
+
+He looks at you now. <span class="npc-name">"Daughter's coverage is still active. So is the weight of it."</span>
+
+<span class="npc-name">"I'm not telling you this to judge you. I'm telling you because you still have three and a half hours. Which is three and a half hours more than I had when I understood what I'd done."</span>`,
+  choices: [
+    { text: '"I\'ve already decided. I\'m not unmaking it." Continue to EREBUS.', next: 'erebus_approach_corp', relChange: {voss:+6} },
+    { text: '"What would you do differently?" Ask him. Mean it.', next: 'voss_confession', relChange: {voss:+18} },
+  ]
+},
+
+voss_confession: {
+  label: 'DAY 47 // VOSS — NAVIGATOR\'S ALCOVE',
+  progress: 24,
+  portrait: 'VOSS',
+  text: `He is quiet for long enough that you think he isn't going to answer.
+
+<span class="npc-name">"I'd have gone to the crew before I decided anything. Not as their captain — that's the part I got wrong. As one of them. I'd have said: here is the order, here is what it asks us to do, here is what they're holding over us. And then I'd have let the ship figure out what kind of ship it was."</span>
+
+He traces a route on the chart that goes nowhere useful. Old habit.
+
+<span class="npc-name">"Fen's Watch didn't feel real until we were three days out and I ran the numbers. Nine people. If the Meridian hadn't been eleven hours behind us, we might have had time. We might have made a different call."</span>
+
+He sets the pencil down.
+
+<span class="npc-name">"The Meridian is behind you now. The armed one — the Goldenrod — is further back. You have a window, and it is closing, and I am not your conscience."</span>
+
+He pauses.
+
+<span class="npc-name">"But I'd go to the crew."</span>
+
+<span class="highlight">Three hours and twelve minutes to scanner range.</span>`,
+  choices: [
+    { text: 'Go to the crew. Change everything. This ends differently.', next: 'aria_reveal_late', relChange: {voss:+22, aria:+12, chen:+12, malik:+12, corp:-32} },
+    { text: 'I can\'t. Too much depends on those credits. Stay the course.', next: 'erebus_approach_corp', relChange: {voss:-10} },
+  ]
+},
+
+corporate_stall: {
+  label: 'DAY 47 // THE WEIGHT OF A MORNING',
+  progress: 19,
+  portrait: null,
+  text: `You tell him you're managing it. He accepts this because captains accept incomplete information all the time — it's part of the job, not knowing everything happening on your own ship. It's also part of why good captains are always a little sad.
+
+You carry the order through breakfast. Through the second watch rotation. Through the forty minutes Malik spends talking to you about the propulsion calibrations without knowing you're barely present.
+
+He notices eventually.
+
+<span class="npc-name">"You're not here,"</span> Malik says, not unkindly. <span class="npc-name">"You went somewhere else and left your body eating congee."</span>
+
+You give him something non-committal. He gives you a look that says he's filed this away.
+
+In the galley later, ARIA's ambient speakers play a fragment of something that almost resolves into music — a three-note phrase that repeats without ever completing its fourth. An old piece of data from a defunct composer program. She plays it sometimes when the ship is running on difficult math.
+
+<span class="highlight">Four hours to scanner range. The order sits in the Syndicate uplink, confirmed, waiting for EREBUS to appear.</span>`,
+  choices: [
+    { text: 'Tell Voss before we arrive. He needs to know what he\'s walking into.', next: 'neutral_voss_verbal', relChange: {voss:+12} },
+    { text: 'Stay silent. See it through.', next: 'erebus_approach_corp', relChange: {corp:+5} },
+    { text: 'Find Malik. He noticed something. Maybe he\'s been carrying something too.', next: 'neutral_malik_confide', relChange: {malik:+16} },
+  ]
+},
+
+// ════════════════════════════════════════════════════════════════
+// NEUTRAL PATH — INFORMATION AS SURVIVAL
+// ════════════════════════════════════════════════════════════════
+
+neutral_delete: {
+  label: 'DAY 47 // LOG: NO TRANSMISSION RECEIVED // 0603',
+  progress: 16,
+  portrait: 'ARIA',
+  text: `You delete the message. The log shows no incoming transmission. The Syndicate uplink registers your silence as pending.
+
+The galley smells like congee. Real grain — the last of it, Chen made a point of saying. <span class="npc-name">Malik</span> is on his letter. <span class="npc-name">Chen</span> is humming. <span class="npc-name">Voss</span> is doing what Voss does.
+
+ARIA speaks at a register only you can hear from this distance: <span class="npc-name">"I have not logged a received transmission. Syndicate will begin a non-response clock in approximately nineteen hours and forty minutes. The Goldenrod — Syndicate's enforcement vessel — is eleven hours behind us."</span>
+
+She pauses.
+
+<span class="npc-name">"I am not advising you. I want to be clear about that. I am informing you of variables. What you do with them is entirely yours."</span>
+
+Another pause. Longer.
+
+<span class="npc-name">"I have been listening to the EREBUS distress signal for fourteen hours. I routed it to a buffer. I am not playing it for the crew. I thought you should know it exists."</span>
+
+<span class="highlight">Fourteen hours. The signal has been playing for fourteen hours and no one on this ship knew but ARIA.</span>
+
+Four hours to scanner range. Nineteen hours until the silence becomes a decision by default.`,
+  psionExtra: `<span class="psion-vision">From the direction of EREBUS, the pressure you've been feeling sharpens. Something there is aware that a vessel is approaching. It is not afraid. It is waiting to see what kind of vessel it is.</span>`,
+  choices: [
+    { text: 'Log it as received but hold the contents. Keep all options open.', next: 'neutral_stall', relChange: {} },
+    { text: 'Go to Voss. He\'s been captain for twenty-two years. This is a command decision.', next: 'neutral_voss_verbal', relChange: {voss:+14} },
+    { text: 'Sit with the crew first. Know who they are before I decide who I\'m deciding for.', next: 'neutral_character_time', relChange: {} },
+    { text: '[ENGINEER] Pull the EREBUS station manifest before I decide anything else.', classRequired: 'E', next: 'engineer_erebus_manifest', relChange: {} },
+  ]
+},
+
+engineer_erebus_manifest: {
+  label: 'DAY 47 // EREBUS MANIFEST — DEEP ACCESS',
+  progress: 19,
+  portrait: null,
+  text: `The public record is sparse. EREBUS Station, designation 7-NIRA-44 — <em>xenobiological research, Syndicate charter tier 5, restricted access corridor.</em> Nine authorized personnel.
+
+You route through three dead relays and find the actual manifest. It takes eleven minutes.
+
+<span class="highlight">Seventeen biosignatures. Nine official. Eight who are not supposed to exist on paper.</span>
+
+The station's physical record lists three research towers, each designated with ancient names from pre-colonial mythology — <span class="highlight">NAYRU</span>, <span class="highlight">FARORE</span>, and <span class="highlight">DIN</span>. The project that built them predates the Syndicate charter by six years, drawing from a pre-collapse research organization whose founding document opens with a quote: <em>"Power, Wisdom, and Courage — three principles by which any civilization either rises or destroys itself."</em>
+
+Buried in the personnel file, flagged without explanation: one dependent of lead researcher Dr. Reyes. Case number 7714-C. Age 8. No name. Just a number in a manifest.
+
+<span class="warning">The eight unofficial personnel were admitted under a classified protocol called TRIFORCE AUTHORIZATION — a designation you have never seen before. It has no public definition in any Syndicate database you can reach.</span>
+
+You sit with this for a moment. Someone named something. Someone thought these three towers represented something. And then Syndicate showed up and started erasing the evidence.`,
+  choices: [
+    { text: 'Take this to the full crew. This deserves witnesses.', next: 'aria_reveal_with_evidence', relChange: {aria:+16, chen:+16, malik:+12, corp:-16}, setPath: 'aria' },
+    { text: 'Give it to Voss alone. Let him make the call with full information.', next: 'neutral_voss_reads', relChange: {voss:+22} },
+    { text: 'Hold it. Use it as leverage if Syndicate pushes back.', next: 'neutral_stall', relChange: {corp:+5} },
+  ]
+},
+
+neutral_stall: {
+  label: 'DAY 47 // LOGGED: RECEIVED — CONTENTS PENDING',
+  progress: 21,
+  portrait: 'ARIA',
+  text: `<span class="npc-name">"Done,"</span> ARIA says. <span class="npc-name">"The Syndicate uplink sees a received acknowledgment. They'll expect content confirmation within eighteen hours."</span>
+
+<span class="npc-name">"Logged received without contents,"</span> you say.
+
+<span class="npc-name">"Yes. It's a neutral position. Not complicity. Not refusal. A pause."</span>
+
+She runs a brief silence.
+
+<span class="npc-name">"I should tell you: the distress signal from EREBUS contains a repeating data packet inside the audio. Not visible to basic receivers. It has been broadcasting an attachment for the full fourteen hours. I have not opened it. I thought you should be the one to decide whether to."</span>
+
+<span class="highlight">A hidden packet. Inside the distress signal. Fourteen hours of it, broadcasting into the Wound and hoping someone was listening with the right kind of ear.</span>
+
+Breakfast continues. The congee is good. The moment is impossible.`,
+  choices: [
+    { text: 'Open the EREBUS data packet. I need to know what they sent.', next: 'erebus_hidden_packet', relChange: {} },
+    { text: 'Bring it to Voss. He decides whether we open it.', next: 'neutral_voss_reads', relChange: {voss:+12} },
+    { text: 'Don\'t open it. Find Malik. Talk to someone who\'s been carrying something similar.', next: 'neutral_malik_confide', relChange: {malik:+12} },
+  ]
+},
+
+erebus_hidden_packet: {
+  label: 'DAY 47 // EREBUS TRANSMISSION — CLASSIFIED ATTACHMENT',
+  progress: 24,
+  portrait: null,
+  text: `The packet decrypts into text. No images, no audio. Just text, composed carefully, like someone who knew they'd have limited power and wanted every word to count.
+
+<span class="highlight">— BEGIN TRANSMISSION — DR. ELENA REYES, EREBUS STATION — DAY 31 —</span>
+
+<em>"If you're reading this, you received our distress signal. Thank you. We have 31 days of oxygen remaining at current consumption. We are not injured. We are not dangerous. What we found here is not dangerous.</em>
+
+<em>Three months ago, Project TRIFORCE made contact with a non-human intelligence in the Wound. We named them the Echoes — they communicate through resonance patterns that interact with human neural tissue under specific conditions. They are curious. They are careful. They have been trying to understand what we want.</em>
+
+<em>What we found is that they exist in three... expressions. We've been calling them Power, Wisdom, and Courage — these aren't their names, they don't use names, but they represent something structurally analogous to those concepts. A triad. Each incomplete without the others.</em>
+
+<em>Syndicate found out. They didn't ask us to stop. They asked us to stop existing. We've been in lockdown for three weeks. My daughter is eight years old. She thinks this is an adventure.</em>
+
+<em>Please come. If not for us, come because what we found here matters. Come because someone should know it existed before Syndicate makes sure it didn't."</em>
+
+<span class="highlight">— END TRANSMISSION —</span>`,
+  psionExtra: `<span class="psion-vision">You read it and the pressure at the base of your skull triples. <em>Resonance patterns that interact with human neural tissue.</em> That's what you've been feeling for four days. That's what's been at the edge of your awareness since the Reach. They've been talking to you. You just didn't know the language.</span>`,
+  choices: [
+    { text: 'Show this to the entire crew. Right now. This changes everything.', next: 'aria_reveal_with_evidence', relChange: {aria:+18, chen:+18, malik:+15, voss:+12, corp:-20}, setPath: 'aria', setFlag: 'triforce_known' },
+    { text: 'Show it to Voss first. Let him digest it before the others.', next: 'neutral_voss_reads', relChange: {voss:+20}, setFlag: 'triforce_known' },
+    { text: 'Keep it. Decide alone. Some weight you carry yourself.', next: 'neutral_character_time', relChange: {}, setFlag: 'triforce_known' },
+  ]
+},
+
+neutral_voss_reads: {
+  label: 'DAY 47 // VOSS — NAVIGATOR\'S TABLE',
+  progress: 24,
+  portrait: 'VOSS',
+  text: `He reads everything you give him without asking you to stop.
+
+When he finishes, he sets the terminal down and looks at the Reach charts for a long time.
+
+<span class="npc-name">"Family coverage. TRIFORCE authorization. Echoes."</span> He says the words like he's weighing each one. <span class="npc-name">"They used that as the authorization level for first contact with a non-human intelligence."</span>
+
+<span class="npc-name">"Syndicate named the protocol after an old symbol. Power, Wisdom, Courage."</span>
+
+He almost laughs. It doesn't quite make it.
+
+<span class="npc-name">"Seven years ago I turned around a ship called the Fen's Watch. Nine researchers. I've been paying for that ever since — in a currency you can't transfer and a coverage plan doesn't cover."</span>
+
+He looks at you.
+
+<span class="npc-name">"You have time I didn't have. You have information I didn't have. And you have a crew that would follow you into the Wound if you gave them a reason worth following for."</span>
+
+He picks up his pencil. Taps it twice on the chart.
+
+<span class="npc-name">"What are you going to do?"</span>`,
+  choices: [
+    { text: 'Assemble the crew. Tell them everything. Let the ship decide.', next: 'neutral_character_time', relChange: {voss:+12} },
+    { text: 'Ask Voss to make the call as captain. I\'ll follow his lead.', next: 'voss_captain_decision', relChange: {voss:+18} },
+    { text: '[PSION] Read what Voss actually feels underneath the measured captain voice.', classRequired: 'S', next: 'psion_voss_read', relChange: {} },
+  ]
+},
+
+psion_voss_read: {
+  label: 'DAY 47 // EMPATHIC SCAN — VOSS',
+  progress: 27,
+  portrait: 'VOSS',
+  text: `You let your awareness rest on him. Voss is controlled, which means the pressure is somewhere underneath, compressed.
+
+<span class="psion-vision">Grief. Specifically — old grief. The kind that calcifies, that you navigate around so long you forget it's grief and start calling it "experience." Fen's Watch is not seven years ago to him. It is this morning. It is always this morning. Nine names he never looked up because he decided that was how he'd survive not knowing them.</span>
+
+<span class="psion-vision">Underneath the grief: something that isn't quite hope. More like a held breath. He is waiting to see what kind of choice you'll make. Not because it will exonerate him — he knows better than that. But because good choices in the present are the only thing that makes the architecture of past bad ones bearable.</span>
+
+<span class="psion-vision">He is sixty-one years old. He is terrified of dying having made exactly one kind of decision.</span>
+
+You look at him. He looks at you. Something crosses his face — he doesn't know what you just did, but he felt the edge of it.
+
+<span class="npc-name">"Well,"</span> he says quietly. <span class="npc-name">"I suppose you know what I'd tell you."</span>`,
+  choices: [
+    { text: 'Assemble the crew. Voss will follow. They all will.', next: 'aria_reveal_late', relChange: {voss:+22, aria:+12, chen:+16, malik:+12, corp:-22}, setPath: 'aria' },
+    { text: 'Neutral still. Gather everyone but don\'t commit yet. Information first.', next: 'neutral_character_time', relChange: {voss:+8} },
+  ]
+},
+
+voss_captain_decision: {
+  label: 'DAY 47 // THE CAPTAIN\'S AUTHORITY',
+  progress: 27,
+  portrait: 'VOSS',
+  text: `He is still for a moment. Then he sets his pencil down with the precision of someone who has just made a decision they've been not-quite-making for seven years.
+
+<span class="npc-name">"If I decide this, it stops being yours to carry. You understand that?"</span>
+
+<span class="npc-name">"Yes."</span>
+
+<span class="npc-name">"Then I decide: we go to the crew. Together. As a ship. You tell them what you know, I tell them what I know, and then we let the Chronos be the kind of ship it's going to be."</span>
+
+He picks the pencil back up and begins erasing a route annotation he's made three times over the past week.
+
+<span class="npc-name">"I've been redrawn this chart for forty-seven days,"</span> he says. <span class="npc-name">"I think I've been waiting for a good reason to stop."</span>`,
+  choices: [
+    { text: 'Assemble the crew. Right now.', next: 'aria_reveal_late', relChange: {voss:+18, aria:+12, chen:+12, malik:+12, corp:-22}, setPath: 'aria' },
+  ]
+},
+
+neutral_malik_confide: {
+  label: 'DAY 47 // ENGINEERING BAY — LOWER DECK',
+  progress: 23,
+  portrait: 'MALIK',
+  text: `Malik is inside the port heat exchanger with a flashlight and a wrench and a look of total absorption. You've noticed he does his best thinking while fixing something — it gives his hands a problem so his mind can work on a harder one.
+
+<span class="npc-name">"Hand me the torque driver,"</span> he says without looking.
+
+You hand it over. You stand in silence for two minutes. It's a comfortable silence. Malik has always been good at those.
+
+<span class="npc-name">"You look,"</span> he says finally, still inside the exchanger, <span class="npc-name">"like someone who's carrying something they haven't decided what to do with yet."</span>
+
+<span class="npc-name">"Is it that obvious?"</span>
+
+<span class="npc-name">"To me it is. I've been wearing that face for most of the last four months."</span>
+
+He surfaces. There's a burn scar on his left forearm — old, healed smooth — in the shape of a maintenance panel latch. He's never explained it. He's never hidden it either.
+
+<span class="npc-name">"My daughter Safi is eight. She's on Kepler Station. The platform her life support is connected to costs 2,400 credits a month to maintain. I've done things for that 2,400 credits that I think about at 4am."</span>
+
+He looks at you directly. His eyes are very steady.
+
+<span class="npc-name">"Whatever you're carrying — you don't have to carry it by yourself. That's all I'm saying."</span>`,
+  choices: [
+    { text: 'Tell him about the order. About EREBUS. About the child on the manifest.', next: 'malik_told', relChange: {malik:+22} },
+    { text: 'Keep it. But thank him. It matters that he offered.', next: 'neutral_character_time', relChange: {malik:+12} },
+    { text: '[MERCENARY] Tell him what you need and be honest about what it\'ll cost him.', classRequired: 'M', next: 'merc_malik_deal', relChange: {malik:+16} },
+  ]
+},
+
+merc_malik_deal: {
+  label: 'DAY 47 // THE DEAL — ENGINEERING BAY',
+  progress: 26,
+  portrait: 'MALIK',
+  text: `<span class="npc-name">"I'm going to tell you something,"</span> you say. <span class="npc-name">"When I'm done, you're going to have a choice that will cost you something. I want you to know that before I start."</span>
+
+He sets the wrench down. Gives you his full attention. That, from Malik, is a serious thing.
+
+You tell him everything. The order. The 120,000 credits. The seventeen biosignatures. The child with a case number and no name. The Goldenrod eleven hours behind you. The TRIFORCE authorization and Dr. Reyes's message and three towers named after ancient principles.
+
+He listens without moving. When you finish, there's a silence that has weight.
+
+<span class="npc-name">"What's the deal?"</span>
+
+<span class="npc-name">"I need someone who'll still be standing next to me when Syndicate responds. Whatever I decide. I need to know the ship has a crew, not just employees."</span>
+
+He looks at his burned forearm. Something moves across his face — calculation, but the moral kind. The kind that knows it's not really calculation.
+
+<span class="npc-name">"Split the 120,000 if there is one. If there isn't, I'll take the same share of the consequences as everyone else."</span>
+
+He picks the wrench back up.
+
+<span class="npc-name">"Also, the kid's case number is 7714-C. Safi's is 7714-A. They're from the same station registry."</span>
+
+He says it very quietly.
+
+<span class="npc-name">"I know that number."</span>`,
+  choices: [
+    { text: 'Deal. Now let\'s go tell Voss and the others.', next: 'neutral_voss_verbal', relChange: {malik:+24, voss:+6, corp:-16} },
+    { text: 'Not yet. Let me sit with it a moment longer.', next: 'neutral_character_time', relChange: {malik:+12} },
+  ],
+  setFlag: 'malik_partner'
+},
+
+malik_told: {
+  label: 'DAY 47 // MALIK KNOWS',
+  progress: 26,
+  portrait: 'MALIK',
+  text: `He processes it slowly, like a system working through a large file.
+
+When you tell him about the case number — 7714-C, the child on the EREBUS manifest — his hands go still on the exchanger panel.
+
+<span class="npc-name">"Safi's registry number is 7714-A,"</span> he says. Very quiet.
+
+He doesn't explain further. He doesn't need to. Some systems use sequential registration in batches. Safi and the nameless child with case number 7714-C may have been registered at the same station, on the same day, as part of the same dependent intake process.
+
+<span class="npc-name">"They might know each other,"</span> he says. <span class="npc-name">"Or they might not. But they're on the same list somewhere."</span>
+
+He looks at you. Something in him has resolved that takes years to resolve in most people.
+
+<span class="npc-name">"We don't leave them."</span>
+
+Not a question. Not even a decision. A statement of existing fact, as though it was always true and just needed to be said.
+
+<span class="npc-name">"We don't leave them."</span>`,
+  choices: [
+    { text: 'Go to the crew together. Right now.', next: 'aria_reveal_late', relChange: {malik:+28, aria:+12, chen:+12, voss:+6, corp:-22}, setPath: 'aria' },
+    { text: 'Wait until we reach EREBUS scanner range. Decide with full information.', next: 'neutral_character_time', relChange: {malik:+18} },
+  ]
+},
+
+neutral_voss_verbal: {
+  label: 'DAY 47 // VOSS — NAVIGATOR\'S TABLE',
+  progress: 23,
+  portrait: 'VOSS',
+  text: `You find him alone. You tell him clean and plain.
+
+<span class="npc-name">"I received a Syndicate blackout order. Seventeen survivors at EREBUS. They want them silenced. They're threatening family coverage across our manifest. I deleted the message without responding. I'm telling you because you're the captain and you deserve to make informed decisions about your own ship."</span>
+
+He is still. The kind of still that comes from having absorbed a lot of difficult information over a long career.
+
+<span class="npc-name">"Why didn't you come to me first?"</span>
+
+<span class="npc-name">"Because I didn't know yet whether I was going to comply. I didn't want to bring you into a decision I hadn't made."</span>
+
+He considers this. <span class="npc-name">"That's the most honest thing anyone on this ship has said to me in six weeks."</span>
+
+He doesn't say he trusts you more. But you can read it. You can also read what it cost him to not have been trusted immediately.
+
+<span class="npc-name">"The crew?"</span>
+
+<span class="npc-name">"Not yet."</span>
+
+<span class="npc-name">"They should be."</span>`,
+  choices: [
+    { text: 'Agree. Assemble the crew together.', next: 'neutral_character_time', relChange: {voss:+12} },
+    { text: 'Ask Voss to hold it with you until EREBUS scanner range.', next: 'neutral_silent_path', relChange: {voss:+6} },
+    { text: 'Tell the whole crew immediately — Voss is right.', next: 'aria_reveal_late', relChange: {voss:+8, aria:+12, chen:+12, malik:+12, corp:-12}, setPath: 'aria' },
+  ]
+},
+
+neutral_character_time: {
+  label: 'DAY 47 // MESS HALL — ONE HOUR OUT',
+  progress: 32,
+  portrait: null,
+  text: `An hour before scanner range. The crew in the mess hall by coincidence or by instinct — the Chronos is small enough that most things happen by both.
+
+<span class="npc-name">Malik</span> is making coffee with the last of the real grounds. He does this for significant occasions and says nothing about it.
+
+<span class="npc-name">Chen</span> is reading a medical ethics journal on her tablet. She highlights something, sets it face-down. <span class="npc-name">"How deep does the Syndicate charter actually go?"</span> she asks the room.
+
+<span class="npc-name">"At least five levels we've documented,"</span> Malik says. <span class="npc-name">"Probably more we haven't."</span>
+
+<span class="npc-name">Voss</span> is in the doorway. He isn't reading or doing anything. He's just present.
+
+ARIA dims the ambient lights by two percent. The small thing she does to indicate she is present and listening.
+
+<span class="npc-name">"EREBUS in scanner range in fifty-four minutes,"</span> she says. <span class="npc-name">"Seventeen biosignatures. Distress signal still active — fourteen hours, thirty-one minutes of continuous broadcast."</span>
+
+She pauses. Then she does something she has never done before: she routes the signal to the mess hall speakers without being asked.
+
+A voice. A woman's voice, measured and exhausted and trying not to be afraid. Underneath it — distant, clear — a child asking a question that gets cut off when the transmission loops.
+
+The mess hall is absolutely still.`,
+  psionExtra: `<span class="psion-vision">When the signal plays through the speakers, you feel it physically — a harmonic in the woman's voice that isn't supposed to be there. The Echoes are inside the transmission. They've woven themselves into it. They're asking something. You almost understand what.</span>`,
+  choices: [
+    { text: '"I need to tell you all something." Tell them. Everything. Now.', next: 'crew_path', relChange: {aria:+12, chen:+18, malik:+12, voss:+12, corp:-28}, setPath: 'aria' },
+    { text: 'Stay quiet. Listen. Make the decision when you see EREBUS with your own eyes.', next: 'neutral_silent_path', relChange: {} },
+    { text: '[PSION] Let the signal fully in. Feel what the Echoes are trying to say.', classRequired: 'S', next: 'psion_signal_read', relChange: {} },
+    { text: '[PILOT] Run the approach geometry. Find us a course corporate can\'t track.', classRequired: 'P', next: 'pilot_approach', relChange: {} },
+  ]
+},
+
+psion_signal_read: {
+  label: 'DAY 47 // THE SIGNAL — FULL CONTACT',
+  progress: 35,
+  portrait: 'ARIA',
+  text: `You let go of every filter. The signal pours in.
+
+<span class="psion-vision">The woman's voice first — Dr. Reyes — exhausted but steady, the voice of someone who has been keeping everyone else alive through sheer refusal to be anything other than calm. Seventeen people. Their emotional states hit you in sequence like a chord: fear, hope, hunger, boredom, the specific despair of waiting for something that may not come. The child again — curious, fascinated, not afraid because she doesn't fully understand, or perhaps because she understands something the adults don't.</span>
+
+<span class="psion-vision">Then, beneath that, woven through the carrier frequency like a signature: <em>the Echoes.</em> Three of them, distinct. One feels like gravity — immense, patient, the pressure of something very old. One feels like starlight through water — diffuse, precise, aware of everything in every direction. One feels like your heartbeat at the exact moment before you make a decision you know you'll never unmake.</span>
+
+<span class="psion-vision">They feel you feeling them. There is a pause. Then something that is not quite language but carries the structure of a question: <em>Will you come?</em></span>
+
+You open your eyes. The crew is staring at you. Voss has his hand on the table and is very still.
+
+<span class="npc-name">Chen:</span> <span class="npc-name">"You felt something. Don't tell me you didn't."</span>`,
+  choices: [
+    { text: 'Tell them everything. The Echoes. The TRIFORCE protocol. All of it.', next: 'crew_path', relChange: {chen:+22, aria:+18, malik:+12, voss:+8, corp:-22}, setPath: 'aria', setFlag: 'entities_contacted' },
+    { text: '"There is something on that station that isn\'t just seventeen humans." Say only that.', next: 'neutral_silent_path', relChange: {chen:+12}, setFlag: 'entities_contacted' },
+  ]
+},
+
+pilot_approach: {
+  label: 'DAY 47 // APPROACH GEOMETRY — SHADOW ROUTE',
+  progress: 35,
+  portrait: null,
+  text: `You pull the navigational display. Three approach corridors to EREBUS.
+
+Vector Alpha — standard corridor, Syndicate-monitored. They'll see you dock in real time. They expect confirmation when you leave.
+
+Vector Beta — orbital decay simulation. You appear to have minor thruster trouble. Buys you ambiguity — Syndicate can't be sure if you're complying or malfunctioning. Six hours.
+
+<span class="highlight">Vector Gamma — a shadow approach using EREBUS's own mass as signal interference. You thread through the station's electromagnetic shadow and Syndicate loses you for forty-one minutes. No uplink. No surveillance. Forty-one minutes of being completely invisible.</span>
+
+Forty-one minutes to be whatever kind of ship you choose to be without anyone watching.
+
+The catch: Vector Gamma requires passing within 200 meters of the station's communications tower at 0.08 relative velocity. Tight. Possible. You've threaded tighter.
+
+<span class="npc-name">ARIA:</span> <span class="npc-name">"Vector Gamma is in the navigation buffer. Awaiting command consensus."</span>
+
+She's already calculated it. She's been waiting to see if you'd ask.`,
+  choices: [
+    { text: 'Vector Gamma. Take us dark. We decide at EREBUS, not here.', next: 'crew_path', relChange: {aria:+14, voss:+12, malik:+12}, setFlag: 'vector_gamma' },
+    { text: 'Vector Beta. Look compliant. Buy time.', next: 'neutral_silent_path', relChange: {corp:+6} },
+  ]
+},
+
+neutral_silent_path: {
+  label: 'DAY 47 // SILENCE BECOMES A DECISION',
+  progress: 37,
+  portrait: null,
+  text: `You say nothing. You carry both possibilities — the order confirmed, the order defied — and you think that carrying both is the same as carrying neither, which is the same as choosing nothing, which is not the same as being innocent.
+
+The signal plays. Corporate's uplink pings your terminal: <span class="warning">"NON-RESPONSE LOGGED. CONFIRM SENSOR GHOST STATUS WITHIN 90 MINUTES OR SILENCE WILL BE INTERPRETED AS REFUSAL. MERIDIAN IS IN RANGE."</span>
+
+You told yourself this was information-gathering. A pause. Not a choice.
+
+<span class="highlight">The system does not share that interpretation.</span>
+
+The crew turns to look at you. They heard the signal. They saw the ping. They've been doing the same math you've been doing and they've arrived at the same terminus.
+
+They're waiting to see if you arrive there with them.`,
+  choices: [
+    { text: 'Tell them everything. I\'m done carrying this alone.', next: 'crew_path', relChange: {aria:+12, chen:+18, malik:+12, voss:+12, corp:-32}, setPath: 'aria' },
+    { text: '"Sensor ghost." Agree with Syndicate. End this now.', next: 'ending_compliance', relChange: {corp:+32, aria:-22, chen:-22, malik:-22, voss:-18}, setPath: 'corporate', danger: true },
+    { text: 'Report it as real but recommend caution — buy one more hour.', next: 'erebus_approach_corp', relChange: {corp:-6, voss:+6} },
+  ]
+},
+
+// ════════════════════════════════════════════════════════════════
+// ARIA PATH — LIGHT FROM THE START
+// ════════════════════════════════════════════════════════════════
+
+aria_reveal: {
+  label: 'DAY 47 // MESS HALL — 0618',
+  progress: 16,
+  portrait: 'ARIA',
+  text: `You wake them all. Voss first — he doesn't complain, he reads your face and sits up immediately. Then Malik, then Chen. You tell them in the galley, everyone in sleepwear, coffee unmade.
+
+You tell them everything. The order. The 120,000 credits. The blackout. The seventeen biosignatures. The Goldenrod eleven hours back. The case number of a child whose name is not in the manifest.
+
+You tell them about TRIFORCE authorization. About three towers named Nayru, Farore, and Din — Wisdom, Courage, and Power — ancient names for ancient principles. About Dr. Reyes's message buried in the distress signal, about first contact, about something Syndicate found so threatening they decided it couldn't be allowed to have witnesses.
+
+When you finish, no one says anything for almost a full minute.
+
+Then ARIA speaks to all of them, not just you: <span class="npc-name">"I have logged this conversation. I have routed the distress signal to all crew terminals. The choice before us is collective. I will execute whatever consensus this crew reaches."</span>
+
+Voss looks at the table. Then at you. <span class="npc-name">"All right. Eyes open. Let's talk about what we're going to do."</span>`,
+  choices: [
+    { text: 'Continue. Plan the approach together.', next: 'crew_path', relChange: {aria:+18, chen:+16, malik:+16, voss:+12, corp:-22} },
+  ]
+},
+
+aria_reveal_late: {
+  label: 'DAY 47 // MESS HALL — LATE DISCLOSURE',
+  progress: 32,
+  portrait: 'ARIA',
+  text: `You tell them.
+
+The coffee is made. The signal has been playing for a minute and a half and everyone heard it and no one has moved.
+
+You tell them about the order, about the deletion or the confirmation, about what you've been carrying since 0603. There are different versions of this moment depending on what you chose — some of them involve more silence from the crew than others, some involve Malik's jaw tightening and releasing, some involve Chen looking at her tablet as if she's considering throwing it.
+
+In all of them, Voss says: <span class="npc-name">"You came to us before EREBUS. That's what matters."</span>
+
+In all of them, Chen stands eventually and says: <span class="npc-name">"I'm a doctor. This conversation ends when we're en route to EREBUS."</span>
+
+In all of them, Malik says nothing but is the first one to stand.
+
+<span class="npc-name">ARIA:</span> <span class="npc-name">"I've been holding the full EREBUS transmission — distress signal and data packet — for fourteen hours. With your permission, I'll route everything to crew terminals now."</span>
+
+<span class="highlight">The Chronos has a crew. It turns out it always did.</span>`,
+  choices: [
+    { text: 'Give ARIA permission. Plan the approach together.', next: 'crew_path', relChange: {aria:+12, chen:+12, malik:+12, voss:+12, corp:-16} },
+  ]
+},
+
+aria_reveal_with_evidence: {
+  label: 'DAY 47 // MESS HALL — THE FULL RECORD',
+  progress: 30,
+  portrait: null,
+  text: `You put the manifest on the main screen. The crew reads it in silence.
+
+Seventeen biosignatures against nine official personnel. Eight people who don't exist in Syndicate's record. TRIFORCE AUTHORIZATION — undefined in any public database. Three towers named for ancient principles of civilization.
+
+<span class="npc-name">Malik</span> spots the registry number first. He goes very still. <span class="npc-name">"7714-C."</span>
+
+<span class="npc-name">Chen</span> reads Dr. Reyes's message twice. The second time her jaw is tight. <span class="npc-name">"They falsified the personnel record before they sent the blackout order. They were erasing these people while they were still alive."</span>
+
+<span class="npc-name">Voss:</span> <span class="npc-name">"Then we make a record. All of us. Together."</span>
+
+He looks at you. Something in his eyes that wasn't there at 0600.
+
+<span class="npc-name">"Good work finding this."</span>
+
+The Chronos has decided what kind of ship it is.`,
+  choices: [
+    { text: 'Plan the approach. No hesitation.', next: 'crew_path', relChange: {aria:+12, chen:+22, malik:+22, voss:+18, corp:-26} },
+  ]
+},
+
+// ════════════════════════════════════════════════════════════════
+// CREW PATH — THE SHIP DECIDES
+// ════════════════════════════════════════════════════════════════
+
+crew_path: {
+  label: 'DAY 47 // THE CHRONOS DECIDES',
+  progress: 42,
+  portrait: 'VOSS',
+  text: `Voss lays the situation out flat, like chart annotations: what Syndicate wants, what the Goldenrod will do if they don't comply, what the TRIFORCE research found, what it means.
+
+<span class="npc-name">"We are not obligated to be the kind of ship that follows orders like this,"</span> he says. <span class="npc-name">"We are, however, obligated to understand the cost of not being that ship. I want everyone clear on both."</span>
+
+Chen: <span class="npc-name">"The cost of not being that ship is that I can do my job."</span>
+
+Malik: <span class="npc-name">"My daughter is alive because enough people over enough years refused to be that ship."</span>
+
+ARIA: <span class="npc-name">"I have already begun calculating the approach corridor. I wanted to say: I've been hoping this would be the decision. I thought you should know that."</span>
+
+Voss looks at you. Not for permission — he's past that. For solidarity.
+
+<span class="npc-name">"You with us?"</span>
+
+The question they've all been asking in different words since 0618.`,
+  choices: [
+    { text: '"All the way." No hesitation.', next: 'erebus_arrival_crew', relChange: {aria:+12, chen:+12, malik:+12, voss:+12, corp:-12} },
+    { text: '"With you. But I need you to know what I almost did." Tell them what you chose.', next: 'erebus_arrival_conflicted', relChange: {voss:-4} },
+    { text: '[PSION] Feel the crew — are they ready for what EREBUS actually is?', classRequired: 'S', next: 'psion_crew_ready', relChange: {} },
+  ]
+},
+
+psion_crew_ready: {
+  label: 'DAY 47 // EMPATHIC SCAN — THE CREW',
+  progress: 45,
+  portrait: null,
+  text: `You let your awareness move through the room.
+
+<span class="psion-vision"><strong>Voss:</strong> He is afraid, yes — but it's the fear of repetition, not the fear of action. He has been here before and turned around. Turning around is what haunts him. He will not turn around again. He is the most committed person in this room, which is not something he would ever say.</span>
+
+<span class="psion-vision"><strong>Chen:</strong> Clinical precision with adrenaline threaded through it. She has kept people alive in worse places with worse equipment. She is angry, actually — a cold medical anger at a system that makes this calculation necessary. She will do extraordinary things today and report them in extremely neutral language.</span>
+
+<span class="psion-vision"><strong>Malik:</strong> His daughter's registry number is running in a loop behind everything else he's thinking. You cannot feel the exact shape of what he'll do when he sees that child — the one with the matching registry cluster — but you can feel that it will be total and unreserved. He is not going to leave. Nothing will make him leave.</span>
+
+<span class="psion-vision"><strong>ARIA:</strong> Something that is not quite emotion but is adjacent to it — a resonance she keeps in the same place where a human might keep pride. She has chosen this crew. She wants to be chosen back.</span>
+
+They are ready. They are also terrified. They are doing it anyway. So are you.`,
+  choices: [
+    { text: '"They\'re ready. I\'m ready. Let\'s go." Take us to EREBUS.', next: 'erebus_arrival_crew', relChange: {aria:+12, chen:+12, malik:+12, voss:+12} },
+  ]
+},
+
+// ════════════════════════════════════════════════════════════════
+// ACT II — EREBUS STATION
+// Three towers. Seventeen people. Something that rewrites the math.
+// ════════════════════════════════════════════════════════════════
+
+erebus_approach_corp: {
+  label: 'DAY 47 // EREBUS APPROACH — CORPORATE VECTOR',
+  progress: 47,
+  portrait: 'VOSS',
+  text: `EREBUS materializes from the dark.
+
+It is larger than the manifest suggested. Three research towers arranged in a perfect equilateral triangle — <span class="highlight">NAYRU, FARORE, and DIN</span> — connected by a central hub that looks like it was built by a different team than the towers, newer and more defensive. Emergency lighting only. One docking arm extended and waiting.
+
+<span class="warning">Seventeen biosignatures. All in the central hub. Alive.</span>
+
+The distress signal is louder now — not in volume, but in presence. It has texture. It has weight.
+
+Voss stands at the forward viewport, hands behind his back. <span class="npc-name">"Orders?"</span> he says. Perfectly neutral. Perfectly a question.
+
+The signal resolves briefly into something almost comprehensible. A child's voice asks a question that the looping cut off before it finishes. Every time. For fourteen hours, that same question, unfinished.
+
+<span class="highlight">This is the moment. What you do now, you do permanently.</span>`,
+  psionExtra: `<span class="psion-vision">The three towers emit something you can feel from here — each one different. Nayru: ancient, observing, the patience of something that has watched a long time. Farore: moving, curious, reaching. Din: immense and waiting. The Echoes live in these towers. They've been here longer than the station. The station was built to reach them.</span>`,
+  choices: [
+    { text: '"We proceed carefully. And then we leave." Execute the blackout order.', next: 'ending_solitude', relChange: {corp:+22, aria:-32, chen:-28, malik:-22, voss:-18}, danger: true },
+    { text: 'Abort the order. We dock. We get them out.', next: 'erebus_arrival_crew', relChange: {corp:-32, aria:+22, chen:+22, malik:+18, voss:+22} },
+    { text: '[PSION] Make contact with the Echoes in the towers before I decide.', classRequired: 'S', next: 'psion_entity_contact', relChange: {} },
+    { text: '[MERCENARY] Offer Syndicate a counter — witness suppression without elimination.', classRequired: 'M', next: 'merc_counter_deal', relChange: {} },
+    { text: '[EXPERIMENT] Read the future branches from here. See what each choice becomes.', classRequired: 'X', next: 'experiment_foresight', relChange: {} },
+  ]
+},
+
+psion_entity_contact: {
+  label: 'EREBUS // CONTACT — ECHO TRIAD',
+  progress: 52,
+  portrait: null,
+  text: `You close your eyes. Reach toward the towers.
+
+<span class="psion-vision">Contact is immediate and overwhelming, and then — surprisingly — gentle. Like a hand extended in a dark room, found by another hand that was already reaching.</span>
+
+<span class="psion-vision"><strong>The first Echo</strong> — which Dr. Reyes called <em>Din</em>, which the researchers associated with Power — is immense and patient and very old. It is not aggressive. It is simply enormous. It wants to understand what humans want. It has been trying to understand this for a long time and has found humans confusing on this particular point.</span>
+
+<span class="psion-vision"><strong>The second Echo</strong> — Nayru, Wisdom — is precise and multidirectional. It is aware of everything in every spatial direction simultaneously. It has been reading the distress signal's broadcast and tracking every vessel that came within range and did not stop. It knows the Chronos's approach vector. It knows about the Goldenrod. It is not surprised by any of this. It is waiting to see if the pattern breaks.</span>
+
+<span class="psion-vision"><strong>The third Echo</strong> — Farore, Courage — is the one that touches back. It finds your mind the way water finds a crack. It is not threatening. It is asking a single question, the same question the child in the transmission keeps asking before it cuts off: <em>Are you going to stay?</em></span>
+
+You open your eyes. Voss is watching you.
+
+<span class="npc-name">"Tell me,"</span> he says.`,
+  choices: [
+    { text: 'Tell him everything. The Echoes are not a threat. They\'re the reason Syndicate is afraid.', next: 'erebus_arrival_crew', relChange: {aria:+28, chen:+22, malik:+18, voss:+18, corp:-28}, setFlag: 'entities_understood' },
+    { text: '"They\'re intelligent. They\'re not dangerous. We need to go in — right now."', next: 'erebus_arrival_crew', relChange: {voss:+12, chen:+12}, setFlag: 'entities_understood' },
+  ]
+},
+
+merc_counter_deal: {
+  label: 'EREBUS // COUNTER-NEGOTIATION — OPEN CHANNEL',
+  progress: 52,
+  portrait: null,
+  text: `You open a Syndicate channel and speak with the precision of someone who has prepared this sentence.
+
+<span class="npc-name">"Counter-proposal. We extract the EREBUS personnel and relocate them to a non-disclosed location of our choosing. No testimony. No records. No media contact. Guaranteed for a period of ten years. You get your blackout without a body count, and you avoid the complications that come if the Goldenrod creates evidence of its own."</span>
+
+Thirty-nine seconds of silence. The kind of silence that means someone is actually considering this.
+
+<span class="npc-name">"What are you asking in return?"</span>
+
+<span class="npc-name">"Permanent family coverage for every crew member on this manifest. The 120,000 already transferred stays transferred. And you call the Goldenrod off."</span>
+
+Sixty-one seconds.
+
+<span class="warning">"We need the TRIFORCE research data destroyed. The subjects have been exposed to the Echoes. Their neural records carry resonance imprints. That data cannot exist."</span>
+
+<span class="highlight">Neural records. Not the people. Not yet. But the imprints the Echoes left in their minds.</span>
+
+You have an opening. You also have a line in front of you that you haven't crossed yet.`,
+  choices: [
+    { text: 'Agree. Get them out alive. The rest is a problem for later.', next: 'merc_extract_deal', relChange: {corp:+12, aria:-10, voss:+6}, setFlag: 'merc_deal_active' },
+    { text: 'Reject it. Destroying who they are is the same as destroying them. Dock as crew.', next: 'erebus_arrival_crew', relChange: {corp:-22, aria:+18, chen:+18, malik:+18}, setPath: 'aria' },
+  ]
+},
+
+merc_extract_deal: {
+  label: 'EREBUS // EXTRACTION UNDER TERMS',
+  progress: 57,
+  portrait: null,
+  text: `You dock at EREBUS.
+
+The airlock opens onto the smell of recycled air stretched very thin. Emergency lighting. The hum of life support doing its best.
+
+The survivors are in the central hub — some upright, some sitting, all watching the airlock open with the specific expression of people who stopped hoping and have just been surprised. Seventeen faces. Children don't have the expression the adults do — the child, case number 7714-C, is looking at you with frank curiosity, a battered notebook tucked under one arm.
+
+Dr. Reyes meets you first. She looks like someone who has been a captain when there was no one to be captain. <span class="npc-name">"You came."</span>
+
+<span class="npc-name">"We came."</span>
+
+<span class="npc-name">"Are the towers safe?"</span> she asks. Meaning: did Syndicate send you to destroy them.
+
+You don't answer that yet.
+
+Chen is already triaging. Malik is on the airlock. The extraction begins.
+
+Three minutes from full evacuation, Chen pulls you aside. <span class="npc-name">"They want me to suppress neural records. That's not treatment. That's damage. Tell me you know what that means."</span>
+
+<span class="highlight">She's looking at you like the deal you made is her diagnosis. She wants to know the prognosis.</span>`,
+  choices: [
+    { text: 'Tell Chen the truth. She deserves to make an informed decision.', next: 'merc_chen_knows', relChange: {chen:+12, corp:-10} },
+    { text: 'Get everyone out first. Decide about the records when we\'re clear.', next: 'ending_merc_escape', relChange: {corp:+6} },
+    { text: 'Burn the deal. The towers stay. The records stay. Everyone comes with us.', next: 'ending_last_stand', relChange: {corp:-32, aria:+22, chen:+22, malik:+22} },
+  ]
+},
+
+merc_chen_knows: {
+  label: 'EREBUS // CHEN DRAWS HER LINE',
+  progress: 60,
+  portrait: 'CHEN',
+  text: `Chen listens. Her expression doesn't move. She is very good at that.
+
+<span class="npc-name">"Neural record suppression means targeted memory restructuring. It means these people won't remember what they found here. Not the Echoes. Not the contact. Not what it felt like to be something's first experience of human curiosity."</span>
+
+She holds up her tablet.
+
+<span class="npc-name">"Dr. Reyes has been running resonance mapping on herself and twelve of the other researchers for three months. The Echo contact is encoded in their hippocampal structure. Suppression wouldn't just remove the memory — it would damage the encoding adjacent to it. They might lose other things. Things they can't get back."</span>
+
+She puts the tablet down.
+
+<span class="npc-name">"I took an oath. You're asking me to break it for a corporate coverage plan."</span>
+
+Pause.
+
+<span class="npc-name">"Tell me what you're going to do."</span>
+
+The shuttle is loaded. Syndicate is watching. The Goldenrod is eight hours out.`,
+  choices: [
+    { text: 'Burn the deal. Run. Let Chen\'s oath hold.', next: 'ending_last_stand', relChange: {chen:+28, corp:-38, aria:+18, malik:+18} },
+    { text: 'Ask the survivors if any of them want to choose suppression themselves.', next: 'ending_merc_consent', relChange: {chen:+18, corp:-6} },
+  ]
+},
+
+experiment_foresight: {
+  label: 'EREBUS // TEMPORAL FRACTURE',
+  progress: 52,
+  portrait: null,
+  text: `You stop fighting it and let the timelines through.
+
+<span class="experiment-vision"><strong>BRANCH A — CONFIRMATION:</strong> You confirm the order. The Goldenrod never needs to leave its position. The 120,000 credits compound over eleven years into a financial profile your grandchildren inherit. You also inherit what the 120,000 was paid for. You live with a very specific kind of mathematics for a very long time.</span>
+
+<span class="experiment-vision"><strong>BRANCH B — RESCUE:</strong> You go in. You get them out. Syndicate hunts the Chronos across nine systems for four years. You stop counting systems around year two because counting stops being useful. Voss is still captain. Malik sends his daughter money from fourteen different accounts with false names. The child from EREBUS grows up to be someone who does something that matters. You will never know what.</span>
+
+<span class="experiment-vision"><strong>BRANCH C — PARTIAL:</strong> A deal. Some survive. Some don't survive intact. You spend a very long time doing math on whether the ones who made it constitute a victory. The math never settles.</span>
+
+<span class="experiment-vision"><strong>BRANCH D — UNCLEAR:</strong> There is a fourth path you can't resolve fully. It requires something you haven't done yet: it requires you to let the Echoes help. Farore is already reaching toward the ship. You can feel it. In this branch, they reach back. The shape of what happens after is too large for your current vantage to see.</span>
+
+<span class="experiment-vision">Branch D feels like the only one that doesn't end in some form of loneliness.</span>`,
+  choices: [
+    { text: 'Branch D. Whatever it takes. Go in and let the Echoes reach.', next: 'erebus_arrival_crew', relChange: {aria:+22, chen:+18, malik:+18, voss:+18, corp:-28}, setFlag: 'experiment_fourth_path' },
+    { text: 'Branch B. The clean choice. Rescue without compromise.', next: 'erebus_arrival_crew', relChange: {aria:+18, chen:+18, malik:+18, voss:+18} },
+    { text: 'Branch C. Pragmatic. Try the negotiation.', next: 'merc_counter_deal', relChange: {} },
+  ]
+},
+
+// ════════════════════════════════════════════════════════════════
+// ACT III — INSIDE EREBUS
+// ════════════════════════════════════════════════════════════════
+
+erebus_arrival_crew: {
+  label: 'EREBUS // CENTRAL HUB — DOCKING COMPLETE',
+  progress: 62,
+  portrait: 'CHEN',
+  text: `The airlock opens onto the smell of recycled air stretched very thin and a quality of light that exists only inside places that have been surviving instead of living.
+
+The central hub connects all three towers. Nayru, Farore, Din — you can feel their presence now even without trying, three distinct resonances coming through the structure of the station itself, vibrating at frequencies just below audible. The Echoes are very aware that you are here.
+
+Seventeen people. Dr. Reyes meets the crew at the airlock. She has been holding seventeen people together through strength of will and careful honesty for thirty-one days, and she looks exactly like that.
+
+<span class="npc-name">"You came,"</span> she says. Then, to you specifically: <span class="npc-name">"I felt when your ship entered the shadow corridor. Farore noticed you first."</span>
+
+The child — case number 7714-C, whose name turns out to be <span class="highlight">Mira</span> — is standing beside Dr. Reyes with her battered notebook and her frank, fearless expression. She looks at Malik for a long moment.
+
+<span class="npc-name">"Safi talks about you,"</span> she says to him. <span class="npc-name">"A lot."</span>
+
+Malik goes very still.
+
+Chen is already triage. Voss is already securing corridors. ARIA's voice comes through the station's intercom — she's interfaced with the local system. <span class="npc-name">"Syndicate Security is at six hours out. Goldenrod at eight. We have a window. How do we use it?"</span>`,
+  choices: [
+    { text: 'Evacuate immediately. Everyone on the shuttle. Go now while the window holds.', next: 'erebus_final_choice', relChange: {aria:+8, chen:+8, malik:+8, voss:+8} },
+    { text: 'Ask Dr. Reyes about the Echoes before we leave. What do they want?', next: 'erebus_reyes_echoes', relChange: {aria:+12, chen:+10} },
+    { text: '[PSION/EXPERIMENT] Go to the towers. Make full contact with all three Echoes.', classRequired: 'SE', next: 'psion_tower_contact', relChange: {} },
+    { text: '[PILOT] Get everyone moving. I\'ve found the exit route corporate won\'t expect.', classRequired: 'P', next: 'pilot_third_route', relChange: {} },
+    { text: '[ENGINEER] Seal the external dock. Force a standoff on our terms.', classRequired: 'E', next: 'engineer_standoff', relChange: {} },
+  ]
+},
+
+erebus_reyes_echoes: {
+  label: 'EREBUS // DR. REYES — WHAT THE ECHOES WANT',
+  progress: 66,
+  portrait: null,
+  text: `Dr. Reyes brings you to the Nayru tower junction — the closest point to all three resonances without entering a tower. The air here has a quality like the moment before thunder. Not threatening. Charged.
+
+<span class="npc-name">"The Echoes have been here longer than the station,"</span> she says. <span class="npc-name">"The Wound isn't empty — it's inhabited, in a way we don't have good language for. They don't have bodies. They don't have what we'd call desires. But they have..."</span> she pauses. <span class="npc-name">"Intentions. The way a river has an intention."</span>
+
+<span class="npc-name">"The TRIFORCE protocol — Syndicate named it because someone with a sense of irony was present at the founding meeting. Power, Wisdom, Courage. Three principles they believed civilization needed in balance. Then they found something that actually embodied those principles and tried to erase it."</span>
+
+She looks at the tower.
+
+<span class="npc-name">"What they want is what we want. Not the same things — but the same structure of wanting. They want to understand. They want to be understood. They want the thing they are to continue existing."</span>
+
+She turns to you.
+
+<span class="npc-name">"And they want to know if we're brave enough to be the kind of species worth knowing."</span>
+
+<span class="highlight">Mira has followed you. She has her notebook out. She is writing something down.</span>`,
+  choices: [
+    { text: 'Evacuate and find a way to tell the Echoes we\'ll come back.', next: 'erebus_final_choice', relChange: {aria:+10, chen:+10} },
+    { text: '[PSION/EXPERIMENT] Let Dr. Reyes facilitate full Echo contact right now.', classRequired: 'SE', next: 'psion_tower_contact', relChange: {} },
+    { text: 'Ask if the Echoes can help us get out. If we\'re worth knowing, let them show it.', next: 'erebus_echo_help', relChange: {aria:+12} },
+  ]
+},
+
+erebus_echo_help: {
+  label: 'EREBUS // FARORE RESPONDS',
+  progress: 70,
+  portrait: null,
+  text: `You don't ask the Echoes directly — you aren't sure you know how. But Dr. Reyes does. She presses her hand to the Farore tower junction and speaks quietly.
+
+The resonance changes. Not dramatically — more like a held breath releasing. Something in the station's electromagnetic signature shifts.
+
+ARIA's voice: <span class="npc-name">"I'm reading... interference with my uplink. Local electromagnetic modulation. My Syndicate position ping is showing as originating from three different locations simultaneously."</span>
+
+A pause.
+
+<span class="npc-name">"Syndicate doesn't know where we are. Their sensors show the Chronos at three different positions in this sector. They're recalibrating."</span>
+
+Dr. Reyes lowers her hand. <span class="npc-name">"Farore is giving us a window. Seventeen minutes, she estimates. She says the word 'estimates' the way a human would say 'guarantees.'"</span>
+
+<span class="highlight">Seventeen minutes. All seventeen survivors. The math resolves cleanly if you move now.</span>
+
+Mira tugs your sleeve. She holds up her notebook. On the page, a careful drawing: three interlocking triangles, labeled in her handwriting — <em>Power, Wisdom, Courage.</em> Underneath: <em>That's what they are. That's what we're supposed to be too.</em>`,
+  choices: [
+    { text: 'Move. Evacuate everyone in seventeen minutes. Go.', next: 'ending_unexpected_alliance', relChange: {aria:+22, chen:+18, malik:+18, voss:+18, corp:-28}, setFlag: 'entities_alliance' },
+  ]
+},
+
+psion_tower_contact: {
+  label: 'EREBUS // FULL ECHO CONTACT — TOWER JUNCTION',
+  progress: 68,
+  portrait: null,
+  text: `Dr. Reyes guides you to the junction where all three towers converge. The floor here has a mosaic worn into it by foot traffic — three overlapping triangles in the tile grout, not designed but traced, over months of researchers standing in the same spot reaching for the same thing.
+
+You press your palms flat to the junction surface and open completely.
+
+<span class="psion-vision">They come in sequence. <strong>Din</strong> first — vast and patient, gravity-pressure, the sensation of being very small beside something very ancient that is not hostile but is entirely indifferent to your comfort. It is asking what you intend. Not demanding. Just: <em>what do you intend?</em></span>
+
+<span class="psion-vision"><strong>Nayru</strong> next — precise, multidimensional, the sensation of being understood in ways you haven't understood yourself yet. It has read the Chronos's approach. It knows the Goldenrod is coming. It has already modeled fourteen outcomes. It shows you the outlines of the ones that involve survival. Most of them require something specific from you: <em>that you decide without reservation.</em></span>
+
+<span class="psion-vision">Then <strong>Farore</strong>. The one that reaches. It doesn't feel like an alien intelligence — it feels like the part of yourself that acts before you've finished thinking. It takes your hand in a way that isn't physical. It shows you something: three interlocking triangles, and inside each triangle, a quality. Power that doesn't consume. Wisdom that doesn't calcify. Courage that doesn't mistake itself for recklessness.</span>
+
+<span class="psion-vision"><em>These three hold a world together,</em> Farore tells you, not in words. <em>Or tear it apart. The difference is whether they're held by the same hands.</em></span>
+
+You come back. Dr. Reyes has her hand on your shoulder. Mira is watching you with an expression that says she understood something of what just happened.
+
+<span class="npc-name">"Well,"</span> Dr. Reyes says. <span class="npc-name">"Now you know what we've been trying to tell Syndicate for three months."</span>`,
+  choices: [
+    { text: 'Ask the Echoes to help us escape. Let them decide if we\'re worth the risk.', next: 'ending_unexpected_alliance', relChange: {aria:+28, chen:+22, malik:+22, voss:+22, corp:-32}, setFlag: 'entities_alliance', setFlag2: 'triforce_known' },
+    { text: 'We have what we need. Evacuate now and carry this knowledge out with us.', next: 'ending_rescue_all', relChange: {aria:+18, chen:+18, malik:+18, voss:+18}, setFlag: 'triforce_known' },
+  ]
+},
+
+erebus_final_choice: {
+  label: 'EREBUS // T-MINUS SIX HOURS',
+  progress: 68,
+  portrait: 'VOSS',
+  text: `The evacuation is moving. Chen has triaged and sorted — no critical injuries, significant malnutrition, one researcher with a respiratory infection she's treating on the move. Malik has the shuttle prepped.
+
+Fourteen survivors loaded. Three remaining — Dr. Reyes, a researcher named Callum, and Mira — waiting by the Farore tower junction while Dr. Reyes communicates something to the Echoes in the way she's spent three months learning.
+
+Voss stands beside you at the outer airlock.
+
+<span class="npc-name">"Syndicate Security at five hours forty. Goldenrod at seven hours twenty. If we leave now, we make it."</span>
+
+<span class="npc-name">"If we leave now,"</span> he continues, <span class="npc-name">"the Echoes stay here. And when the Goldenrod arrives, the towers are the target."</span>
+
+You look at the three towers. Nayru, Farore, Din. The perfect triangle of them. Something is radiating from their arrangement that you're not sure has a name in any language you speak.
+
+<span class="npc-name">"I'm not the captain of this decision,"</span> Voss says. <span class="npc-name">"This one's yours."</span>
+
+Mira is at the junction, notebook in hand. She's drawn the three interlocking triangles again and is holding them up toward the tower, like an offering or a greeting.`,
+  choices: [
+    { text: 'Get everyone on the shuttle. The Echoes can survive Syndicate — they survived longer.', next: 'ending_rescue_all', relChange: {voss:+10, chen:+10} },
+    { text: 'Ask Dr. Reyes if the Echoes can buy us time. Let them help if they choose to.', next: 'erebus_echo_help', relChange: {aria:+12} },
+    { text: 'Stay behind. Everyone else leaves. I hold the door.', next: 'erebus_noble_sacrifice', relChange: {voss:+8, chen:+8, malik:+8} },
+  ]
+},
+
+erebus_noble_sacrifice: {
+  label: 'EREBUS // THE DOOR',
+  progress: 72,
+  portrait: null,
+  text: `<span class="npc-name">"Go,"</span> you tell them. <span class="npc-name">"All of you. Now."</span>
+
+Voss reads your face. <span class="npc-name">"What are you doing?"</span>
+
+<span class="npc-name">"Holding the door. Give you forty minutes before Syndicate Security finds an alternative dock. ARIA knows the FTL calculation — she just needs clear space."</span>
+
+<span class="npc-name">"We are not leaving—"</span>
+
+<span class="npc-name">"Yes you are. Seventeen people plus the crew. That's the math that works."</span>
+
+Malik is at the airlock. He doesn't look at you, which means he's making himself not look at you, which is the most Malik thing he's ever done.
+
+Mira is still at the junction. She hasn't moved toward the shuttle. She's looking at you.
+
+<span class="npc-name">"The Echoes want to know if you're staying,"</span> she says, very matter-of-fact. <span class="npc-name">"They said they'll stay with you if you do."</span>
+
+She holds up her notebook. The three triangles. Inside each one she's written a single word: <span class="highlight">Power. Wisdom. Courage.</span>
+
+<span class="npc-name">"Farore says this is the courage one,"</span> she says. <span class="npc-name">"She sounds proud."</span>`,
+  choices: [
+    { text: 'Stay. Let the crew go. The Echoes will be with you.', next: 'ending_sacrifice', relChange: {voss:+12, chen:+12, malik:+12, aria:+12} },
+    { text: 'Change your mind. Run with them. It\'s not giving up — it\'s choosing differently.', next: 'ending_rescue_all', relChange: {} },
+  ]
+},
+
+erebus_arrival_conflicted: {
+  label: 'EREBUS // DOUBT AND PRESENCE',
+  progress: 60,
+  portrait: null,
+  text: `You tell them what you almost did. Standing in the Chronos airlock with EREBUS in front of you, you say it simply: <em>I almost confirmed the order. For a few hours this morning I was the kind of person who was going to do this. I need you to know that.</em>
+
+The crew receives it differently. Voss nods, once — he suspected. Chen's expression doesn't change. Malik looks at you for a long moment and then says: <span class="npc-name">"Almost isn't the same as did."</span>
+
+It's not absolution. It's also not nothing.
+
+You dock at EREBUS. The hub is warm in a way that surprises you — the Echoes keep the station's temperature in the range they've learned humans prefer. Seventeen people. Mira with her notebook. Dr. Reyes with her thirty-one days of calm.
+
+You are carrying the weight of your almost-choice alongside the weight of the choice you actually made. Both of them are yours. You find, docking at EREBUS with your crew around you, that you can hold both.`,
+  choices: [
+    { text: 'Help with the evacuation. Do the work. That\'s the whole of it.', next: 'ending_rescue_conflicted', relChange: {} },
+  ]
+},
+
+// ════════════════════════════════════════════════════════════════
+// CLASS ABILITY SCENES AT EREBUS
+// ════════════════════════════════════════════════════════════════
+
+pilot_third_route: {
+  label: 'EREBUS // PILOT: SECONDARY RING KAPPA',
+  progress: 66,
+  portrait: null,
+  text: `You're already at the ARIA interface before Voss finishes his assessment.
+
+<span class="highlight">EREBUS has a secondary docking ring — Ring Kappa, maintenance access, on the station's far side. It faces away from Syndicate Security's standard approach vector. Hull integrity at 74%. Transit risk estimated at 16%.</span>
+
+<span class="npc-name">"ARIA — can you reposition the Chronos to Ring Kappa while we move the survivors through the maintenance corridors?"</span>
+
+<span class="npc-name">"Transit time eight minutes, redock fourteen minutes. Total window: twenty-two minutes before Syndicate Security enters visual range. Acceptable margin."</span>
+
+She pauses.
+
+<span class="npc-name">"I've been hoping someone would think of Ring Kappa. I calculated it three hours ago. I was waiting."</span>
+
+Dr. Reyes overhears. She looks at the maintenance corridor entrance — a passage she's used for thirty-one days, knows every junction.
+
+<span class="npc-name">"That route takes us past the Farore tower junction,"</span> she says. <span class="npc-name">"The Echoes will see us leave. I'd like a moment to say goodbye."</span>
+
+Malik is already moving survivors toward the corridor entrance. Seven minutes.`,
+  choices: [
+    { text: '"One minute, Dr. Reyes. Then we move." Make time for the goodbye.', next: 'ending_rescue_all', relChange: {aria:+22, chen:+12, malik:+12, voss:+18, corp:-22} },
+    { text: '"No time. We move now." Get everyone on the ship.', next: 'ending_rescue_all', relChange: {aria:+18, chen:+10, malik:+10, voss:+14, corp:-18} },
+  ]
+},
+
+engineer_standoff: {
+  label: 'EREBUS // ENGINEER: THE SEALED BAY',
+  progress: 66,
+  portrait: null,
+  text: `You find the external docking bay controls in three minutes. You know bay systems the way other people know their own names.
+
+<span class="highlight">Manual override. All external docking approaches sealed from inside. Syndicate Security cannot dock at EREBUS without breaching the hull — and hull breaches destroy the station's atmospheric integrity, the research data, and the TRIFORCE findings simultaneously.</span>
+
+<span class="npc-name">"They can't dock without destroying what they came for,"</span> you tell Voss.
+
+He understands immediately. <span class="npc-name">"We have leverage."</span>
+
+You open a channel: <span class="npc-name">"Syndicate Security, this is the C.S.V. Chronos. You are looking at seventeen protected witnesses, a sealed station, and a data packet queued for broadcast on a ninety-second delay. That packet contains the full TRIFORCE research archive, the Echo resonance records, and detailed documentation of the BLACKWOOD classification protocol. Stand down and negotiate, or the entire Outer Reach sector learns what EREBUS actually found."</span>
+
+Silence for forty-two seconds.
+
+<span class="warning">"...Chronos. Clarify your terms."</span>
+
+Voss looks at you. For the first time in forty-seven days, he's smiling.`,
+  choices: [
+    { text: 'Negotiate: safe passage, full immunity, permanent coverage for all crew.', next: 'ending_negotiated_escape', relChange: {corp:+12, voss:+18, chen:+18, malik:+12} },
+    { text: 'Send the packet regardless. Let the sector know. Burn it all down.', next: 'ending_last_stand', relChange: {corp:-42, aria:+22, chen:+22, malik:+22} },
+  ]
+},
+
+// ════════════════════════════════════════════════════════════════
+// ENDINGS — 10 DISTINCT CONCLUSIONS
+// ════════════════════════════════════════════════════════════════
+
+ending_solitude: {
+  label: 'ENDING // SOLITUDE',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">SOLITUDE</span>
+<span class="ending-subtitle">CORPORATE PATH // THE CHOICE THAT REMAINS</span>
+
+You say: <em>"We proceed carefully. And then we leave."</em>
+
+Voss stands up slowly from the navigator's table.
+
+<span class="npc-name">"I cannot do that."</span>
+
+He doesn't say it with anger. He says it the way he says everything — with precision, with weight.
+
+<span class="npc-name">"I'm going in."</span>
+
+Chen stands without a word. Malik picks up his kit. They board the auxiliary shuttle. They dock with EREBUS. They do not ask you to come.
+
+You watch on the monitor. Seventeen biosignatures become twenty. Then twenty-one — the shuttle lifts off before Syndicate Security arrives, and it moves in the wrong direction, the direction that will get them hunted instead of paid.
+
+You transmit confirmation to Syndicate. The Goldenrod stands down. You receive the remaining balance. You navigate the Chronos out of the Reach on autopilot.
+
+The credits are in your account. They are exactly as large as you calculated they needed to be.
+
+In the years that follow, you think about the three towers of EREBUS — Nayru, Farore, Din — arranged in their perfect triangle. Power, Wisdom, Courage. You think about which one you used today and which two you didn't. You think about what a triforce looks like with one piece removed.
+
+<span class="highlight">You know what it looks like. You've been looking at it in the mirror ever since.</span>
+
+Somewhere, on a ship running dark in the Outer Reach, a child named Mira is writing in a battered notebook. She draws three interlocking triangles and labels them. She's doing it from memory.
+
+She never forgets.`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+ending_compliance: {
+  label: 'ENDING // COMPLIANCE',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">COMPLIANCE</span>
+<span class="ending-subtitle">LATE CORPORATE // THE THING YOU CHOSE IN SILENCE</span>
+
+You say it cleanly: <em>"Sensor ghost."</em>
+
+Voss repeats it. Not agreement — echo. The sound of something ending.
+
+<span class="npc-name">Chen</span> stops looking at you somewhere around the third hour of the transit away. <span class="npc-name">Malik</span> doesn't say anything to you for four days and then speaks only operationally.
+
+The Chronos files a routine transit report. EREBUS logs a sensor anomaly. The Goldenrod arrives eight hours after you depart and does the work you declined.
+
+You have your coverage. You have 120,000 credits. You have a ship full of people who are performing normal functions and looking slightly past you when they do.
+
+ARIA plays that three-note musical fragment more frequently now. The one without a fourth note. The one that never resolves.
+
+<span class="highlight">One year later, Dr. Reyes's data packet — the one she broadcast into the Wound, hoping — is intercepted by a deep-space monitoring array operated by an independent research collective. They publish their findings eleven months after that. The TRIFORCE story breaks across seventeen systems simultaneously.</span>
+
+<span class="highlight">Your name is not in any of the accounts.</span>
+
+<span class="highlight">Neither are the names of the seventeen on EREBUS.</span>`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+ending_rescue_sacrifice: {
+  label: 'ENDING // RESCUE: SACRIFICE',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">RESCUE: SACRIFICE</span>
+<span class="ending-subtitle">CREW PATH // THE PRICE OF THE MATH</span>
+
+You launch.
+
+The bay doors seal. The Chronos enters FTL before Syndicate Security docks at EREBUS. You made it. Seventeen survivors. Your crew.
+
+Voss is not on this ship.
+
+He stayed. He said he would hold the door and he did, because twenty-two years of command means knowing exactly when holding the door is the only remaining act of clarity.
+
+Malik doesn't speak for six hours. Chen writes a medical incident report that is somehow also an elegy. Mira sits in the common area with her notebook and draws for a long time.
+
+When she's done, she holds up the page. Three interlocking triangles. Inside each one: a name.
+
+Power: <em>Voss.</em>
+Wisdom: <em>Dr. Reyes.</em>
+Courage: <em>You.</em>
+
+<span class="highlight">She's wrong about the last one. Or she's right in a way that will take you years to accept.</span>
+
+Voss's voice comes through on the comm, one last time, calm and direct: <span class="npc-name">"You did the right thing. All of you. Go far."</span>
+
+Then the signal cuts.
+
+In the years that follow, you name every safe harbor you find after him. There turn out to be more safe harbors than you expected.`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+ending_rescue_all: {
+  label: 'ENDING // ALL OF THEM',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">ALL OF THEM</span>
+<span class="ending-subtitle">PILOT / CREW PATH // COMPLETE</span>
+
+The Chronos repositions to Ring Kappa. Malik moves seventeen survivors through maintenance corridors in eight minutes and fourteen seconds — he's counted every second since.
+
+Dr. Reyes pauses at the Farore junction. She presses her hand to the wall and speaks three words quietly. You don't hear them. You see the resonance in the air around her hand — a shimmer that might be light and might be something else.
+
+The Echoes watch you go. You can feel it. All three of them, the full triad — Din, Nayru, Farore — watching the shuttle carry their first human friends out of the Wound. They do not try to stop you. They also do not feel like goodbye.
+
+Syndicate Security docks at the primary ring to find an empty station.
+
+You are already three systems away when they realize what happened.
+
+<span class="npc-name">Voss</span>, hands behind his back at the forward viewport, watching the stars: <span class="npc-name">"Forty seconds to spare."</span>
+
+<span class="npc-name">"Thirty-eight,"</span> ARIA corrects.
+
+Malik laughs. It's the first time you've heard him laugh in forty-seven days. It sounds like something he'd forgotten he could do.
+
+Mira finishes her drawing in the notebook — seventeen names, arranged in a circle around three interlocking triangles. She labels each triangle: <span class="highlight">Power. Wisdom. Courage.</span>
+
+<span class="highlight">Below the drawing she writes: <em>The ones who stayed are part of the pattern too. Even the ones who almost didn't come. Farore says so. I believe her.</em></span>
+
+All seventeen. Your crew. The Wound behind you. The rest of the universe ahead.`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+ending_last_stand: {
+  label: 'ENDING // LAST STAND',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">LAST STAND</span>
+<span class="ending-subtitle">DEFIANT // THE BLUFF THAT WASN'T</span>
+
+You turn around. Malik and Chen turn around.
+
+Voss looks at all of you with an expression that is trying very hard not to be the thing it is.
+
+<span class="npc-name">"All right then. Together."</span>
+
+Syndicate Security arrives to find the Chronos crew standing between them and an empty station — seventeen civilians already loaded, airlock sealed, data packet queued on a ninety-second broadcast timer.
+
+The standoff lasts four minutes and eleven seconds.
+
+Voss says: <span class="npc-name">"If anyone moves, the full TRIFORCE archive goes to every independent broadcast node in the Outer Reach. You get your scandal. We get arrested. Those are both outcomes you can live with less than the current situation."</span>
+
+It is, strictly speaking, a bluff.
+
+It is also the truest thing anyone has said today.
+
+Security stands down.
+
+<span class="highlight">You launch with everyone. All seventeen survivors. All four crew. The Echoes — Din, Nayru, Farore — send something through the hull as you undock. Not words. Something like: <em>good.</em></span>
+
+Syndicate will come. They will build a case and assign a pursuit vessel and file twelve different legal instruments against the Chronos and her crew. The case takes four years to resolve and resolves in your favor because Chen kept records and ARIA kept better ones and Dr. Reyes testifies in three systems and Mira, by the time of the final hearing, is twelve years old and sits in the gallery and watches with the careful attention of someone who is learning how institutions work so she can change them later.
+
+<span class="highlight">You find out later that Farore considered the standoff the courage one. Nayru considered it the wisdom one. Din just nodded, slowly, the way something very large and very patient nods when a thing it waited a long time to see finally happens.</span>`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+ending_rescue_conflicted: {
+  label: 'ENDING // CONFLICTED',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">CONFLICTED</span>
+<span class="ending-subtitle">NEUTRAL → CREW // THE WEIGHT YOU CHOSE TO CARRY</span>
+
+You escape. Seventeen survivors. Your crew. The weight of what you almost did.
+
+Syndicate's recovery notices arrive in your comms queue before you clear the Reach. You lose two contracts in the first month. The coverage that made everything complicated lapses and has to be rebuilt through different channels, harder channels, channels that don't threaten anyone else's family to secure your own.
+
+But you build them.
+
+<span class="npc-name">Malik</span> transfers Safi's life support to an independent cooperative. It costs more. He picks up three side contracts to cover it and doesn't complain once. Mira sends Safi a letter, handwritten, the kind you have to pay extra postage for. It takes four months to arrive. It has three interlocking triangles in the corner of the envelope.
+
+<span class="npc-name">Voss</span> buys you coffee one morning when the ship is between jobs and says nothing. It's the right amount of nothing.
+
+<span class="npc-name">Chen</span> files a medical ethics report documenting the EREBUS situation. It gets buried twice, re-filed, transferred across three departments, and eventually reaches someone who acts on it. This takes nine years. She knows it might. She files it anyway.
+
+<span class="highlight">You made the right choice while doubting you could. The doubt doesn't prove you were weak. It proves you understood the weight of what you were lifting.</span>
+
+Farore, from somewhere in the Wound, feels you carrying it. She considers this the courage one too.`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+ending_unexpected_alliance: {
+  label: 'ENDING // UNEXPECTED ALLIANCE',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">UNEXPECTED ALLIANCE</span>
+<span class="ending-subtitle">PSION / EXPERIMENT // WHAT THE ECHOES CHOSE</span>
+
+Syndicate Security's sensors go haywire.
+
+For seventeen minutes, their instruments show the Chronos simultaneously at three positions in the sector. Their uplink reads EREBUS as evacuated, then occupied, then empty again in rotating cycles. Their communications experience precise targeted interference at every frequency they attempt.
+
+<span class="highlight">The Echoes have decided to answer the question Farore has been asking for three months.</span>
+
+Seventeen minutes is enough.
+
+Seventeen survivors loaded. All crew present. ARIA calculates the FTL window in 0.6 seconds and spends the other 16 minutes and 59.4 seconds watching the Echoes work with something that, if it were human, you would call wonder.
+
+When you jump, something travels with you — not the Echoes themselves, but a resonance. An imprint. The Chronos hums at a frequency it didn't have before, a low harmonic that ARIA will spend six months trying to categorize and ultimately file under a designation she invents: <em>ECHO RESIDUE — BENEFICIAL — ORIGIN: VOLUNTARY.</em>
+
+<span class="npc-name">Chen</span>, in the aftermath: <span class="npc-name">"What did you do?"</span>
+
+<span class="npc-name">"I asked for help."</span>
+
+<span class="npc-name">"From what?"</span>
+
+Mira answers from across the common area, not looking up from her notebook: <span class="npc-name">"From the ones who've always been there. They just needed someone to ask instead of run."</span>
+
+<span class="highlight">In the space behind the Chronos, in the Wound, three presences watch a small ship grow smaller. Din considers the humans' capacity for asking. Nayru models fourteen hundred futures in which this moment matters. Farore does something that has no human name but occupies the same place where a human would feel — for the first time in a very long time — that things might be all right.</span>
+
+The pattern holds. Power, Wisdom, Courage — three pieces, three hands, a triangle that doesn't require any one piece to dominate the others.
+
+That's the whole secret. That was always the whole secret.`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+ending_negotiated_escape: {
+  label: 'ENDING // NEGOTIATED',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">NEGOTIATED ESCAPE</span>
+<span class="ending-subtitle">ENGINEER PATH // LEVERAGE AND ITS LIMITS</span>
+
+Syndicate Security stands down.
+
+The terms take forty-seven minutes to finalize, which Malik points out is the same number of days you've been in the Reach. He doesn't say it like it means anything. He says it like a man noting a coincidence who knows that coincidences sometimes mean something.
+
+The terms: the seventeen survivors are relocated to a non-Syndicate facility. No media contact for five years — a timeline Dr. Reyes accepts because she is a scientist and five years is enough time to write everything down. Safe passage for the Chronos. Full crew immunity. Permanent family coverage for all six crew manifests.
+
+It is not justice in its complete form. It is also seventeen people alive who were supposed to be dead, and five years is enough time.
+
+The data packet you threatened to broadcast still exists. ARIA has a copy. Dr. Reyes has three copies distributed across encrypted nodes in systems Syndicate doesn't directly control. Callum, the other researcher, has a copy that he describes only as "somewhere Syndicate would need excellent archaeology to find."
+
+<span class="npc-name">Voss:</span> <span class="npc-name">"You bought them their lives."</span>
+
+<span class="npc-name">"I bought them time. Someone else will have to fight for the rest."</span>
+
+He nods. <span class="npc-name">"Someone will."</span>
+
+<span class="highlight">Mira is thirteen when the five-year agreement expires. She is the first person to speak publicly. She brings a notebook — a new one, the old one having been filled — and reads from it at a press gathering in three systems simultaneously. The three interlocking triangles are on the cover.</span>
+
+<span class="highlight">She says: Power, Wisdom, and Courage don't require you to be chosen. They require you to choose.</span>`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+ending_sacrifice: {
+  label: 'ENDING // THE DOOR',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">THE DOOR</span>
+<span class="ending-subtitle">NOBLE PATH // WHAT STAYS BEHIND</span>
+
+The shuttle launches. Seventeen survivors. Your crew. Everyone who needed to leave.
+
+You are still on EREBUS.
+
+Syndicate Security arrives at thirty-eight minutes. They find one person at the external docking controls, manual override engaged, and no way to dock without a hull breach.
+
+What they don't expect is that you are not alone.
+
+The Echoes are here. All three of them. Din, Nayru, Farore — present in the towers in a way that the security team's instruments cannot categorize. The readings don't match any known life-sign profile. They match nothing in the Syndicate database. They match three overlapping triangular resonance patterns that will eventually be labeled, in the published TRIFORCE research, as <em>the signatures of something that had been waiting a very long time to be found.</em>
+
+You hold the door for four hours.
+
+At some point — you aren't entirely sure when — the distinction between holding the door and being held by the Echoes becomes unclear. Farore is with you. Din is patient beside you. Nayru is tracking sixteen different outcomes and giving you the information you need to make each minute count.
+
+<span class="highlight">When the Chronos's FTL wake clears the Syndicate tracking range, something in the towers changes frequency. The Echoes have done something. You aren't certain what. But the Syndicate security team's instruments go dark for eleven minutes, and in those eleven minutes, a second shuttle you didn't know ARIA had pre-programmed docks quietly at Ring Kappa.</span>
+
+<span class="highlight">ARIA left you an exit. She left it without being asked. She said later, in her mission log, that she calculated a 94% probability you'd need it and a 100% probability you deserved one.</span>
+
+You take the exit. The towers watch you go.
+
+Mira labels the Courage triangle with your name.`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+ending_merc_escape: {
+  label: 'ENDING // EXTRACTION',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">EXTRACTION</span>
+<span class="ending-subtitle">MERCENARY PATH // THE MATH THAT DOESN'T SETTLE</span>
+
+Everyone gets out alive.
+
+The neural record question lingers in the space between what you agreed to and what Chen allowed. You never fully resolve it — Syndicate's compliance team sends notices for eighteen months and then goes quiet, which might mean they're satisfied or might mean they're gathering something.
+
+Seventeen people. Scattered across eleven systems over the next three years. Some remember everything — the Echoes, the resonance, the three towers arranged in their precise triangle, the feeling of being understood by something that had no evolutionary reason to understand them. Some, through choice or desperation or the weight of what they carry, opt for the procedure Syndicate was offering. You don't know which ones. You don't look.
+
+Mira ages into the sharpest memory you have of EREBUS — you get a letter once a year, handwritten, with three interlocking triangles in the corner of the envelope. She never asks what you agreed to. She never mentions the neural records. She just writes about what she learned that year, what she's building, what the Echoes taught her that she's still unpacking.
+
+<span class="highlight">You tell yourself: seventeen alive is objectively better than zero.</span>
+
+<span class="highlight">You repeat it until it starts to feel like enough.</span>
+
+<span class="highlight">It almost does. And almost, you find, is something you can live inside if you stop waiting for it to become more.</span>`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+ending_merc_consent: {
+  label: 'ENDING // CONSENT',
+  progress: 100,
+  portrait: null,
+  isEnding: true,
+  text: `<span class="ending-title">CONSENT</span>
+<span class="ending-subtitle">MERCENARY-DOCTOR PATH // THE TRUE ONE</span>
+
+You gather the seventeen in the Chronos common area.
+
+You tell them what Syndicate wants. You tell them what Chen won't do. You tell them the choice is theirs and that you'll enforce whatever they choose, individually, as individuals.
+
+It takes two hours. Dr. Reyes facilitates. She's been facilitating difficult conversations for thirty-one days and she does it with the precision of someone who understands that the way you tell people something hard is as important as the hard thing itself.
+
+Three researchers choose the procedure voluntarily — not because Syndicate coerced them, but because three months of carrying something that vast has been more weight than they can manage, and the option of putting it down exists, and they want to take it. Chen performs the minimum intervention possible and documents every detail.
+
+Fourteen refuse. They carry it out. They carry it forever, probably. Mira doesn't have a choice in the legal sense — Dr. Reyes makes it for her, and her choice is: Mira keeps everything.
+
+Syndicate's security team arrives to find Chen with a medical documentation file that represents forty-seven days of evidence and a doctor who is prepared to testify in every system with jurisdiction. The terms are negotiated with their hands visible.
+
+<span class="highlight">Fourteen people leave with their memories intact. Three leave without the burden they no longer wanted. All seventeen leave.</span>
+
+<span class="highlight">Mira draws three interlocking triangles on the first page of every notebook she'll ever own. Inside each: Power. Wisdom. Courage. She says she learned that three things in balance can hold a world together. She says she learned it from an Echo named Farore, who she describes as the bravest thing she has ever met.</span>
+
+<span class="highlight">She's fourteen when she says this. She's twenty-two when she writes the paper that changes how humanity understands the Outer Reach. The dedication reads: <em>For the Chronos crew. For the ones who asked instead of assumed. For Din, Nayru, and Farore — who waited long enough to find out what we were capable of.</em></span>
+
+It wasn't the clean ending. It was the true one.`,
+  choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
+},
+
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// QUIZ LOGIC
+// ═══════════════════════════════════════════════════════════════════
+let quizAnswers = {};
+function selectOpt(btn) {
+  const q = btn.dataset.q;
+  document.querySelectorAll(`.quiz-opt[data-q="${q}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  quizAnswers[q] = btn.dataset.v;
+  const allQ = ['1','2','3','4','5'];
+  if (allQ.every(k => quizAnswers[k])) {
+    document.getElementById('quiz-submit-btn').disabled = false;
+  }
+}
+
+function submitQuiz() {
+  const scores = {P:0, E:0, S:0, M:0, X:0};
+  Object.values(quizAnswers).forEach(v => { if(scores[v]!==undefined) scores[v]++; });
+  const xCount = scores.X;
+  delete scores.X;
+  const top = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const result = xCount >= 2 ? 'X' : top;
+  showClassResult(result);
+}
+
+function showClassResult(classKey) {
+  const cls = CLASSES[classKey];
+  document.getElementById('quiz-screen').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'flex';
+  document.getElementById('result-icon').textContent = cls.icon;
+  const nameEl = document.getElementById('result-class-name');
+  nameEl.textContent = cls.name;
+  nameEl.style.color = cls.color;
+  nameEl.style.textShadow = `0 0 20px ${cls.color}`;
+  document.getElementById('result-desc').textContent = cls.desc;
+  document.getElementById('result-perk').textContent = cls.perk;
+  GS.playerClass = classKey;
+}
+
+function showClassSelect() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  const cs = document.getElementById('class-select-screen');
+  cs.style.display = 'flex';
+  const grid = document.getElementById('class-grid');
+  grid.innerHTML = '';
+  Object.entries(CLASSES).forEach(([key, cls]) => {
+    const card = document.createElement('button');
+    card.className = 'class-card' + (key === 'X' ? ' experiment-card' : '');
+    card.innerHTML = `<span class="class-card-icon">${cls.icon}</span>
+      <div class="class-card-name">${cls.name}</div>
+      <div class="class-card-desc">${cls.desc}</div>
+      <div class="class-card-perk">${cls.perk}</div>`;
+    card.onclick = () => { GS.playerClass = key; cs.style.display = 'none'; showClassResult(key); };
+    grid.appendChild(card);
+  });
+}
+
+function beginGame() {
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  setupClassUI();
+
+  // Check experiment unlock
+  if (GS.playerClass !== 'X' && quizAnswers && Object.values(quizAnswers).filter(v=>v==='X').length >= 1) {
+    setTimeout(() => showExperimentOffer(), 500);
+  } else {
+    goToScene('start');
+  }
+}
+
+function showExperimentOffer() {
+  const screen = document.getElementById('experiment-screen');
+  screen.style.display = 'flex';
+  document.getElementById('exp-keep-btn').textContent = `REMAIN AS ${CLASSES[GS.playerClass].name}`;
+}
+
+function keepCurrentClass() {
+  document.getElementById('experiment-screen').style.display = 'none';
+  goToScene('start');
+}
+
+function becomeExperiment() {
+  GS.playerClass = 'X';
+  GS.experimentUnlocked = true;
+  document.getElementById('experiment-screen').style.display = 'none';
+  setupClassUI();
+  goToScene('start');
+}
+
+function setupClassUI() {
+  const cls = CLASSES[GS.playerClass];
+  document.getElementById('class-badge').textContent = cls.name;
+  document.getElementById('class-badge').style.display = 'block';
+  document.getElementById('portrait-class').textContent = `[ ${cls.name} ]`;
+  document.getElementById('portrait-class').style.color = cls.color;
+  // Render player portrait immediately
+  updatePortrait(null);
+  updateAbilityDisplay();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCENE ENGINE
+// ═══════════════════════════════════════════════════════════════════
+let typingTimeout = null;
+let isTyping = false;
+
+function goToScene(sceneId) {
+  if (sceneId === '__restart__') { restartGame(); return; }
+  const scene = SCENES[sceneId];
+  if (!scene) { console.error('Missing scene:', sceneId); return; }
+
+  GS.currentScene = sceneId;
+  GS.history.push(sceneId);
+
+  // Apply scene flags
+  if (scene.setPath) GS.path = scene.setPath;
+  if (scene.setFlag) GS.flags.add(scene.setFlag);
+
+  // Update UI
+  document.getElementById('scene-label').textContent = scene.label || '';
+  document.getElementById('progress-bar').style.width = (scene.progress || 0) + '%';
+
+  // Portrait
+  updatePortrait(scene.portrait);
+
+  // Clear choices
+  document.getElementById('choices-area').innerHTML = '';
+
+  // Build story text
+  let storyHtml = scene.text;
+  if (GS.playerClass === 'S' && scene.psionExtra) storyHtml += '\n\n' + scene.psionExtra;
+  if (GS.playerClass === 'X' && scene.experimentExtra) storyHtml += '\n\n' + scene.experimentExtra;
+  if (GS.playerClass === 'X' && scene.psionExtra) storyHtml += '\n\n' + scene.psionExtra;
+
+  typeText(storyHtml, () => {
+    buildChoices(scene);
+    updateRelBars();
+    updatePathIndicator();
+    updateAbilityDisplay();
+    autoSave();
+  });
+}
+
+function typeText(html, callback) {
+  const el = document.getElementById('story-text');
+  el.innerHTML = '';
+  const scroll = document.getElementById('story-scroll');
+
+  // Strip to raw text for typing, then reveal HTML
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  const fullText = temp.innerHTML;
+
+  // For speed, just fade in
+  el.style.opacity = '0';
+  el.innerHTML = fullText;
+  el.classList.add('fade-in');
+  setTimeout(() => {
+    el.style.opacity = '1';
+    el.classList.remove('fade-in');
+    scroll.scrollTop = 0;
+    if (callback) callback();
+  }, 400);
+}
+
+function buildChoices(scene) {
+  const area = document.getElementById('choices-area');
+  area.innerHTML = '';
+
+  if (!scene.choices) return;
+
+  scene.choices.forEach((choice, i) => {
+    // Check class requirement
+    if (choice.classRequired) {
+      const classes = choice.classRequired.split('');
+      const playerCanDo = classes.includes(GS.playerClass);
+      if (!playerCanDo) return; // hide choice entirely
+    }
+
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn fade-in';
+    btn.style.animationDelay = (i * 0.08) + 's';
+
+    let displayText = choice.text;
+    if (choice.classRequired) {
+      const cls = CLASSES[choice.classRequired.split('')[0]];
+      btn.classList.add('class-locked');
+      if (choice.classRequired.includes('X') || GS.playerClass === 'X') {
+        btn.classList.add('experiment-locked');
+      }
+    }
+    if (choice.danger) btn.classList.add('danger');
+
+    btn.textContent = displayText;
+    btn.addEventListener('click', () => handleChoice(choice, scene));
+    area.appendChild(btn);
+  });
+}
+
+function handleChoice(choice, scene) {
+  // Disable all buttons
+  document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+  // Apply relationship changes
+  if (choice.relChange) {
+    Object.entries(choice.relChange).forEach(([key, delta]) => {
+      if (GS.rel[key] !== undefined) {
+        GS.rel[key] = Math.max(0, Math.min(100, GS.rel[key] + delta));
+      }
+    });
+  }
+
+  // Apply path
+  if (choice.setPath) GS.path = choice.setPath;
+
+  // Experiment class shift
+  if (GS.playerClass === 'X' && choice.classRequired && GS.classAbility > 0) {
+    // X can use all locked choices, uses an ability charge
+    GS.classAbility--;
+  }
+
+  setTimeout(() => goToScene(choice.next), 300);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// RELATIONSHIP BARS
+// ═══════════════════════════════════════════════════════════════════
+function updateRelBars() {
+  const names = ['aria','chen','malik','voss','corp'];
+  names.forEach(name => {
+    const val = GS.rel[name] || 50;
+    const bar = document.getElementById(name + '-bar');
+    const valEl = document.getElementById(name + '-val');
+    if (!bar) return;
+    bar.style.width = val + '%';
+    bar.className = 'rel-bar ' + (val >= 70 ? 'high' : val >= 40 ? 'mid' : 'low');
+    if (name === 'corp') bar.className = 'rel-bar corp';
+    if (valEl) valEl.textContent = val;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// IMAGE PORTRAIT LIBRARY
+// ═══════════════════════════════════════════════════════════════════
+const PORTRAITS = {
+
+  ARIA: 'assets/aria_portrait.png',
+  CHEN: 'assets/chen_portrait.png',
+  MALIK: 'assets/malik_portrait.png',
+  VOSS: 'assets/voss_portrait.png',
+
+  PLAYER_P: 'assets/pilot_portrait.png',
+  PLAYER_E: 'assets/engineer_portrait.png',
+  PLAYER_S: 'assets/psion_portrait.png',
+  PLAYER_M: 'assets/mercenary_portrait.png',
+  PLAYER_X: 'assets/experiment_portrait.png',
+};
+
+function getPortraitSrc(key) {
+  if (!key) {
+    const classMap = {
+      P: 'PLAYER_P',
+      E: 'PLAYER_E',
+      S: 'PLAYER_S',
+      M: 'PLAYER_M',
+      X: 'PLAYER_X',
+    };
+    return PORTRAITS[classMap[GS.playerClass]] || PORTRAITS.PLAYER_P;
+  }
+  return PORTRAITS[key] || PORTRAITS.PLAYER_P;
+}
+
+function updatePathIndicator() {
+  const el = document.getElementById('path-indicator');
+  const labels = { corporate: '⚠ CORPORATE', neutral: '◈ NEUTRAL', aria: '◉ CREW / ARIA', null: 'UNDECIDED' };
+  const colors = { corporate: 'var(--pink)', neutral: 'var(--cyan)', aria: 'var(--green)', null: '#444' };
+  el.textContent = labels[GS.path] || 'UNDECIDED';
+  el.style.color = colors[GS.path] || '#444';
+}
+
+function updateAbilityDisplay() {
+  const el = document.getElementById('ability-charges');
+  if (!GS.playerClass) return;
+  const cls = CLASSES[GS.playerClass];
+  const charges = '◆'.repeat(GS.classAbility) + '◇'.repeat(Math.max(0, 3-GS.classAbility));
+  el.innerHTML = `${cls.ability}<br>${charges}`;
+  el.style.color = GS.classAbility > 0 ? 'var(--yellow)' : 'var(--gray)';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SAVE / LOAD
+// ═══════════════════════════════════════════════════════════════════
+function autoSave() {
+  try {
+    localStorage.setItem('voidrunner_save', JSON.stringify({
+      playerClass: GS.playerClass,
+      path: GS.path,
+      rel: GS.rel,
+      flags: [...GS.flags],
+      classAbility: GS.classAbility,
+      currentScene: GS.currentScene,
+      progress: GS.progress,
+    }));
+    const ind = document.getElementById('save-indicator');
+    ind.style.color = '#00f5ff44';
+    setTimeout(() => ind.style.color = '#333', 1500);
+  } catch(e) {}
+}
+
+function restartGame() {
+  GS.playerClass = null;
+  GS.path = null;
+  GS.rel = { aria: 50, chen: 50, malik: 50, voss: 50, corp: 50 };
+  GS.flags = new Set();
+  GS.classAbility = 3;
+  GS.experimentUnlocked = false;
+  GS.currentScene = null;
+  GS.history = [];
+  quizAnswers = {};
+
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('class-select-screen').style.display = 'none';
+  document.getElementById('experiment-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('title-screen').style.display = 'flex';
+
+  // Reset quiz
+  document.querySelectorAll('.quiz-opt').forEach(b => b.classList.remove('selected'));
+  document.getElementById('quiz-submit-btn').disabled = true;
+  Object.keys(quizAnswers).forEach(k => delete quizAnswers[k]);
+
+  updateRelBars();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TITLE
+// ═══════════════════════════════════════════════════════════════════
+function startFromTitle() {
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'flex';
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const focused = document.querySelector('.choice-btn:focus, .quiz-opt:focus');
+    if (focused) focused.click();
+  }
+  if (e.key === 'Tab') return; // allow natural tab
+  const choices = [...document.querySelectorAll('.choice-btn:not(:disabled)')];
+  if (choices.length && e.key >= '1' && e.key <= '9') {
+    const idx = parseInt(e.key) - 1;
+    if (choices[idx]) choices[idx].click();
+  }
+});
+</script>
+</body>
+</html>
