@@ -497,6 +497,27 @@ padding-bottom: env(safe-area-inset-bottom);
     margin: 0 10px;
   }
 
+  #portrait-panel {
+    width: 100%;
+    flex-direction: row;
+    height: 160px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  #portrait-frame {
+    width: 160px;
+    flex-shrink: 0;
+    border-bottom: none;
+    border-right: 1px solid #1a1a1a;
+  }
+
+  #portrait-frame img {
+    object-fit: contain;
+    object-position: center top;
+    background: #020808;
+  }
+
   /* MAIN AREA STACKED */
   #main {
     flex-direction: column;
@@ -510,13 +531,6 @@ padding-bottom: env(safe-area-inset-bottom);
     height: 140px;
     border-right: none;
     border-bottom: 1px solid #1a1a1a;
-  }
-
-  #portrait-frame {
-    width: 140px;
-    flex-shrink: 0;
-    border-bottom: none;
-    border-right: 1px solid #1a1a1a;
   }
 
   #portrait-nameplate {
@@ -2683,7 +2697,7 @@ function getPortraitImage(key) {
   img.alt = key + ' portrait';
   img.style.width = '100%';
   img.style.height = '100%';
-  img.style.objectFit = 'cover';
+  img.style.objectFit = 'cover'; // desktop default
   img.style.display = 'block';
   return img;
 }
