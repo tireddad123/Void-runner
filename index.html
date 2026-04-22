@@ -466,6 +466,166 @@ body::after {
 
 .fade-in { animation: fadeIn 0.4s ease forwards; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+/* ─────────────────────────────
+   MOBILE RESPONSIVE LAYOUT
+   ───────────────────────────── */
+@media (max-width: 768px) {
+
+  html, body {
+    overflow: auto;
+    height: 100%;
+padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  #app {
+    height: auto;
+    min-height: 100vh;
+    animation: none; /* reduce visual noise on mobile */
+  }
+
+  /* HEADER */
+  #header {
+    padding: 10px 12px;
+  }
+
+  #title-text {
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+
+  #progress-bar-wrap {
+    margin: 0 10px;
+  }
+
+  /* MAIN AREA STACKED */
+  #main {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  /* PORTRAIT PANEL → HORIZONTAL */
+  #portrait-panel {
+    width: 100%;
+    flex-direction: row;
+    height: 140px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  #portrait-frame {
+    width: 140px;
+    flex-shrink: 0;
+    border-bottom: none;
+    border-right: 1px solid #1a1a1a;
+  }
+
+  #portrait-nameplate {
+    padding: 4px;
+  }
+
+  #portrait-name {
+    font-size: 10px;
+  }
+
+  /* STORY PANEL */
+  #story-panel {
+    width: 100%;
+  }
+
+  #scene-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 6px 12px;
+  }
+
+  #story-scroll {
+    padding: 14px 14px 10px;
+  }
+
+  #story-text {
+    font-size: 15px;
+    line-height: 1.9;
+  }
+
+  /* CHOICES – TOUCH FRIENDLY */
+  #choices-area {
+    padding: 12px;
+  }
+
+  .choice-btn {
+    font-size: 14px;
+    padding: 14px 16px;
+    margin: 8px 0;
+  }
+
+  .choice-btn::before {
+    content: '▶ ';
+  }
+
+  /* Disable hover-only effects */
+  .choice-btn:hover {
+    box-shadow: none;
+  }
+
+  /* RELATIONSHIP PANEL → BOTTOM DRAWER */
+  #rel-panel {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    max-height: 40vh;
+    background: #000;
+    border-left: none;
+    border-top: 1px solid #1a1a1a;
+    padding: 10px 12px;
+    overflow-y: auto;
+  }
+
+  .rel-name {
+    font-size: 10px;
+  }
+
+  .rel-label {
+    font-size: 9px;
+  }
+
+  /* QUIZ */
+  .quiz-title {
+    font-size: 22px;
+    letter-spacing: 4px;
+  }
+
+  .quiz-q-text {
+    font-size: 15px;
+  }
+
+  .quiz-opt {
+    padding: 14px;
+    font-size: 14px;
+  }
+
+  .quiz-submit {
+    padding: 14px;
+    font-size: 14px;
+  }
+
+  /* RESULT SCREEN */
+  .result-class-name {
+    font-size: 28px;
+  }
+
+  .result-desc {
+    font-size: 14px;
+  }
+
+  /* TITLE SCREEN */
+  .title-main {
+    font-size: clamp(32px, 10vw, 56px);
+  }
+
+  .title-prompt {
+    font-size: 12px;
+  }
+}
 </style>
 </head>
 <body>
