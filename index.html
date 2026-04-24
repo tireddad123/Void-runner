@@ -144,6 +144,48 @@ body::after {
 }
 #portrait-frame.active { box-shadow: inset 0 0 0 1px var(--cyan), 0 0 12px #00f5ff44; }
 
+/* Dual portrait — second slot */
+#portrait-frame-2 {
+  display: none;
+  flex-shrink: 0;
+  height: 0;
+  position: relative; overflow: hidden;
+  background: #020808;
+  border-top: 1px solid #111;
+  transition: box-shadow 0.4s, height 0.3s ease;
+}
+#portrait-panel.dual #portrait-frame-2 {
+  display: block;
+  height: 50%;
+  flex-shrink: 0;
+}
+#portrait-panel.dual #portrait-frame {
+  flex: 1;
+  min-height: 0;
+}
+#portrait-frame-2 > div { position: absolute; inset: 0; }
+#portrait-scan-2 {
+  position: absolute; left:0; width:100%; height:3px;
+  background: linear-gradient(transparent, rgba(0,245,255,0.18), transparent);
+  animation: portraitScan 4s linear infinite;
+  animation-delay: -1.5s;
+  pointer-events: none; z-index: 3;
+}
+#portrait-vignette-2 {
+  position: absolute; inset:0; z-index:1; pointer-events:none;
+  background: linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.92) 100%);
+}
+#portrait-nameplate-2 {
+  position: absolute; bottom:0; left:0; right:0; z-index:4;
+  padding: 4px 6px 4px; text-align:center;
+}
+#portrait-name-2 {
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--cyan); text-shadow: var(--glow-cyan); line-height:1.2;
+}
+#portrait-frame-2.swap { opacity: 0; transition: opacity 0.18s; }
+#portrait-frame-2.active { box-shadow: inset 0 0 0 1px var(--cyan), 0 0 10px #00f5ff33; }
+
 /* ─── STORY PANEL ─── */
 #story-panel {
   flex: 1; display: flex; flex-direction: column;
@@ -512,7 +554,25 @@ padding-bottom: env(safe-area-inset-bottom);
     border-right: 1px solid #1a1a1a;
   }
 
-  #portrait-frame img {
+  /* Dual portrait — side by side on mobile */
+  #portrait-panel.dual #portrait-frame {
+    width: 80px;
+    flex-shrink: 0;
+    min-height: unset;
+    height: 160px;
+  }
+
+  #portrait-panel.dual #portrait-frame-2 {
+    display: block;
+    width: 80px;
+    flex-shrink: 0;
+    height: 160px;       /* match row height exactly */
+    border-top: none;    /* no top border — side by side */
+    border-left: 1px solid #111;
+  }
+
+  #portrait-frame img,
+  #portrait-frame-2 img {
     object-fit: contain;
     object-position: center top;
     background: #020808;
@@ -532,6 +592,17 @@ padding-bottom: env(safe-area-inset-bottom);
 
   #portrait-name {
     font-size: 10px;
+  }
+
+  /* Dual mode — tighter nameplates at 80px width */
+  #portrait-panel.dual #portrait-name,
+  #portrait-panel.dual #portrait-name-2 {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+
+  #portrait-nameplate-2 {
+    padding: 3px 4px;
   }
 
   /* STORY PANEL */
@@ -752,6 +823,13 @@ padding-bottom: env(safe-area-inset-bottom);
           <div id="portrait-class"></div>
         </div>
       </div>
+      <div id="portrait-frame-2">
+        <div id="portrait-scan-2"></div>
+        <div id="portrait-vignette-2"></div>
+        <div id="portrait-nameplate-2">
+          <div id="portrait-name-2"></div>
+        </div>
+      </div>
     </div>
     <!-- Story -->
     <div id="story-panel">
@@ -759,7 +837,7 @@ padding-bottom: env(safe-area-inset-bottom);
       <div id="story-scroll">
         <div id="story-text"></div>
       </div>
-      <div id="choices-area" id="choices-area">
+      <div id="choices-area">
         <!-- choices filled by JS -->
       </div>
     </div>
@@ -812,6 +890,7 @@ const GS = {
   history: [],
   quizAnswers: {},
   progress: 0,
+  _pendingPath: false,
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -905,7 +984,7 @@ You have not responded. You have not decided. But the clock is already running.`
 psion_read_message: {
   label: 'DAY 47 // EMPATHIC LAYER — SYNDICATE ENCRYPTION',
   progress: 9,
-  portrait: 'ARIA',
+  portrait: ['ARIA', 'REYES'],
   text: `You press two fingers to the terminal glass and let your awareness sink beneath the words.
 
 <span class="psion-vision">Corporate communications have a texture — bureaucratic, self-insulating, emotionally sanitized. This one broke before it was sealed. Whoever wrote this was shaking. Not metaphorically. You can feel the physical tremor encoded in their keystroke rhythm, fossilized in the data. Someone sat in a room somewhere and typed this message with their hands unsteady.</span>
@@ -1240,7 +1319,7 @@ Breakfast continues. The congee is good. The moment is impossible.`,
 erebus_hidden_packet: {
   label: 'DAY 47 // EREBUS TRANSMISSION — CLASSIFIED ATTACHMENT',
   progress: 24,
-  portrait: null,
+  portrait: 'REYES',
   text: `The packet decrypts into text. No images, no audio. Just text, composed carefully, like someone who knew they'd have limited power and wanted every word to count.
 
 <span class="highlight">— BEGIN TRANSMISSION — DR. ELENA REYES, EREBUS STATION — DAY 31 —</span>
@@ -1459,7 +1538,7 @@ He doesn't say he trusts you more. But you can read it. You can also read what i
 neutral_character_time: {
   label: 'DAY 47 // MESS HALL — ONE HOUR OUT',
   progress: 32,
-  portrait: null,
+  portrait: 'REYES',
   text: `An hour before scanner range. The crew in the mess hall by coincidence or by instinct — the Chronos is small enough that most things happen by both.
 
 <span class="npc-name">Malik</span> is making coffee with the last of the real grounds. He does this for significant occasions and says nothing about it.
@@ -1491,7 +1570,7 @@ The mess hall is absolutely still.`,
 psion_signal_read: {
   label: 'DAY 47 // THE SIGNAL — FULL CONTACT',
   progress: 35,
-  portrait: 'ARIA',
+  portrait: ['REYES', 'MIRA'],
   text: `You let go of every filter. The signal pours in.
 
 <span class="psion-vision">The woman's voice first — Dr. Reyes — exhausted but steady, the voice of someone who has been keeping everyone else alive through sheer refusal to be anything other than calm. Seventeen people. Their emotional states hit you in sequence like a chord: fear, hope, hunger, boredom, the specific despair of waiting for something that may not come. The child again — curious, fascinated, not afraid because she doesn't fully understand, or perhaps because she understands something the adults don't.</span>
@@ -1763,7 +1842,7 @@ You have an opening. You also have a line in front of you that you haven't cross
 merc_extract_deal: {
   label: 'EREBUS // EXTRACTION UNDER TERMS',
   progress: 57,
-  portrait: null,
+  portrait: ['REYES', 'MIRA'],
   text: `You dock at EREBUS.
 
 The airlock opens onto the smell of recycled air stretched very thin. Emergency lighting. The hum of life support doing its best.
@@ -1793,7 +1872,7 @@ Three minutes from full evacuation, Chen pulls you aside. <span class="npc-name"
 merc_chen_knows: {
   label: 'EREBUS // CHEN DRAWS HER LINE',
   progress: 60,
-  portrait: 'CHEN',
+  portrait: ['CHEN', 'REYES'],
   text: `Chen listens. Her expression doesn't move. She is very good at that.
 
 <span class="npc-name">"Neural record suppression means targeted memory restructuring. It means these people won't remember what they found here. Not the Echoes. Not the contact. Not what it felt like to be something's first experience of human curiosity."</span>
@@ -1846,7 +1925,7 @@ experiment_foresight: {
 erebus_arrival_crew: {
   label: 'EREBUS // CENTRAL HUB — DOCKING COMPLETE',
   progress: 62,
-  portrait: 'CHEN',
+  portrait: ['REYES', 'MIRA'],
   text: `The airlock opens onto the smell of recycled air stretched very thin and a quality of light that exists only inside places that have been surviving instead of living.
 
 The central hub connects all three towers. Nayru, Farore, Din — you can feel their presence now even without trying, three distinct resonances coming through the structure of the station itself, vibrating at frequencies just below audible. The Echoes are very aware that you are here.
@@ -1874,7 +1953,7 @@ Chen is already triage. Voss is already securing corridors. ARIA's voice comes t
 erebus_reyes_echoes: {
   label: 'EREBUS // DR. REYES — WHAT THE ECHOES WANT',
   progress: 66,
-  portrait: null,
+  portrait: ['REYES', 'MIRA'],
   text: `Dr. Reyes brings you to the Nayru tower junction — the closest point to all three resonances without entering a tower. The air here has a quality like the moment before thunder. Not threatening. Charged.
 
 <span class="npc-name">"The Echoes have been here longer than the station,"</span> she says. <span class="npc-name">"The Wound isn't empty — it's inhabited, in a way we don't have good language for. They don't have bodies. They don't have what we'd call desires. But they have..."</span> she pauses. <span class="npc-name">"Intentions. The way a river has an intention."</span>
@@ -1900,7 +1979,7 @@ She turns to you.
 erebus_echo_help: {
   label: 'EREBUS // FARORE RESPONDS',
   progress: 70,
-  portrait: null,
+  portrait: ['REYES', 'MIRA'],
   text: `You don't ask the Echoes directly — you aren't sure you know how. But Dr. Reyes does. She presses her hand to the Farore tower junction and speaks quietly.
 
 The resonance changes. Not dramatically — more like a held breath releasing. Something in the station's electromagnetic signature shifts.
@@ -1924,7 +2003,7 @@ Mira tugs your sleeve. She holds up her notebook. On the page, a careful drawing
 psion_tower_contact: {
   label: 'EREBUS // FULL ECHO CONTACT — TOWER JUNCTION',
   progress: 68,
-  portrait: null,
+  portrait: ['REYES', 'MIRA'],
   text: `Dr. Reyes guides you to the junction where all three towers converge. The floor here has a mosaic worn into it by foot traffic — three overlapping triangles in the tile grout, not designed but traced, over months of researchers standing in the same spot reaching for the same thing.
 
 You press your palms flat to the junction surface and open completely.
@@ -1949,7 +2028,7 @@ You come back. Dr. Reyes has her hand on your shoulder. Mira is watching you wit
 erebus_final_choice: {
   label: 'EREBUS // T-MINUS SIX HOURS',
   progress: 68,
-  portrait: 'VOSS',
+  portrait: ['REYES', 'MIRA'],
   text: `The evacuation is moving. Chen has triaged and sorted — no critical injuries, significant malnutrition, one researcher with a respiratory infection she's treating on the move. Malik has the shuttle prepped.
 
 Fourteen survivors loaded. Three remaining — Dr. Reyes, a researcher named Callum, and Mira — waiting by the Farore tower junction while Dr. Reyes communicates something to the Echoes in the way she's spent three months learning.
@@ -1975,7 +2054,7 @@ Mira is at the junction, notebook in hand. She's drawn the three interlocking tr
 erebus_noble_sacrifice: {
   label: 'EREBUS // THE DOOR',
   progress: 72,
-  portrait: null,
+  portrait: 'MIRA',
   text: `<span class="npc-name">"Go,"</span> you tell them. <span class="npc-name">"All of you. Now."</span>
 
 Voss reads your face. <span class="npc-name">"What are you doing?"</span>
@@ -2004,7 +2083,7 @@ She holds up her notebook. The three triangles. Inside each one she's written a 
 erebus_arrival_conflicted: {
   label: 'EREBUS // DOUBT AND PRESENCE',
   progress: 60,
-  portrait: null,
+  portrait: ['REYES', 'MIRA'],
   text: `You tell them what you almost did. Standing in the Chronos airlock with EREBUS in front of you, you say it simply: <em>I almost confirmed the order. For a few hours this morning I was the kind of person who was going to do this. I need you to know that.</em>
 
 The crew receives it differently. Voss nods, once — he suspected. Chen's expression doesn't change. Malik looks at you for a long moment and then says: <span class="npc-name">"Almost isn't the same as did."</span>
@@ -2026,7 +2105,7 @@ You are carrying the weight of your almost-choice alongside the weight of the ch
 pilot_third_route: {
   label: 'EREBUS // PILOT: SECONDARY RING KAPPA',
   progress: 66,
-  portrait: null,
+  portrait: 'REYES',
   text: `You're already at the ARIA interface before Voss finishes his assessment.
 
 <span class="highlight">EREBUS has a secondary docking ring — Ring Kappa, maintenance access, on the station's far side. It faces away from Syndicate Security's standard approach vector. Hull integrity at 74%. Transit risk estimated at 16%.</span>
@@ -2082,7 +2161,7 @@ Voss looks at you. For the first time in forty-seven days, he's smiling.`,
 ending_solitude: {
   label: 'ENDING // SOLITUDE',
   progress: 100,
-  portrait: null,
+  portrait: 'MIRA',
   isEnding: true,
   text: `<span class="ending-title">SOLITUDE</span>
 <span class="ending-subtitle">CORPORATE PATH // THE CHOICE THAT REMAINS</span>
@@ -2146,7 +2225,7 @@ ARIA plays that three-note musical fragment more frequently now. The one without
 ending_rescue_sacrifice: {
   label: 'ENDING // RESCUE: SACRIFICE',
   progress: 100,
-  portrait: null,
+  portrait: 'MIRA',
   isEnding: true,
   text: `<span class="ending-title">RESCUE: SACRIFICE</span>
 <span class="ending-subtitle">CREW PATH // THE PRICE OF THE MATH</span>
@@ -2180,7 +2259,7 @@ In the years that follow, you name every safe harbor you find after him. There t
 ending_rescue_all: {
   label: 'ENDING // ALL OF THEM',
   progress: 100,
-  portrait: null,
+  portrait: ['REYES', 'MIRA'],
   isEnding: true,
   text: `<span class="ending-title">ALL OF THEM</span>
 <span class="ending-subtitle">PILOT / CREW PATH // COMPLETE</span>
@@ -2212,7 +2291,7 @@ All seventeen. Your crew. The Wound behind you. The rest of the universe ahead.`
 ending_last_stand: {
   label: 'ENDING // LAST STAND',
   progress: 100,
-  portrait: null,
+  portrait: 'MIRA',
   isEnding: true,
   text: `<span class="ending-title">LAST STAND</span>
 <span class="ending-subtitle">DEFIANT // THE BLUFF THAT WASN'T</span>
@@ -2246,7 +2325,7 @@ Syndicate will come. They will build a case and assign a pursuit vessel and file
 ending_rescue_conflicted: {
   label: 'ENDING // CONFLICTED',
   progress: 100,
-  portrait: null,
+  portrait: 'MIRA',
   isEnding: true,
   text: `<span class="ending-title">CONFLICTED</span>
 <span class="ending-subtitle">NEUTRAL → CREW // THE WEIGHT YOU CHOSE TO CARRY</span>
@@ -2272,7 +2351,7 @@ Farore, from somewhere in the Wound, feels you carrying it. She considers this t
 ending_unexpected_alliance: {
   label: 'ENDING // UNEXPECTED ALLIANCE',
   progress: 100,
-  portrait: null,
+  portrait: ['REYES', 'MIRA'],
   isEnding: true,
   text: `<span class="ending-title">UNEXPECTED ALLIANCE</span>
 <span class="ending-subtitle">PSION / EXPERIMENT // WHAT THE ECHOES CHOSE</span>
@@ -2308,7 +2387,7 @@ That's the whole secret. That was always the whole secret.`,
 ending_negotiated_escape: {
   label: 'ENDING // NEGOTIATED',
   progress: 100,
-  portrait: null,
+  portrait: ['REYES', 'CALLUM'],
   isEnding: true,
   text: `<span class="ending-title">NEGOTIATED ESCAPE</span>
 <span class="ending-subtitle">ENGINEER PATH // LEVERAGE AND ITS LIMITS</span>
@@ -2338,7 +2417,7 @@ He nods. <span class="npc-name">"Someone will."</span>
 ending_sacrifice: {
   label: 'ENDING // THE DOOR',
   progress: 100,
-  portrait: null,
+  portrait: 'MIRA',
   isEnding: true,
   text: `<span class="ending-title">THE DOOR</span>
 <span class="ending-subtitle">NOBLE PATH // WHAT STAYS BEHIND</span>
@@ -2370,7 +2449,7 @@ Mira labels the Courage triangle with your name.`,
 ending_merc_escape: {
   label: 'ENDING // EXTRACTION',
   progress: 100,
-  portrait: null,
+  portrait: 'MIRA',
   isEnding: true,
   text: `<span class="ending-title">EXTRACTION</span>
 <span class="ending-subtitle">MERCENARY PATH // THE MATH THAT DOESN'T SETTLE</span>
@@ -2394,7 +2473,7 @@ Mira ages into the sharpest memory you have of EREBUS — you get a letter once 
 ending_merc_consent: {
   label: 'ENDING // CONSENT',
   progress: 100,
-  portrait: null,
+  portrait: ['REYES', 'MIRA'],
   isEnding: true,
   text: `<span class="ending-title">CONSENT</span>
 <span class="ending-subtitle">MERCENARY-DOCTOR PATH // THE TRUE ONE</span>
@@ -2538,9 +2617,11 @@ function goToScene(sceneId) {
   GS.currentScene = sceneId;
   GS.history.push(sceneId);
 
-  // Apply scene flags
-  if (scene.setPath) GS.path = scene.setPath;
+  // Apply scene flags (choice path applied after in handleChoice, takes precedence)
+  if (scene.setPath && !GS._pendingPath) GS.path = scene.setPath;
+  GS._pendingPath = null;
   if (scene.setFlag) GS.flags.add(scene.setFlag);
+  if (scene.setFlag2) GS.flags.add(scene.setFlag2);
 
   // Update UI
   document.getElementById('scene-label').textContent = scene.label || '';
@@ -2609,7 +2690,6 @@ function buildChoices(scene) {
 
     let displayText = choice.text;
     if (choice.classRequired) {
-      const cls = CLASSES[choice.classRequired.split('')[0]];
       btn.classList.add('class-locked');
       if (choice.classRequired.includes('X') || GS.playerClass === 'X') {
         btn.classList.add('experiment-locked');
@@ -2637,7 +2717,7 @@ function handleChoice(choice, scene) {
   }
 
   // Apply path
-  if (choice.setPath) GS.path = choice.setPath;
+  if (choice.setPath) { GS.path = choice.setPath; GS._pendingPath = true; }
 
   // Experiment class shift
   if (GS.playerClass === 'X' && choice.classRequired && GS.classAbility > 0) {
@@ -2670,11 +2750,24 @@ function updateRelBars() {
 // PORTRAIT LIBRARY
 // ═══════════════════════════════════════════════════════════════════
 const IMAGE_PORTRAITS = {
-  // NPCs
+  // Original NPCs
   ARIA: 'assets/aria_portrait.png',
   CHEN: 'assets/chen_portrait.png',
   MALIK: 'assets/malik_portrait.png',
   VOSS: 'assets/voss_portrait.png',
+
+  // EREBUS survivors
+  REYES: 'assets/reyes_portrait.png',
+  MIRA: 'assets/mira_portrait.png',
+  CALLUM: 'assets/callum_portrait.png',
+
+  // Future characters (assets ready)
+  YUSUF: 'assets/yusuf_portrait.png',
+  OSEI: 'assets/osei_portrait.png',
+  HARKEN: 'assets/harken_portrait.png',
+  KRATOS: 'assets/kratos_portrait.png',
+  VELA: 'assets/vela_portrait.png',
+  AION: 'assets/aion _portrait.png',
 
   // Player classes
   PLAYER_P: 'assets/pilot_portrait.png',
@@ -2696,28 +2789,76 @@ function getPortraitImage(key) {
 
 
 function updatePortrait(npcName) {
-  const frame = document.getElementById('portrait-frame');
-  const nameEl = document.getElementById('portrait-name');
+  // Normalise: accept string | array | null
+  const keys = npcName
+    ? (Array.isArray(npcName) ? npcName : [npcName])
+    : [];
 
-  frame.classList.add('swap');
+  const panel = document.getElementById('portrait-panel');
+  const frame1 = document.getElementById('portrait-frame');
+  const frame2 = document.getElementById('portrait-frame-2');
+  const nameEl  = document.getElementById('portrait-name');
+  const name2El = document.getElementById('portrait-name-2');
+
+  // Toggle dual mode
+  if (keys.length >= 2) {
+    panel.classList.add('dual');
+  } else {
+    panel.classList.remove('dual');
+  }
+
+  // ── Frame 1 ──
+  frame1.classList.add('swap');
   setTimeout(() => {
-    // Remove only previous SVG wrapper (first div child that isn't a named overlay)
-    const existing = frame.querySelector('div.portrait-svg-wrap');
+    const existing = frame1.querySelector('div.portrait-svg-wrap');
     if (existing) existing.remove();
 
     const svgWrap = document.createElement('div');
     svgWrap.className = 'portrait-svg-wrap';
     svgWrap.style.cssText = 'position:absolute;inset:0;z-index:0;';
-    const portraitKey = npcName || `PLAYER_${GS.playerClass}`;
-const img = getPortraitImage(portraitKey);
-svgWrap.appendChild(img);
-    // Insert as first child so overlays render on top
-    frame.insertBefore(svgWrap, frame.firstChild);
-    frame.classList.remove('swap');
+    const portraitKey = keys[0] || `PLAYER_${GS.playerClass}`;
+    const img = getPortraitImage(portraitKey);
+    svgWrap.appendChild(img);
+    frame1.insertBefore(svgWrap, frame1.firstChild);
+    frame1.classList.remove('swap');
   }, 180);
 
-  nameEl.textContent = npcName || 'OFFICER';
-  frame.className = 'portrait-frame' + (npcName ? ' active' : '');
+  nameEl.textContent = keys[0] || 'OFFICER';
+  setTimeout(() => {
+    if (!frame1.classList.contains('swap')) {
+      frame1.className = 'portrait-frame' + (keys[0] ? ' active' : '');
+    }
+  }, 200);
+
+  // ── Frame 2 ──
+  if (keys.length >= 2) {
+    frame2.classList.add('swap');
+    setTimeout(() => {
+      const existing2 = frame2.querySelector('div.portrait-svg-wrap');
+      if (existing2) existing2.remove();
+
+      const svgWrap2 = document.createElement('div');
+      svgWrap2.className = 'portrait-svg-wrap';
+      svgWrap2.style.cssText = 'position:absolute;inset:0;z-index:0;';
+      const img2 = getPortraitImage(keys[1]);
+      svgWrap2.appendChild(img2);
+      frame2.insertBefore(svgWrap2, frame2.firstChild);
+      frame2.classList.remove('swap');
+    }, 220);
+
+    name2El.textContent = keys[1];
+    setTimeout(() => {
+      if (!frame2.classList.contains('swap')) {
+        frame2.className = 'portrait-frame-2 active';
+      }
+    }, 240);
+  } else {
+    // Clear frame 2
+    const existing2 = frame2.querySelector('div.portrait-svg-wrap');
+    if (existing2) existing2.remove();
+    frame2.className = 'portrait-frame-2';
+    name2El.textContent = '';
+  }
 }
 
 function updatePathIndicator() {
@@ -2766,6 +2907,7 @@ function restartGame() {
   GS.experimentUnlocked = false;
   GS.currentScene = null;
   GS.history = [];
+  GS._pendingPath = false;
   quizAnswers = {};
 
   document.getElementById('app').style.display = 'none';
