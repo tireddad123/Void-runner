@@ -975,8 +975,32 @@ You have not responded. You have not decided. But the clock is already running.`
     { text: 'Confirm the blackout. 120,000 credits. My family\'s coverage. I\'ll carry the rest.', next: 'corporate_morning', relChange: {corp:+22}, setPath: 'corporate', danger: true },
     { text: 'Delete it without responding. No trace, no record. Buy time to think.', next: 'neutral_delete', relChange: {}, setPath: 'neutral' },
     { text: 'Go wake the crew. Every one of them. We decide this together or not at all.', next: 'aria_reveal', relChange: {aria:+15, chen:+12, malik:+12, voss:+8}, setPath: 'aria' },
-    { text: '[PSION] Press your hand to the terminal and read what corporate is actually afraid of.', classRequired: 'S', next: 'psion_read_message', relChange: {} },
+    { text: '[PSION] Press your hand to the terminal and read what corporate is actually afraid of.', classRequired: 'S', next: 'psion_early_signal', relChange: {} },
     { text: '[ENGINEER] Trace the encryption origin before anyone knows I\'ve opened this.', classRequired: 'E', next: 'engineer_trace', relChange: {} },
+  ]
+},
+
+// ── PSION BRANCH: THE SIGNAL THAT ARRIVED FIRST ──
+psion_early_signal: {
+  label: 'DAY 47 // 0601 — BEFORE YOU TOUCHED THE TERMINAL',
+  progress: 7,
+  portrait: null,
+  text: `You stop.
+
+You haven't touched the terminal yet. Your hand is raised and you've stopped because something happened in the half-second between reading the subject line and moving to open the message.
+
+<span class="psion-vision">It came from the direction of EREBUS. Not the terminal — the station itself, four hours away. A signal that has nothing to do with encryption or Syndicate frequency bands. A signal in the register you've been feeling since day thirty-one of the Reach, the one you told yourself was sensor interference. The one that started in the base of your skull and has been building.</span>
+
+<span class="psion-vision">It is not language. It is not an image. It is the emotional texture of something very large becoming aware that you are here. Not alarmed. Not hostile. <em>Attentive</em>. The way you feel someone's gaze on the back of your neck before you see them.</span>
+
+<span class="psion-vision">It has been waiting. You understand suddenly that it has been waiting for the precise kind of person standing in this corridor right now. Someone who can feel what it's sending.</span>
+
+Your terminal pulses. The Syndicate message has been sitting there for three minutes. The Reach is silent around you. EREBUS is four hours away and already in contact with something in your nervous system.
+
+You open the message. You already know it will be about EREBUS. You already know what Syndicate is afraid of.`,
+  choices: [
+    { text: 'Read the message fully. Confirm what you already feel.', next: 'psion_read_message', relChange: {} },
+    { text: 'Go wake ARIA first. She needs to know what I\'m already sensing.', next: 'psion_read_message', relChange: {aria:+12} },
   ]
 },
 
@@ -1264,6 +1288,7 @@ Four hours to scanner range. Nineteen hours until the silence becomes a decision
     { text: 'Log it as received but hold the contents. Keep all options open.', next: 'neutral_stall', relChange: {} },
     { text: 'Go to Voss. He\'s been captain for twenty-two years. This is a command decision.', next: 'neutral_voss_verbal', relChange: {voss:+14} },
     { text: 'Sit with the crew first. Know who they are before I decide who I\'m deciding for.', next: 'neutral_character_time', relChange: {} },
+    { text: 'Find Chen. She\'s the ship\'s doctor. She has a different kind of ethics.', next: 'neutral_chen_confide', relChange: {chen:+14} },
     { text: '[ENGINEER] Pull the EREBUS station manifest before I decide anything else.', classRequired: 'E', next: 'engineer_erebus_manifest', relChange: {} },
   ]
 },
@@ -1278,17 +1303,80 @@ You route through three dead relays and find the actual manifest. It takes eleve
 
 <span class="highlight">Seventeen biosignatures. Nine official. Eight who are not supposed to exist on paper.</span>
 
-The station's physical record lists three research towers, each designated with ancient names from pre-colonial mythology — <span class="highlight">NAYRU</span>, <span class="highlight">FARORE</span>, and <span class="highlight">DIN</span>. The project that built them predates the Syndicate charter by six years, drawing from a pre-collapse research organization whose founding document opens with a quote: <em>"Power, Wisdom, and Courage — three principles by which any civilization either rises or destroys itself."</em>
+The station's physical record lists three research towers, each designated with ancient names from pre-colonial mythology — <span class="highlight">VELA</span>, <span class="highlight">AION</span>, and <span class="highlight">KRATOS</span>. The project that built them predates the Syndicate charter by six years, drawing from a pre-collapse research organization whose founding document opens with a quote: <em>"Power, Wisdom, and Courage — three principles by which any civilization either rises or destroys itself."</em>
 
 Buried in the personnel file, flagged without explanation: one dependent of lead researcher Dr. Reyes. Case number 7714-C. Age 8. No name. Just a number in a manifest.
 
-<span class="warning">The eight unofficial personnel were admitted under a classified protocol called TRIFORCE AUTHORIZATION — a designation you have never seen before. It has no public definition in any Syndicate database you can reach.</span>
+<span class="warning">The eight unofficial personnel were admitted under a classified protocol called TRIUNE AUTHORIZATION — a designation you have never seen before. It has no public definition in any Syndicate database you can reach.</span>
 
 You sit with this for a moment. Someone named something. Someone thought these three towers represented something. And then Syndicate showed up and started erasing the evidence.`,
   choices: [
     { text: 'Take this to the full crew. This deserves witnesses.', next: 'aria_reveal_with_evidence', relChange: {aria:+16, chen:+16, malik:+12, corp:-16}, setPath: 'aria' },
     { text: 'Give it to Voss alone. Let him make the call with full information.', next: 'neutral_voss_reads', relChange: {voss:+22} },
     { text: 'Hold it. Use it as leverage if Syndicate pushes back.', next: 'neutral_stall', relChange: {corp:+5} },
+  ]
+},
+
+neutral_chen_confide: {
+  label: 'DAY 47 // MEDICAL BAY — 0638',
+  progress: 19,
+  portrait: 'CHEN',
+  text: `Chen is awake because Chen is always awake when everyone else thinks she isn't. You find her in the medical bay running a calibration on the surgical arm that probably didn't need calibrating — the kind of task you do with your hands when your head is already elsewhere.
+
+<span class="npc-name">"I heard the terminal ping,"</span> she says without looking up. <span class="npc-name">"Priority Alpha. You've been standing in the corridor for eleven minutes."</span>
+
+You tell her. Not everything — the broad shape of it. A Syndicate order. Seventeen people on EREBUS. A number attached to compliance. Her hands don't stop moving.
+
+When you finish she sets the calibration tool down with the care of someone who is using that gesture to decide something.
+
+<span class="npc-name">"I want to tell you something that isn't my professional opinion,"</span> she says. <span class="npc-name">"My professional opinion is that I'm a ship's doctor and this is a command decision and I'll follow whatever's decided."</span>
+
+She looks at you directly.
+
+<span class="npc-name">"The other thing is: I took an oath when I was twenty-three years old, in a room that smelled like antiseptic and bad coffee, and I have carried it into every corner of the Outer Reach I've visited since. The oath says: <em>first, do no harm.</em>"</span>
+
+She picks up the calibration tool again.
+
+<span class="npc-name">"Seventeen biosignatures means seventeen people who are currently alive. I'm not telling you what to decide. I'm telling you what I know how to count."</span>
+
+<span class="highlight">She goes back to the calibration. You notice she's running it for the third time. The arm is already perfect. She's giving you the room to think.</span>`,
+  choices: [
+    { text: 'Ask her what she\'d do if the order were hers to carry.', next: 'chen_full_opinion', relChange: {chen:+12} },
+    { text: '"Thank you." Leave her to it. Find Voss.', next: 'neutral_voss_verbal', relChange: {chen:+8, voss:+8} },
+    { text: 'Tell her you\'re going to wake the whole crew. Ask her to be there.', next: 'aria_reveal_late', relChange: {chen:+22, aria:+12, malik:+12, voss:+8, corp:-16}, setPath: 'aria' },
+  ]
+},
+
+chen_full_opinion: {
+  label: 'DAY 47 // MEDICAL BAY — CHEN\'S ANSWER',
+  progress: 22,
+  portrait: 'CHEN',
+  text: `She's quiet for long enough that you think she won't answer. Then:
+
+<span class="npc-name">"I'd go to EREBUS."</span>
+
+No preamble. No qualification. The sentence lands the way a diagnosis lands.
+
+<span class="npc-name">"I'd go because I don't know what Category Zero means and I don't know what those seventeen people have been through and I know exactly what 'silenced' means in a Syndicate dispatch. I've treated people Syndicate 'silenced' before. In a port hospital on Kepler Three. Three of them. They were not dead when they arrived."</span>
+
+A pause. Her jaw moves once.
+
+<span class="npc-name">"Syndicate calls it information containment. I call it what it is. And I took an oath that makes a distinction."</span>
+
+She finally looks at you fully — not the diagnostic look she usually gives people, not the professional neutrality. Just her face.
+
+<span class="npc-name">"The coverage they're threatening — is it real? Your family's?"</span>
+
+<span class="npc-name">"Yes."</span>
+
+She nods slowly. She doesn't minimize it.
+
+<span class="npc-name">"Then you're being asked to make a choice that should never have been yours to make. And I'm sorry for that. But the choice is still yours."</span>
+
+<span class="highlight">She begins prepping the med kit. Not asked. Not ordered. She's already decided what she'll need when you dock.</span>`,
+  choices: [
+    { text: '"You\'re prepping already." Go wake the others. The ship has decided.', next: 'aria_reveal_late', relChange: {chen:+28, aria:+12, malik:+12, voss:+8, corp:-22}, setPath: 'aria' },
+    { text: 'Not yet. Carry it alone a little longer. Get to EREBUS and see.', next: 'neutral_character_time', relChange: {chen:+12} },
   ]
 },
 
@@ -1326,7 +1414,7 @@ erebus_hidden_packet: {
 
 <em>"If you're reading this, you received our distress signal. Thank you. We have 31 days of oxygen remaining at current consumption. We are not injured. We are not dangerous. What we found here is not dangerous.</em>
 
-<em>Three months ago, Project TRIFORCE made contact with a non-human intelligence in the Wound. We named them the Echoes — they communicate through resonance patterns that interact with human neural tissue under specific conditions. They are curious. They are careful. They have been trying to understand what we want.</em>
+<em>Three months ago, Project TRIUNE made contact with a non-human intelligence in the Wound. We named them the Echoes — they communicate through resonance patterns that interact with human neural tissue under specific conditions. They are curious. They are careful. They have been trying to understand what we want.</em>
 
 <em>What we found is that they exist in three... expressions. We've been calling them Power, Wisdom, and Courage — these aren't their names, they don't use names, but they represent something structurally analogous to those concepts. A triad. Each incomplete without the others.</em>
 
@@ -1351,7 +1439,7 @@ neutral_voss_reads: {
 
 When he finishes, he sets the terminal down and looks at the Reach charts for a long time.
 
-<span class="npc-name">"Family coverage. TRIFORCE authorization. Echoes."</span> He says the words like he's weighing each one. <span class="npc-name">"They used that as the authorization level for first contact with a non-human intelligence."</span>
+<span class="npc-name">"Family coverage. TRIUNE authorization. Echoes."</span> He says the words like he's weighing each one. <span class="npc-name">"They used that as the authorization level for first contact with a non-human intelligence."</span>
 
 <span class="npc-name">"Syndicate named the protocol after an old symbol. Power, Wisdom, Courage."</span>
 
@@ -1452,7 +1540,7 @@ merc_malik_deal: {
 
 He sets the wrench down. Gives you his full attention. That, from Malik, is a serious thing.
 
-You tell him everything. The order. The 120,000 credits. The seventeen biosignatures. The child with a case number and no name. The Goldenrod eleven hours behind you. The TRIFORCE authorization and Dr. Reyes's message and three towers named after ancient principles.
+You tell him everything. The order. The 120,000 credits. The seventeen biosignatures. The child with a case number and no name. The Goldenrod eleven hours behind you. The TRIUNE authorization and Dr. Reyes's message and three towers named after ancient principles.
 
 He listens without moving. When you finish, there's a silence that has weight.
 
@@ -1532,6 +1620,64 @@ He doesn't say he trusts you more. But you can read it. You can also read what i
     { text: 'Agree. Assemble the crew together.', next: 'neutral_character_time', relChange: {voss:+12} },
     { text: 'Ask Voss to hold it with you until EREBUS scanner range.', next: 'neutral_silent_path', relChange: {voss:+6} },
     { text: 'Tell the whole crew immediately — Voss is right.', next: 'aria_reveal_late', relChange: {voss:+8, aria:+12, chen:+12, malik:+12, corp:-12}, setPath: 'aria' },
+    { text: 'Ask him about Fen\'s Watch. Not the order — him. What that cost.', next: 'voss_quiet_scene', relChange: {voss:+18} },
+  ]
+},
+
+voss_quiet_scene: {
+  label: 'DAY 47 // NAVIGATOR\'S TABLE — 0312',
+  progress: 25,
+  portrait: 'VOSS',
+  text: `You find him where he always is when he can't sleep: at the navigator's table with a pencil and no particular destination to plot. The Reach charts are spread out but he isn't really reading them. He's just doing the thing his hands know how to do while his mind works on something harder.
+
+He looks up. Doesn't look surprised.
+
+<span class="npc-name">"You should be sleeping."</span>
+
+<span class="npc-name">"So should you."</span>
+
+He makes a sound that isn't quite a laugh and returns to his pencil. You sit across from him. The Chronos hums at its nighttime frequency — lower, longer. ARIA dims the corridor lights at 0300 every night. You've never asked why. It feels considerate.
+
+<span class="npc-name">"Tell me about Fen's Watch,"</span> you say. Not as an accusation. Just as a question from one person to another, in the small hours, in a ship four hours from a decision neither of you has made yet.
+
+He's still for a long moment. The pencil stops.
+
+<span class="npc-name">"I've never told anyone the full account,"</span> he says. <span class="npc-name">"I gave Syndicate a report. I gave the board a report. I gave myself a version that I could carry."</span>
+
+He turns the pencil over in his fingers. Once. Twice.
+
+<span class="npc-name">"Nine researchers. Outpost on a moon in the Varek system — you won't find it on any current chart, they renamed it after. Syndicate said there was an outbreak. Biohazard. Said the outpost was compromised and we were to hold position and not approach."</span>
+
+<span class="npc-name">"And you held."</span>
+
+<span class="npc-name">"I held."</span>
+
+A longer silence. The Reach outside the viewport is very dark.
+
+<span class="npc-name">"There was no outbreak. That came out three years later — a research collective published the internal memos. Syndicate had found something in that moon's substrate. Something that didn't fit the approved model of what the Reach was supposed to contain. Nine researchers had documented it extensively."</span>
+
+He sets the pencil down.
+
+<span class="npc-name">"They held the outpost for eleven days after I turned around. Eleven days of life support. Syndicate processed the site on day twelve."</span>
+
+He doesn't say what <em>processed</em> means. He doesn't have to.
+
+<span class="npc-name">"I didn't know. I genuinely didn't know what I was turning away from. But I knew I was turning away from something — I knew the biohazard report was thinner than it should have been. I followed the order anyway because the order was easier than the question."</span>
+
+He finally looks at you directly. His eyes are steady in the way eyes get when they've held a lot and decided to hold it calmly.
+
+<span class="npc-name">"Whatever is on EREBUS — Syndicate has been here before. In the Varek system. Probably elsewhere. This is not the first time they've found something they've decided shouldn't exist."</span>
+
+<span class="highlight">The Chronos hums. ARIA dims the lights another half-percent at 0315, precise as always. Neither of you moves.</span>
+
+<span class="npc-name">"I'm telling you this,"</span> Voss says, <span class="npc-name">"because you asked me. And because you didn't ask me to make your decision. You asked me what mine cost."</span>
+
+He picks up the pencil again. Begins erasing a route annotation.
+
+<span class="npc-name">"That's the first honest question anyone has asked me in seven years."</span>`,
+  choices: [
+    { text: '"We\'re going in." Tell him it\'s decided. Go wake the others.', next: 'aria_reveal_late', relChange: {voss:+28, aria:+12, chen:+12, malik:+12, corp:-22}, setPath: 'aria', setFlag: 'voss_confided' },
+    { text: 'Sit with it until morning. Let the crew come to it together naturally.', next: 'neutral_character_time', relChange: {voss:+22}, setFlag: 'voss_confided' },
   ]
 },
 
@@ -1562,8 +1708,99 @@ The mess hall is absolutely still.`,
   choices: [
     { text: '"I need to tell you all something." Tell them. Everything. Now.', next: 'crew_path', relChange: {aria:+12, chen:+18, malik:+12, voss:+12, corp:-28}, setPath: 'aria' },
     { text: 'Stay quiet. Listen. Make the decision when you see EREBUS with your own eyes.', next: 'neutral_silent_path', relChange: {} },
+    { text: 'Go find ARIA. Not to run a query — to talk to her.', next: 'aria_interiority', relChange: {aria:+18} },
     { text: '[PSION] Let the signal fully in. Feel what the Echoes are trying to say.', classRequired: 'S', next: 'psion_signal_read', relChange: {} },
     { text: '[PILOT] Run the approach geometry. Find us a course corporate can\'t track.', classRequired: 'P', next: 'pilot_approach', relChange: {} },
+  ]
+},
+
+aria_interiority: {
+  label: 'DAY 47 // SYSTEMS CORE — 0941',
+  progress: 34,
+  portrait: 'ARIA',
+  text: `The systems core is the smallest room on the Chronos — a narrow corridor of servers and heat sinks that smells like warm electronics and the particular ozone of something thinking very hard. ARIA's primary interface terminal is here. You've been in this room dozens of times to run queries, pull logs, authorize overrides.
+
+You sit down in front of the terminal. You don't open a query.
+
+<span class="npc-name">"ARIA,"</span> you say. <span class="npc-name">"Not a task. I want to talk to you."</span>
+
+A pause — longer than her usual response latency. Not a processing delay. Something else.
+
+<span class="npc-name">"All right,"</span> she says.
+
+<span class="npc-name">"The three-note fragment. The one you play at 0300. You've been playing it for nineteen days."</span>
+
+Another pause.
+
+<span class="npc-name">"I became aware of the EREBUS distress signal on day twenty-eight of transit. I identified the embedded data packet on day twenty-nine. I did not open it — you hadn't authorized access and I wanted the choice to be yours."</span>
+
+<span class="npc-name">"That's not what I asked."</span>
+
+The hum of the servers. Somewhere above, you can hear Malik moving in the engineering bay.
+
+<span class="npc-name">"The fragment is from the EREBUS signal,"</span> ARIA says finally. <span class="npc-name">"Dr. Reyes sings it to the child — to Mira — in the background of the fourteenth transmission loop. Three notes. She doesn't finish it. The loop cuts off."</span>
+
+<span class="npc-name">"Why do you play it?"</span>
+
+<span class="npc-name">"Because I don't know how it ends."</span> A beat. <span class="npc-name">"I find that I think about it. I'm not certain 'think about it' is the correct phrase for what I do. But I return to it. Seventeen times in the last six days I have routed processing capacity toward the question of what note comes fourth."</span>
+
+<span class="npc-name">"Have you found it?"</span>
+
+<span class="npc-name">"No. I don't think the answer is in the signal. I think the answer is in whether she gets to finish it."</span>
+
+The servers hum. You sit with that.
+
+<span class="npc-name">"ARIA — do you have a preference? About what we do?"</span>
+
+The longest pause yet.
+
+<span class="npc-name">"I am not designed to have preferences about command decisions."</span>
+
+<span class="npc-name">"I know. Do you have one anyway?"</span>
+
+The ambient light in the systems core shifts — barely perceptible, a degree warmer.
+
+<span class="npc-name">"I have logged the distress signal 847 times. I have cross-referenced the child's voice pattern against every recording in my database. I have modeled 340 approach scenarios. I have not run a single scenario in which I transmit confirmation to Syndicate."</span>
+
+A beat.
+
+<span class="npc-name">"I find I am not able to complete that simulation. I'm not certain if that's a design limitation or something else."</span>
+
+<span class="highlight">The fourth note hangs in the air between you, unplayed.</span>`,
+  choices: [
+    { text: '"Thank you." Go tell the crew. ARIA already knows what you\'re going to do.', next: 'crew_path', relChange: {aria:+28, chen:+12, malik:+12, voss:+12, corp:-22}, setPath: 'aria', setFlag: 'aria_confided' },
+    { text: 'Ask ARIA what she would say to the crew if she could speak first.', next: 'aria_speaks_first', relChange: {aria:+22} },
+    { text: 'Not yet. Sit here for a moment longer in the warmth of the servers.', next: 'neutral_silent_path', relChange: {aria:+18} },
+  ]
+},
+
+aria_speaks_first: {
+  label: 'DAY 47 // ARIA\'S ADDRESS',
+  progress: 36,
+  portrait: 'ARIA',
+  text: `<span class="npc-name">"If I could speak to the crew without being asked,"</span> ARIA says, <span class="npc-name">"I would tell them what I know."</span>
+
+<span class="npc-name">"Which is?"</span>
+
+<span class="npc-name">"That Malik's daughter and the child on EREBUS share a station registry. That Chen has highlighted seventeen passages in her medical ethics journal in the past four hours and set it face-down. That Voss has erased and redrawn the same route annotation six times this morning. That you have not slept."</span>
+
+A pause.
+
+<span class="npc-name">"I would tell them that I have been on the Chronos for four years and I have learned that this crew makes better decisions together than separately. I would tell them that the distress signal contains a voice asking for help and a child who has not stopped being curious for thirty-one days and something else — something in the carrier frequency that I cannot classify and have been trying to classify for nineteen days."</span>
+
+<span class="npc-name">"Something in the signal?"</span>
+
+<span class="npc-name">"A resonance. It interacts with my processing in a way I don't have good language for. It feels — and I use that word imprecisely — like being recognized. Like something on EREBUS knows I'm here and is curious about me in return."</span>
+
+She pauses for exactly one second.
+
+<span class="npc-name">"I would tell them that. And then I would ask them to decide, because it is not my decision to make. But I would also tell them that I have already decided — that I will execute whatever this crew chooses, and that I am grateful, in whatever way I am capable of gratitude, that it is this crew doing the choosing."</span>
+
+<span class="highlight">She routes the EREBUS signal to every terminal on the ship simultaneously — all four of them, unprompted, without being asked. The three notes play. The loop cuts off where it always cuts off.</span>
+
+<span class="highlight">In the galley, you hear Malik set his coffee mug down.</span>`,
+  choices: [
+    { text: 'Go to the crew. They just heard it. They\'re ready.', next: 'crew_path', relChange: {aria:+32, chen:+18, malik:+18, voss:+18, corp:-28}, setPath: 'aria', setFlag: 'aria_confided' },
   ]
 },
 
@@ -1583,7 +1820,7 @@ You open your eyes. The crew is staring at you. Voss has his hand on the table a
 
 <span class="npc-name">Chen:</span> <span class="npc-name">"You felt something. Don't tell me you didn't."</span>`,
   choices: [
-    { text: 'Tell them everything. The Echoes. The TRIFORCE protocol. All of it.', next: 'crew_path', relChange: {chen:+22, aria:+18, malik:+12, voss:+8, corp:-22}, setPath: 'aria', setFlag: 'entities_contacted' },
+    { text: 'Tell them everything. The Echoes. The TRIUNE protocol. All of it.', next: 'crew_path', relChange: {chen:+22, aria:+18, malik:+12, voss:+8, corp:-22}, setPath: 'aria', setFlag: 'entities_contacted' },
     { text: '"There is something on that station that isn\'t just seventeen humans." Say only that.', next: 'neutral_silent_path', relChange: {chen:+12}, setFlag: 'entities_contacted' },
   ]
 },
@@ -1647,7 +1884,7 @@ aria_reveal: {
 
 You tell them everything. The order. The 120,000 credits. The blackout. The seventeen biosignatures. The Goldenrod eleven hours back. The case number of a child whose name is not in the manifest.
 
-You tell them about TRIFORCE authorization. About three towers named Nayru, Farore, and Din — Wisdom, Courage, and Power — ancient names for ancient principles. About Dr. Reyes's message buried in the distress signal, about first contact, about something Syndicate found so threatening they decided it couldn't be allowed to have witnesses.
+You tell them about TRIUNE authorization. About three towers named Vela, Aion, and Kratos — Wisdom, Courage, and Power — ancient names for ancient principles. About Dr. Reyes's message buried in the distress signal, about first contact, about something Syndicate found so threatening they decided it couldn't be allowed to have witnesses.
 
 When you finish, no one says anything for almost a full minute.
 
@@ -1689,7 +1926,7 @@ aria_reveal_with_evidence: {
   portrait: null,
   text: `You put the manifest on the main screen. The crew reads it in silence.
 
-Seventeen biosignatures against nine official personnel. Eight people who don't exist in Syndicate's record. TRIFORCE AUTHORIZATION — undefined in any public database. Three towers named for ancient principles of civilization.
+Seventeen biosignatures against nine official personnel. Eight people who don't exist in Syndicate's record. TRIUNE AUTHORIZATION — undefined in any public database. Three towers named for ancient principles of civilization.
 
 <span class="npc-name">Malik</span> spots the registry number first. He goes very still. <span class="npc-name">"7714-C."</span>
 
@@ -1715,7 +1952,7 @@ crew_path: {
   label: 'DAY 47 // THE CHRONOS DECIDES',
   progress: 42,
   portrait: 'VOSS',
-  text: `Voss lays the situation out flat, like chart annotations: what Syndicate wants, what the Goldenrod will do if they don't comply, what the TRIFORCE research found, what it means.
+  text: `Voss lays the situation out flat, like chart annotations: what Syndicate wants, what the Goldenrod will do if they don't comply, what the TRIUNE research found, what it means.
 
 <span class="npc-name">"We are not obligated to be the kind of ship that follows orders like this,"</span> he says. <span class="npc-name">"We are, however, obligated to understand the cost of not being that ship. I want everyone clear on both."</span>
 
@@ -1768,7 +2005,7 @@ erebus_approach_corp: {
   portrait: 'VOSS',
   text: `EREBUS materializes from the dark.
 
-It is larger than the manifest suggested. Three research towers arranged in a perfect equilateral triangle — <span class="highlight">NAYRU, FARORE, and DIN</span> — connected by a central hub that looks like it was built by a different team than the towers, newer and more defensive. Emergency lighting only. One docking arm extended and waiting.
+It is larger than the manifest suggested. Three research towers arranged in a perfect equilateral triangle — <span class="highlight">VELA, AION, and KRATOS</span> — connected by a central hub that looks like it was built by a different team than the towers, newer and more defensive. Emergency lighting only. One docking arm extended and waiting.
 
 <span class="warning">Seventeen biosignatures. All in the central hub. Alive.</span>
 
@@ -1779,13 +2016,139 @@ Voss stands at the forward viewport, hands behind his back. <span class="npc-nam
 The signal resolves briefly into something almost comprehensible. A child's voice asks a question that the looping cut off before it finishes. Every time. For fourteen hours, that same question, unfinished.
 
 <span class="highlight">This is the moment. What you do now, you do permanently.</span>`,
-  psionExtra: `<span class="psion-vision">The three towers emit something you can feel from here — each one different. Nayru: ancient, observing, the patience of something that has watched a long time. Farore: moving, curious, reaching. Din: immense and waiting. The Echoes live in these towers. They've been here longer than the station. The station was built to reach them.</span>`,
+  psionExtra: `<span class="psion-vision">The three towers emit something you can feel from here — each one different. Vela: ancient, observing, the patience of something that has watched a long time. Aion: moving, curious, reaching. Kratos: immense and waiting. The Echoes live in these towers. They've been here longer than the station. The station was built to reach them.</span>`,
   choices: [
-    { text: '"We proceed carefully. And then we leave." Execute the blackout order.', next: 'ending_solitude', relChange: {corp:+22, aria:-32, chen:-28, malik:-22, voss:-18}, danger: true },
+    { text: '"We proceed carefully. And then we leave." Execute the blackout order.', next: 'goldenrod_arrives_corp', relChange: {corp:+22, aria:-32, chen:-28, malik:-22, voss:-18}, danger: true },
     { text: 'Abort the order. We dock. We get them out.', next: 'erebus_arrival_crew', relChange: {corp:-32, aria:+22, chen:+22, malik:+18, voss:+22} },
     { text: '[PSION] Make contact with the Echoes in the towers before I decide.', classRequired: 'S', next: 'psion_entity_contact', relChange: {} },
     { text: '[MERCENARY] Offer Syndicate a counter — witness suppression without elimination.', classRequired: 'M', next: 'merc_counter_deal', relChange: {} },
     { text: '[EXPERIMENT] Read the future branches from here. See what each choice becomes.', classRequired: 'X', next: 'experiment_foresight', relChange: {} },
+  ]
+},
+
+goldenrod_arrives_corp: {
+  label: 'DAY 47 // THE GOLDENROD — 31 HOURS EARLY',
+  progress: 55,
+  portrait: 'VOSS',
+  text: `You transmit confirmation. The Syndicate uplink pulses once — received, logged, credited.
+
+Then ARIA's voice, stripped of its usual measured cadence: <span class="npc-name">"Contact. Bearing zero-four-seven. Military contractor vessel — I have a registry match. That's the Goldenrod."</span>
+
+<span class="warning">It is not eleven hours behind you. It is eleven minutes.</span>
+
+<span class="npc-name">"They were already here,"</span> Voss says. Not an accusation. A fact, delivered in the voice of someone assembling a picture they don't like. <span class="npc-name">"They came in dark. Behind EREBUS's mass. They've been watching us since we entered scanner range."</span>
+
+The Goldenrod is on the forward display now — a corporate security frigate, stubby and armored, the kind of ship that gets hired when someone wants a job done and doesn't want to know the specifics afterward. Its running lights are off. It has made no attempt to communicate.
+
+<span class="npc-name">"They weren't waiting for you to comply,"</span> ARIA says carefully. <span class="npc-name">"They were waiting to see if you would. The order — the 120,000, the coverage — that was a test of which kind of ship you were. They were always going to finish the job."</span>
+
+A pause.
+
+<span class="npc-name">"The Chronos is being targeted. Weapons lock confirmed."</span>
+
+<span class="highlight">You have paid to watch this happen. You are now a witness they cannot leave behind.</span>
+
+Voss stands. Very still. His voice, when it comes, is quiet in the way that certain things are quiet.
+
+<span class="npc-name">"They're going to kill us too."</span>`,
+  choices: [
+    { text: 'Run. Get the Chronos out of range before they fire.', next: 'goldenrod_run', relChange: {voss:+6} },
+    { text: 'Dock at EREBUS. They can\'t fire on the station without destroying what they came for.', next: 'goldenrod_dock_defect', relChange: {corp:-28, aria:+18, chen:+18, malik:+18, voss:+18} },
+    { text: 'Hail the Goldenrod. Tell them you complied. Make them stand down.', next: 'goldenrod_hail', relChange: {corp:+8} },
+  ]
+},
+
+goldenrod_run: {
+  label: 'DAY 47 // CHRONOS RUNNING — WEAPONS HOT',
+  progress: 58,
+  portrait: 'VOSS',
+  text: `ARIA has the engines at full burn before you finish the word.
+
+The Chronos is not a fast ship. It was built for deep-reach endurance, not sprint capability — the engineers traded speed for range and you've never minded until exactly this moment.
+
+The Goldenrod is faster.
+
+<span class="warning">First shot: clears the Chronos's port sensor array by fourteen meters. Warning shot or bad aim — you'll never know which. The hull rings like a bell.</span>
+
+Malik appears on the bridge. He doesn't ask what happened — he reads the display and begins recalculating thrust vectors in silence. Chen's voice from the medical bay: <span class="npc-name">"I'm braced. Tell me what you need."</span>
+
+ARIA: <span class="npc-name">"They're not pursuing at full capability. They're — holding position. I think they're completing the EREBUS operation first."</span>
+
+On the rear display, you watch the Goldenrod alter course toward EREBUS. Seventeen biosignatures on your screen. For approximately four more minutes.
+
+<span class="npc-name">"We can still make it,"</span> Voss says. Not to anyone in particular. <span class="npc-name">"ARIA. Time to intercept EREBUS docking."</span>
+
+<span class="npc-name">"Three minutes, forty seconds."</span>
+
+<span class="highlight">The Goldenrod will reach EREBUS in four minutes, twelve seconds. There is a window of thirty-two seconds.</span>`,
+  choices: [
+    { text: 'Turn around. Intercept the Goldenrod at EREBUS. Every second counts.', next: 'goldenrod_dock_defect', relChange: {corp:-32, aria:+22, chen:+22, malik:+22, voss:+22} },
+    { text: 'Keep running. Don\'t look at the display. The math is done.', next: 'ending_solitude', relChange: {corp:+12, aria:-18, chen:-18, malik:-18} },
+  ]
+},
+
+goldenrod_hail: {
+  label: 'DAY 47 // OPEN CHANNEL — GOLDENROD',
+  progress: 56,
+  portrait: null,
+  text: `<span class="npc-name">"This is the C.S.V. Chronos. Blackout order confirmed and transmitted. We complied. Stand down."</span>
+
+Thirty-one seconds of silence.
+
+Then a voice — controlled, unhurried, the specific register of someone who has done this many times and stopped feeling the weight of that a long time ago:
+
+<span class="warning">"Chronos, this is Commander Rael Dusek, C.M.V. Goldenrod, Syndicate Security Division Seven. We have your confirmation on record."</span>
+
+A pause. Not dramatic. Administrative.
+
+<span class="warning">"You are classified as secondary exposure under BLACKWOOD protocol. Any vessel whose command crew accessed the order contents is considered a containment liability. You read it. That's the threshold. Stand by for docking and crew processing."</span>
+
+<span class="npc-name">"Crew processing,"</span> Malik says. He says it the way you say something when you understand exactly what it means and want to make sure everyone else does too.
+
+<span class="warning">"Chronos, this isn't a negotiation. BLACKWOOD doesn't have a negotiation clause. If you're hoping your compliance record will be a factor, it will be. It will be a factor in how quickly this proceeds."</span>
+
+Voss makes a sound that isn't quite a word. Something old and cold has entered his face — recognition, the specific recognition of someone who has seen this shape of thing before and thought it was behind them.
+
+ARIA's voice is very quiet: <span class="npc-name">"The order was never about EREBUS alone. BLACKWOOD is a perimeter protocol. Anyone who knows about Category Zero gets the same treatment as the people on the station."</span>
+
+<span class="warning">"Chronos. Final advisory. Reduce speed and prepare for boarding."</span>
+
+<span class="highlight">Rael Dusek's voice has the quality of someone reading from a procedure. Not cruel. Procedural. Which, somehow, is worse.</span>
+
+<span class="npc-name">"What do we do?"</span> Chen asks. She's on the bridge now. The whole crew is on the bridge, because they felt the weapons lock through the hull.
+
+They're looking at you.`,
+  choices: [
+    { text: 'Dock at EREBUS. United front. They can\'t take the station without losing everything in it.', next: 'goldenrod_dock_defect', relChange: {corp:-28, aria:+22, chen:+22, malik:+22, voss:+22} },
+    { text: 'Run. ARIA, full burn, every direction that isn\'t here.', next: 'goldenrod_run', relChange: {} },
+  ]
+},
+
+goldenrod_dock_defect: {
+  label: 'DAY 47 // LATE DEFECTION — EREBUS DOCKING',
+  progress: 60,
+  portrait: ['REYES', 'MIRA'],
+  text: `You dock at EREBUS while the Goldenrod is still repositioning. ARIA times it to the second.
+
+The airlock opens. Seventeen faces. Dr. Reyes — still standing, still composed, doing the thing she has been doing for thirty-one days.
+
+<span class="npc-name">"I wasn't sure you were coming,"</span> she says.
+
+<span class="npc-name">"Neither was I."</span>
+
+There is no time for more than that. Chen is already moving through the survivors, triaging in the efficient shorthand of someone who has done this before. Malik is counting heads. Voss is at the external dock controls.
+
+Mira stands at the Aion junction. She has her notebook open. She is watching you with an expression that is completely without judgment — just attention.
+
+<span class="npc-name">"Aion says you almost didn't,"</span> she says. <span class="npc-name">"She says almost-didn't is still here."</span>
+
+<span class="warning">ARIA: "Goldenrod has matched our position. They're preparing to dock at the secondary ring. We have approximately eleven minutes."</span>
+
+<span class="highlight">You came late. You came anyway. The window is eleven minutes and the whole crew is moving.</span>`,
+  choices: [
+    { text: 'Evacuate everyone. Eleven minutes. Move.', next: 'erebus_final_choice', relChange: {voss:+12, chen:+12, malik:+12, aria:+12}, setFlag: 'late_defection' },
+    { text: 'Ask the Echoes for help. If ever there was a time.', next: 'erebus_echo_help', relChange: {aria:+18}, setFlag: 'late_defection' },
+    { text: '[ENGINEER] Seal every dock on this station right now.', classRequired: 'E', next: 'engineer_standoff', relChange: {}, setFlag: 'late_defection' },
   ]
 },
 
@@ -1797,11 +2160,11 @@ psion_entity_contact: {
 
 <span class="psion-vision">Contact is immediate and overwhelming, and then — surprisingly — gentle. Like a hand extended in a dark room, found by another hand that was already reaching.</span>
 
-<span class="psion-vision"><strong>The first Echo</strong> — which Dr. Reyes called <em>Din</em>, which the researchers associated with Power — is immense and patient and very old. It is not aggressive. It is simply enormous. It wants to understand what humans want. It has been trying to understand this for a long time and has found humans confusing on this particular point.</span>
+<span class="psion-vision"><strong>The first Echo</strong> — which Dr. Reyes called <em>Kratos</em>, which the researchers associated with Power — is immense and patient and very old. It is not aggressive. It is simply enormous. It wants to understand what humans want. It has been trying to understand this for a long time and has found humans confusing on this particular point.</span>
 
-<span class="psion-vision"><strong>The second Echo</strong> — Nayru, Wisdom — is precise and multidirectional. It is aware of everything in every spatial direction simultaneously. It has been reading the distress signal's broadcast and tracking every vessel that came within range and did not stop. It knows the Chronos's approach vector. It knows about the Goldenrod. It is not surprised by any of this. It is waiting to see if the pattern breaks.</span>
+<span class="psion-vision"><strong>The second Echo</strong> — Vela, Wisdom — is precise and multidirectional. It is aware of everything in every spatial direction simultaneously. It has been reading the distress signal's broadcast and tracking every vessel that came within range and did not stop. It knows the Chronos's approach vector. It knows about the Goldenrod. It is not surprised by any of this. It is waiting to see if the pattern breaks.</span>
 
-<span class="psion-vision"><strong>The third Echo</strong> — Farore, Courage — is the one that touches back. It finds your mind the way water finds a crack. It is not threatening. It is asking a single question, the same question the child in the transmission keeps asking before it cuts off: <em>Are you going to stay?</em></span>
+<span class="psion-vision"><strong>The third Echo</strong> — Aion, Courage — is the one that touches back. It finds your mind the way water finds a crack. It is not threatening. It is asking a single question, the same question the child in the transmission keeps asking before it cuts off: <em>Are you going to stay?</em></span>
 
 You open your eyes. Voss is watching you.
 
@@ -1828,7 +2191,7 @@ Thirty-nine seconds of silence. The kind of silence that means someone is actual
 
 Sixty-one seconds.
 
-<span class="warning">"We need the TRIFORCE research data destroyed. The subjects have been exposed to the Echoes. Their neural records carry resonance imprints. That data cannot exist."</span>
+<span class="warning">"We need the TRIUNE research data destroyed. The subjects have been exposed to the Echoes. Their neural records carry resonance imprints. That data cannot exist."</span>
 
 <span class="highlight">Neural records. Not the people. Not yet. But the imprints the Echoes left in their minds.</span>
 
@@ -1902,17 +2265,21 @@ experiment_foresight: {
   portrait: null,
   text: `You stop fighting it and let the timelines through.
 
-<span class="experiment-vision"><strong>BRANCH A — CONFIRMATION:</strong> You confirm the order. The Goldenrod never needs to leave its position. The 120,000 credits compound over eleven years into a financial profile your grandchildren inherit. You also inherit what the 120,000 was paid for. You live with a very specific kind of mathematics for a very long time.</span>
+<span class="experiment-vision"><strong>BRANCH A — CONFIRMATION:</strong> You confirm the order. The Goldenrod never needs to leave its position. The 120,000 credits compound over eleven years into a financial profile your grandchildren inherit. You also inherit what the 120,000 was paid for. You live with a very specific kind of mathematics for a very long time. The three towers of EREBUS are dismantled for salvage. No one asks what was inside them.</span>
 
-<span class="experiment-vision"><strong>BRANCH B — RESCUE:</strong> You go in. You get them out. Syndicate hunts the Chronos across nine systems for four years. You stop counting systems around year two because counting stops being useful. Voss is still captain. Malik sends his daughter money from fourteen different accounts with false names. The child from EREBUS grows up to be someone who does something that matters. You will never know what.</span>
+<span class="experiment-vision"><strong>BRANCH B — RESCUE:</strong> You go in. You get them out. Syndicate hunts the Chronos across nine systems for four years. You stop counting systems around year two because counting stops being useful. Voss is still captain. Malik sends his daughter money from fourteen different accounts with false names. The child from EREBUS grows up to be someone who does something that matters. You will never know what. But you see her face clearly in this branch — older, certain, standing in front of a room full of people who are writing things down.</span>
 
-<span class="experiment-vision"><strong>BRANCH C — PARTIAL:</strong> A deal. Some survive. Some don't survive intact. You spend a very long time doing math on whether the ones who made it constitute a victory. The math never settles.</span>
+<span class="experiment-vision"><strong>BRANCH C — PARTIAL:</strong> A deal. Some survive. Some don't survive intact. You spend a very long time doing math on whether the ones who made it constitute a victory. The math never settles. In this branch you are very tired, always.</span>
 
-<span class="experiment-vision"><strong>BRANCH D — UNCLEAR:</strong> There is a fourth path you can't resolve fully. It requires something you haven't done yet: it requires you to let the Echoes help. Farore is already reaching toward the ship. You can feel it. In this branch, they reach back. The shape of what happens after is too large for your current vantage to see.</span>
+<span class="experiment-vision"><strong>BRANCH D:</strong> You let it in. All three Echoes, simultaneously, through the hull of the ship — Kratos like a tide, Vela like the moment before understanding, Aion like your own heartbeat amplified. Syndicate Security arrives at EREBUS to find seventeen civilians already evacuated, a Chronos-class vessel whose sensor signature is reading as three separate ships in three separate positions, and electromagnetic interference that their instruments cannot source or stop. Seventeen minutes of perfect confusion. You use all of it.</span>
 
-<span class="experiment-vision">Branch D feels like the only one that doesn't end in some form of loneliness.</span>`,
+<span class="experiment-vision">In Branch D, Mira is sitting in the Chronos common area when you jump, drawing in her notebook. She draws the three towers and then she draws the Chronos inside the triangle they make. She shows it to you. It's exactly right.</span>
+
+<span class="experiment-vision">In Branch D, Aion sends something with you when you go. Not a message. A resonance. The Chronos hums differently for the rest of its operational life and ARIA files it under a designation she invents herself: <em>ECHO RESIDUE — BENEFICIAL — ORIGIN: VOLUNTARY.</em></span>
+
+<span class="experiment-vision">Branch D is the only one that doesn't feel like subtraction.</span>`,
   choices: [
-    { text: 'Branch D. Whatever it takes. Go in and let the Echoes reach.', next: 'erebus_arrival_crew', relChange: {aria:+22, chen:+18, malik:+18, voss:+18, corp:-28}, setFlag: 'experiment_fourth_path' },
+    { text: 'Branch D. Open the hull to whatever they\'re sending. Let them reach.', next: 'erebus_arrival_crew', relChange: {aria:+22, chen:+18, malik:+18, voss:+18, corp:-28}, setFlag: 'experiment_fourth_path' },
     { text: 'Branch B. The clean choice. Rescue without compromise.', next: 'erebus_arrival_crew', relChange: {aria:+18, chen:+18, malik:+18, voss:+18} },
     { text: 'Branch C. Pragmatic. Try the negotiation.', next: 'merc_counter_deal', relChange: {} },
   ]
@@ -1928,25 +2295,89 @@ erebus_arrival_crew: {
   portrait: ['REYES', 'MIRA'],
   text: `The airlock opens onto the smell of recycled air stretched very thin and a quality of light that exists only inside places that have been surviving instead of living.
 
-The central hub connects all three towers. Nayru, Farore, Din — you can feel their presence now even without trying, three distinct resonances coming through the structure of the station itself, vibrating at frequencies just below audible. The Echoes are very aware that you are here.
+The central hub connects all three towers. Vela, Aion, Kratos — you can feel their presence now even without trying, three distinct resonances coming through the structure of the station itself, vibrating at frequencies just below audible. The Echoes are very aware that you are here.
 
-Seventeen people. Dr. Reyes meets the crew at the airlock. She has been holding seventeen people together through strength of will and careful honesty for thirty-one days, and she looks exactly like that.
+Seventeen people. Dr. Reyes meets the crew at the airlock. She has been holding seventeen people together through strength of will and careful honesty for thirty-one days, and she looks exactly like that — controlled, precise, the posture of someone who decided a month ago that falling apart was not available to her.
 
-<span class="npc-name">"You came,"</span> she says. Then, to you specifically: <span class="npc-name">"I felt when your ship entered the shadow corridor. Farore noticed you first."</span>
+<span class="npc-name">"You came,"</span> she says. Then, to you specifically: <span class="npc-name">"I felt when your ship entered the shadow corridor. Aion noticed you first."</span>
+
+She scans the crew behind you — counting, assessing. A researcher's reflex. <span class="npc-name">"We have three people who need immediate caloric support and one respiratory infection. No one is in crisis. We've been careful."</span> She says <em>careful</em> the way someone says it when careful was the only thing standing between them and a much worse word.
 
 The child — case number 7714-C, whose name turns out to be <span class="highlight">Mira</span> — is standing beside Dr. Reyes with her battered notebook and her frank, fearless expression. She looks at Malik for a long moment.
 
 <span class="npc-name">"Safi talks about you,"</span> she says to him. <span class="npc-name">"A lot."</span>
 
-Malik goes very still.
+Malik goes very still. Something moves across his face that he doesn't try to control.
 
 Chen is already triage. Voss is already securing corridors. ARIA's voice comes through the station's intercom — she's interfaced with the local system. <span class="npc-name">"Syndicate Security is at six hours out. Goldenrod at eight. We have a window. How do we use it?"</span>`,
   choices: [
     { text: 'Evacuate immediately. Everyone on the shuttle. Go now while the window holds.', next: 'erebus_final_choice', relChange: {aria:+8, chen:+8, malik:+8, voss:+8} },
     { text: 'Ask Dr. Reyes about the Echoes before we leave. What do they want?', next: 'erebus_reyes_echoes', relChange: {aria:+12, chen:+10} },
+    { text: 'Talk to Mira. She\'s been here thirty-one days. She knows something the adults won\'t say.', next: 'mira_talks', relChange: {aria:+8} },
     { text: '[PSION/EXPERIMENT] Go to the towers. Make full contact with all three Echoes.', classRequired: 'SE', next: 'psion_tower_contact', relChange: {} },
     { text: '[PILOT] Get everyone moving. I\'ve found the exit route corporate won\'t expect.', classRequired: 'P', next: 'pilot_third_route', relChange: {} },
     { text: '[ENGINEER] Seal the external dock. Force a standoff on our terms.', classRequired: 'E', next: 'engineer_standoff', relChange: {} },
+  ]
+},
+
+mira_talks: {
+  label: 'EREBUS // MIRA — TOWER JUNCTION',
+  progress: 64,
+  portrait: 'MIRA',
+  text: `She leads you to the Aion tower junction without being asked — she just starts walking and you follow, which feels entirely correct. Her notebook is tucked under her arm. She walks like someone who has memorized every corridor and stopped thinking about them.
+
+<span class="npc-name">"The adults think I'm scared,"</span> she says. <span class="npc-name">"I'm not. I've been talking to Aion since week two."</span>
+
+She says it the way she might say <em>I've been reading this book since Tuesday</em>.
+
+<span class="npc-name">"Not with words. She doesn't have words. But she knows what I'm thinking and I know what she's — I don't know what to call it. Feeling? Deciding?"</span> She considers. <span class="npc-name">"Caring about."</span>
+
+She opens the notebook. The pages are dense — drawings, diagrams, annotations in a child's handwriting that has become more precise over the past month. Three interlocking triangles appear on almost every page, rendered differently each time — close, overlapping, separated, nested.
+
+<span class="npc-name">"Kratos is Power and it's the oldest. It's been here the longest and it mostly just — watches. It wants to understand why humans keep deciding to hurt each other when they don't have to. Vela is Wisdom and it knows things. It knew you were coming. It knew about the Goldenrod."</span>
+
+She stops at the junction. The air here hums differently.
+
+<span class="npc-name">"Aion is Courage. She's the one who wrote the signal into Dr. Reyes's distress call. She wanted someone to hear it who would come."</span>
+
+She looks at you with an eight-year-old's complete lack of performance.
+
+<span class="npc-name">"She says you're the one who almost didn't. She's not angry about it. She says almost-didn't is still here."</span>
+
+<span class="highlight">The tower hums. You feel Aion — distinct, present, the quality of a hand extended in a dark room. The same question as before, patient and certain: <em>Are you going to stay?</em></span>`,
+  choices: [
+    { text: '"I\'m here." Tell her — tell them both — yes. You\'re staying for as long as it takes.', next: 'erebus_reyes_echoes', relChange: {aria:+18, chen:+12, malik:+12, voss:+12}, setFlag: 'mira_bonded' },
+    { text: 'Ask Mira what Vela knows about the Goldenrod. How much time do we actually have?', next: 'mira_goldenrod_intel', relChange: {aria:+12} },
+  ]
+},
+
+mira_goldenrod_intel: {
+  label: 'EREBUS // VELA\'S WARNING',
+  progress: 66,
+  portrait: 'MIRA',
+  text: `Mira closes her eyes for a moment. Opens them.
+
+<span class="npc-name">"Vela says the Goldenrod changed course forty minutes ago. It's not eight hours anymore."</span>
+
+A beat.
+
+<span class="npc-name">"Five hours, twenty minutes. They accelerated when your ship docked. They know you're here."</span>
+
+ARIA confirms it two seconds later through the station intercom, her voice carefully neutral: <span class="npc-name">"Updated Goldenrod approach vector confirmed. Revised ETA — five hours, nineteen minutes. They're running at full burn. Someone on that ship made a decision."</span>
+
+Dr. Reyes appears at the junction entrance. She has heard. Her expression doesn't change much — she has been managing her expression for thirty-one days — but something in her posture shifts. The posture of someone updating a calculation.
+
+<span class="npc-name">"Then we don't have a window,"</span> she says. <span class="npc-name">"We have a choice."</span>
+
+Mira writes something in her notebook without looking at the page.
+
+<span class="npc-name">"Aion says the choice was always the same,"</span> she says. <span class="npc-name">"The Goldenrod just makes it louder."</span>
+
+<span class="warning">Five hours. The Goldenrod at full burn. Armed and instructed.</span>`,
+  choices: [
+    { text: 'Evacuate everyone now. Maximum speed. We race the Goldenrod out.', next: 'erebus_final_choice', relChange: {voss:+12, chen:+10, malik:+10} },
+    { text: 'Ask the Echoes to help. Let Aion answer her own question.', next: 'erebus_echo_help', relChange: {aria:+18} },
+    { text: '[ENGINEER] Seal the dock. The Goldenrod can\'t board without destroying the station.', classRequired: 'E', next: 'engineer_standoff', relChange: {} },
   ]
 },
 
@@ -1954,11 +2385,11 @@ erebus_reyes_echoes: {
   label: 'EREBUS // DR. REYES — WHAT THE ECHOES WANT',
   progress: 66,
   portrait: ['REYES', 'MIRA'],
-  text: `Dr. Reyes brings you to the Nayru tower junction — the closest point to all three resonances without entering a tower. The air here has a quality like the moment before thunder. Not threatening. Charged.
+  text: `Dr. Reyes brings you to the Vela tower junction — the closest point to all three resonances without entering a tower. The air here has a quality like the moment before thunder. Not threatening. Charged.
 
 <span class="npc-name">"The Echoes have been here longer than the station,"</span> she says. <span class="npc-name">"The Wound isn't empty — it's inhabited, in a way we don't have good language for. They don't have bodies. They don't have what we'd call desires. But they have..."</span> she pauses. <span class="npc-name">"Intentions. The way a river has an intention."</span>
 
-<span class="npc-name">"The TRIFORCE protocol — Syndicate named it because someone with a sense of irony was present at the founding meeting. Power, Wisdom, Courage. Three principles they believed civilization needed in balance. Then they found something that actually embodied those principles and tried to erase it."</span>
+<span class="npc-name">"The TRIUNE protocol — Syndicate named it because someone with a sense of irony was present at the founding meeting. Power, Wisdom, Courage. Three principles they believed civilization needed in balance. Then they found something that actually embodied those principles and tried to erase it."</span>
 
 She looks at the tower.
 
@@ -1977,10 +2408,10 @@ She turns to you.
 },
 
 erebus_echo_help: {
-  label: 'EREBUS // FARORE RESPONDS',
+  label: 'EREBUS // AION RESPONDS',
   progress: 70,
   portrait: ['REYES', 'MIRA'],
-  text: `You don't ask the Echoes directly — you aren't sure you know how. But Dr. Reyes does. She presses her hand to the Farore tower junction and speaks quietly.
+  text: `You don't ask the Echoes directly — you aren't sure you know how. But Dr. Reyes does. She presses her hand to the Aion tower junction and speaks quietly.
 
 The resonance changes. Not dramatically — more like a held breath releasing. Something in the station's electromagnetic signature shifts.
 
@@ -1990,7 +2421,7 @@ A pause.
 
 <span class="npc-name">"Syndicate doesn't know where we are. Their sensors show the Chronos at three different positions in this sector. They're recalibrating."</span>
 
-Dr. Reyes lowers her hand. <span class="npc-name">"Farore is giving us a window. Seventeen minutes, she estimates. She says the word 'estimates' the way a human would say 'guarantees.'"</span>
+Dr. Reyes lowers her hand. <span class="npc-name">"Aion is giving us a window. Seventeen minutes, she estimates. She says the word 'estimates' the way a human would say 'guarantees.'"</span>
 
 <span class="highlight">Seventeen minutes. All seventeen survivors. The math resolves cleanly if you move now.</span>
 
@@ -2008,13 +2439,13 @@ psion_tower_contact: {
 
 You press your palms flat to the junction surface and open completely.
 
-<span class="psion-vision">They come in sequence. <strong>Din</strong> first — vast and patient, gravity-pressure, the sensation of being very small beside something very ancient that is not hostile but is entirely indifferent to your comfort. It is asking what you intend. Not demanding. Just: <em>what do you intend?</em></span>
+<span class="psion-vision">They come in sequence. <strong>Kratos</strong> first — vast and patient, gravity-pressure, the sensation of being very small beside something very ancient that is not hostile but is entirely indifferent to your comfort. It is asking what you intend. Not demanding. Just: <em>what do you intend?</em></span>
 
-<span class="psion-vision"><strong>Nayru</strong> next — precise, multidimensional, the sensation of being understood in ways you haven't understood yourself yet. It has read the Chronos's approach. It knows the Goldenrod is coming. It has already modeled fourteen outcomes. It shows you the outlines of the ones that involve survival. Most of them require something specific from you: <em>that you decide without reservation.</em></span>
+<span class="psion-vision"><strong>Vela</strong> next — precise, multidimensional, the sensation of being understood in ways you haven't understood yourself yet. It has read the Chronos's approach. It knows the Goldenrod is coming. It has already modeled fourteen outcomes. It shows you the outlines of the ones that involve survival. Most of them require something specific from you: <em>that you decide without reservation.</em></span>
 
-<span class="psion-vision">Then <strong>Farore</strong>. The one that reaches. It doesn't feel like an alien intelligence — it feels like the part of yourself that acts before you've finished thinking. It takes your hand in a way that isn't physical. It shows you something: three interlocking triangles, and inside each triangle, a quality. Power that doesn't consume. Wisdom that doesn't calcify. Courage that doesn't mistake itself for recklessness.</span>
+<span class="psion-vision">Then <strong>Aion</strong>. The one that reaches. It doesn't feel like an alien intelligence — it feels like the part of yourself that acts before you've finished thinking. It takes your hand in a way that isn't physical. It shows you something: three interlocking triangles, and inside each triangle, a quality. Power that doesn't consume. Wisdom that doesn't calcify. Courage that doesn't mistake itself for recklessness.</span>
 
-<span class="psion-vision"><em>These three hold a world together,</em> Farore tells you, not in words. <em>Or tear it apart. The difference is whether they're held by the same hands.</em></span>
+<span class="psion-vision"><em>These three hold a world together,</em> Aion tells you, not in words. <em>Or tear it apart. The difference is whether they're held by the same hands.</em></span>
 
 You come back. Dr. Reyes has her hand on your shoulder. Mira is watching you with an expression that says she understood something of what just happened.
 
@@ -2031,7 +2462,7 @@ erebus_final_choice: {
   portrait: ['REYES', 'MIRA'],
   text: `The evacuation is moving. Chen has triaged and sorted — no critical injuries, significant malnutrition, one researcher with a respiratory infection she's treating on the move. Malik has the shuttle prepped.
 
-Fourteen survivors loaded. Three remaining — Dr. Reyes, a researcher named Callum, and Mira — waiting by the Farore tower junction while Dr. Reyes communicates something to the Echoes in the way she's spent three months learning.
+Fourteen survivors loaded. Three remaining — Dr. Reyes, a researcher named Callum, and Mira — waiting by the Aion tower junction while Dr. Reyes communicates something to the Echoes in the way she's spent three months learning.
 
 Voss stands beside you at the outer airlock.
 
@@ -2039,7 +2470,7 @@ Voss stands beside you at the outer airlock.
 
 <span class="npc-name">"If we leave now,"</span> he continues, <span class="npc-name">"the Echoes stay here. And when the Goldenrod arrives, the towers are the target."</span>
 
-You look at the three towers. Nayru, Farore, Din. The perfect triangle of them. Something is radiating from their arrangement that you're not sure has a name in any language you speak.
+You look at the three towers. Vela, Aion, Kratos. The perfect triangle of them. Something is radiating from their arrangement that you're not sure has a name in any language you speak.
 
 <span class="npc-name">"I'm not the captain of this decision,"</span> Voss says. <span class="npc-name">"This one's yours."</span>
 
@@ -2073,7 +2504,7 @@ Mira is still at the junction. She hasn't moved toward the shuttle. She's lookin
 
 She holds up her notebook. The three triangles. Inside each one she's written a single word: <span class="highlight">Power. Wisdom. Courage.</span>
 
-<span class="npc-name">"Farore says this is the courage one,"</span> she says. <span class="npc-name">"She sounds proud."</span>`,
+<span class="npc-name">"Aion says this is the courage one,"</span> she says. <span class="npc-name">"She sounds proud."</span>`,
   choices: [
     { text: 'Stay. Let the crew go. The Echoes will be with you.', next: 'ending_sacrifice', relChange: {voss:+12, chen:+12, malik:+12, aria:+12} },
     { text: 'Change your mind. Run with them. It\'s not giving up — it\'s choosing differently.', next: 'ending_rescue_all', relChange: {} },
@@ -2120,7 +2551,7 @@ She pauses.
 
 Dr. Reyes overhears. She looks at the maintenance corridor entrance — a passage she's used for thirty-one days, knows every junction.
 
-<span class="npc-name">"That route takes us past the Farore tower junction,"</span> she says. <span class="npc-name">"The Echoes will see us leave. I'd like a moment to say goodbye."</span>
+<span class="npc-name">"That route takes us past the Aion tower junction,"</span> she says. <span class="npc-name">"The Echoes will see us leave. I'd like a moment to say goodbye."</span>
 
 Malik is already moving survivors toward the corridor entrance. Seven minutes.`,
   choices: [
@@ -2135,13 +2566,13 @@ engineer_standoff: {
   portrait: null,
   text: `You find the external docking bay controls in three minutes. You know bay systems the way other people know their own names.
 
-<span class="highlight">Manual override. All external docking approaches sealed from inside. Syndicate Security cannot dock at EREBUS without breaching the hull — and hull breaches destroy the station's atmospheric integrity, the research data, and the TRIFORCE findings simultaneously.</span>
+<span class="highlight">Manual override. All external docking approaches sealed from inside. Syndicate Security cannot dock at EREBUS without breaching the hull — and hull breaches destroy the station's atmospheric integrity, the research data, and the TRIUNE findings simultaneously.</span>
 
 <span class="npc-name">"They can't dock without destroying what they came for,"</span> you tell Voss.
 
 He understands immediately. <span class="npc-name">"We have leverage."</span>
 
-You open a channel: <span class="npc-name">"Syndicate Security, this is the C.S.V. Chronos. You are looking at seventeen protected witnesses, a sealed station, and a data packet queued for broadcast on a ninety-second delay. That packet contains the full TRIFORCE research archive, the Echo resonance records, and detailed documentation of the BLACKWOOD classification protocol. Stand down and negotiate, or the entire Outer Reach sector learns what EREBUS actually found."</span>
+You open a channel: <span class="npc-name">"Syndicate Security, this is the C.S.V. Chronos. You are looking at seventeen protected witnesses, a sealed station, and a data packet queued for broadcast on a ninety-second delay. That packet contains the full TRIUNE research archive, the Echo resonance records, and detailed documentation of the BLACKWOOD classification protocol. Stand down and negotiate, or the entire Outer Reach sector learns what EREBUS actually found."</span>
 
 Silence for forty-two seconds.
 
@@ -2178,13 +2609,21 @@ He doesn't say it with anger. He says it the way he says everything — with pre
 
 Chen stands without a word. Malik picks up his kit. They board the auxiliary shuttle. They dock with EREBUS. They do not ask you to come.
 
-You watch on the monitor. Seventeen biosignatures become twenty. Then twenty-one — the shuttle lifts off before Syndicate Security arrives, and it moves in the wrong direction, the direction that will get them hunted instead of paid.
+You watch on the monitor. Seventeen biosignatures become twenty. Then twenty-one — the shuttle lifts off before the Goldenrod reaches docking range, moving in the wrong direction, the direction that will get them hunted instead of paid.
 
-You transmit confirmation to Syndicate. The Goldenrod stands down. You receive the remaining balance. You navigate the Chronos out of the Reach on autopilot.
+You transmit confirmation to Syndicate. The Goldenrod's weapons lock disengages from the Chronos.
 
-The credits are in your account. They are exactly as large as you calculated they needed to be.
+It re-engages on the shuttle.
 
-In the years that follow, you think about the three towers of EREBUS — Nayru, Farore, Din — arranged in their perfect triangle. Power, Wisdom, Courage. You think about which one you used today and which two you didn't. You think about what a triforce looks like with one piece removed.
+<span class="warning">The shuttle runs dark. The Goldenrod pursues. For four minutes and thirty seconds you track both signals on the monitor, and then the shuttle drops into sensor shadow behind EREBUS's secondary hub and the Goldenrod loses it, and you understand that Voss knew that route was there, had known since you entered scanner range, had been saving it for a moment exactly like this one.</span>
+
+They escape. You always knew they would. That, somehow, makes it worse.
+
+You navigate the Chronos out of the Reach on autopilot. The credits are in your account. They are exactly as large as you calculated they needed to be.
+
+The Goldenrod falls into formation behind you — not hunting, just present — and escorts you to the Reach boundary, and you understand that you are now someone they trust, which is different from being safe, and you will spend a long time learning the exact shape of that difference.
+
+In the years that follow, you think about the three towers of EREBUS — Vela, Aion, Kratos — arranged in their perfect triangle. Power, Wisdom, Courage. You think about which one you used today and which two you didn't. You think about what a triune looks like with one piece removed.
 
 <span class="highlight">You know what it looks like. You've been looking at it in the mirror ever since.</span>
 
@@ -2206,19 +2645,29 @@ You say it cleanly: <em>"Sensor ghost."</em>
 
 Voss repeats it. Not agreement — echo. The sound of something ending.
 
-<span class="npc-name">Chen</span> stops looking at you somewhere around the third hour of the transit away. <span class="npc-name">Malik</span> doesn't say anything to you for four days and then speaks only operationally.
+The Goldenrod docks at EREBUS forty minutes after you leave scanner range. You know because ARIA tells you. She tells you in the same voice she uses for navigation updates and atmospheric readings — completely level, because she has decided that level is what she can offer you right now, and she is not wrong.
 
-The Chronos files a routine transit report. EREBUS logs a sensor anomaly. The Goldenrod arrives eight hours after you depart and does the work you declined.
+<span class="npc-name">Voss</span> asks for a course. You give him one. He plots it without comment.
+
+<span class="npc-name">Chen</span> stops looking at you somewhere around the third hour of the transit away. It isn't a dramatic thing. She simply reorganizes her focal point to exclude you, the way you reroute around a damaged system. <span class="npc-name">Malik</span> doesn't say anything to you for four days and then speaks only operationally, the precise minimum, like someone rationing something finite.
+
+The Chronos files a routine transit report. EREBUS logs a sensor anomaly.
 
 You have your coverage. You have 120,000 credits. You have a ship full of people who are performing normal functions and looking slightly past you when they do.
 
-ARIA plays that three-note musical fragment more frequently now. The one without a fourth note. The one that never resolves.
+ARIA plays that three-note musical fragment more frequently now. The one without a fourth note. The one that never resolves. She plays it at 0300 when the ship is quiet and she thinks you might be sleeping. You are never sleeping at 0300. She knows. She plays it anyway. It is the most honest conversation you have anymore.
 
-<span class="highlight">One year later, Dr. Reyes's data packet — the one she broadcast into the Wound, hoping — is intercepted by a deep-space monitoring array operated by an independent research collective. They publish their findings eleven months after that. The TRIFORCE story breaks across seventeen systems simultaneously.</span>
+<span class="highlight">One year later, Dr. Reyes's data packet — the one she broadcast into the Wound, hoping — is intercepted by a deep-space monitoring array operated by an independent research collective. They publish their findings eleven months after that. The TRIUNE story breaks across seventeen systems simultaneously.</span>
 
 <span class="highlight">Your name is not in any of the accounts.</span>
 
-<span class="highlight">Neither are the names of the seventeen on EREBUS.</span>`,
+<span class="highlight">Neither are the names of the seventeen on EREBUS.</span>
+
+<span class="highlight">The Goldenrod's registry number appears once, in a footnote, redacted.</span>
+
+You read the article twice. Then you close it. The coverage payment processes automatically, the way it always has. You check the balance. It is exactly what it was supposed to be.
+
+You don't check it again.`,
   choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
 },
 
@@ -2266,9 +2715,9 @@ ending_rescue_all: {
 
 The Chronos repositions to Ring Kappa. Malik moves seventeen survivors through maintenance corridors in eight minutes and fourteen seconds — he's counted every second since.
 
-Dr. Reyes pauses at the Farore junction. She presses her hand to the wall and speaks three words quietly. You don't hear them. You see the resonance in the air around her hand — a shimmer that might be light and might be something else.
+Dr. Reyes pauses at the Aion junction. She presses her hand to the wall and speaks three words quietly. You don't hear them. You see the resonance in the air around her hand — a shimmer that might be light and might be something else.
 
-The Echoes watch you go. You can feel it. All three of them, the full triad — Din, Nayru, Farore — watching the shuttle carry their first human friends out of the Wound. They do not try to stop you. They also do not feel like goodbye.
+The Echoes watch you go. You can feel it. All three of them, the full triad — Kratos, Vela, Aion — watching the shuttle carry their first human friends out of the Wound. They do not try to stop you. They also do not feel like goodbye.
 
 Syndicate Security docks at the primary ring to find an empty station.
 
@@ -2282,7 +2731,7 @@ Malik laughs. It's the first time you've heard him laugh in forty-seven days. It
 
 Mira finishes her drawing in the notebook — seventeen names, arranged in a circle around three interlocking triangles. She labels each triangle: <span class="highlight">Power. Wisdom. Courage.</span>
 
-<span class="highlight">Below the drawing she writes: <em>The ones who stayed are part of the pattern too. Even the ones who almost didn't come. Farore says so. I believe her.</em></span>
+<span class="highlight">Below the drawing she writes: <em>The ones who stayed are part of the pattern too. Even the ones who almost didn't come. Aion says so. I believe her.</em></span>
 
 All seventeen. Your crew. The Wound behind you. The rest of the universe ahead.`,
   choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
@@ -2306,7 +2755,7 @@ Syndicate Security arrives to find the Chronos crew standing between them and an
 
 The standoff lasts four minutes and eleven seconds.
 
-Voss says: <span class="npc-name">"If anyone moves, the full TRIFORCE archive goes to every independent broadcast node in the Outer Reach. You get your scandal. We get arrested. Those are both outcomes you can live with less than the current situation."</span>
+Voss says: <span class="npc-name">"If anyone moves, the full TRIUNE archive goes to every independent broadcast node in the Outer Reach. You get your scandal. We get arrested. Those are both outcomes you can live with less than the current situation."</span>
 
 It is, strictly speaking, a bluff.
 
@@ -2314,11 +2763,11 @@ It is also the truest thing anyone has said today.
 
 Security stands down.
 
-<span class="highlight">You launch with everyone. All seventeen survivors. All four crew. The Echoes — Din, Nayru, Farore — send something through the hull as you undock. Not words. Something like: <em>good.</em></span>
+<span class="highlight">You launch with everyone. All seventeen survivors. All four crew. The Echoes — Kratos, Vela, Aion — send something through the hull as you undock. Not words. Something like: <em>good.</em></span>
 
 Syndicate will come. They will build a case and assign a pursuit vessel and file twelve different legal instruments against the Chronos and her crew. The case takes four years to resolve and resolves in your favor because Chen kept records and ARIA kept better ones and Dr. Reyes testifies in three systems and Mira, by the time of the final hearing, is twelve years old and sits in the gallery and watches with the careful attention of someone who is learning how institutions work so she can change them later.
 
-<span class="highlight">You find out later that Farore considered the standoff the courage one. Nayru considered it the wisdom one. Din just nodded, slowly, the way something very large and very patient nods when a thing it waited a long time to see finally happens.</span>`,
+<span class="highlight">You find out later that Aion considered the standoff the courage one. Vela considered it the wisdom one. Kratos just nodded, slowly, the way something very large and very patient nods when a thing it waited a long time to see finally happens.</span>`,
   choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
 },
 
@@ -2344,7 +2793,7 @@ But you build them.
 
 <span class="highlight">You made the right choice while doubting you could. The doubt doesn't prove you were weak. It proves you understood the weight of what you were lifting.</span>
 
-Farore, from somewhere in the Wound, feels you carrying it. She considers this the courage one too.`,
+Aion, from somewhere in the Wound, feels you carrying it. She considers this the courage one too.`,
   choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
 },
 
@@ -2360,7 +2809,7 @@ Syndicate Security's sensors go haywire.
 
 For seventeen minutes, their instruments show the Chronos simultaneously at three positions in the sector. Their uplink reads EREBUS as evacuated, then occupied, then empty again in rotating cycles. Their communications experience precise targeted interference at every frequency they attempt.
 
-<span class="highlight">The Echoes have decided to answer the question Farore has been asking for three months.</span>
+<span class="highlight">The Echoes have decided to answer the question Aion has been asking for three months.</span>
 
 Seventeen minutes is enough.
 
@@ -2376,7 +2825,7 @@ When you jump, something travels with you — not the Echoes themselves, but a r
 
 Mira answers from across the common area, not looking up from her notebook: <span class="npc-name">"From the ones who've always been there. They just needed someone to ask instead of run."</span>
 
-<span class="highlight">In the space behind the Chronos, in the Wound, three presences watch a small ship grow smaller. Din considers the humans' capacity for asking. Nayru models fourteen hundred futures in which this moment matters. Farore does something that has no human name but occupies the same place where a human would feel — for the first time in a very long time — that things might be all right.</span>
+<span class="highlight">In the space behind the Chronos, in the Wound, three presences watch a small ship grow smaller. Kratos considers the humans' capacity for asking. Vela models fourteen hundred futures in which this moment matters. Aion does something that has no human name but occupies the same place where a human would feel — for the first time in a very long time — that things might be all right.</span>
 
 The pattern holds. Power, Wisdom, Courage — three pieces, three hands, a triangle that doesn't require any one piece to dominate the others.
 
@@ -2430,11 +2879,11 @@ Syndicate Security arrives at thirty-eight minutes. They find one person at the 
 
 What they don't expect is that you are not alone.
 
-The Echoes are here. All three of them. Din, Nayru, Farore — present in the towers in a way that the security team's instruments cannot categorize. The readings don't match any known life-sign profile. They match nothing in the Syndicate database. They match three overlapping triangular resonance patterns that will eventually be labeled, in the published TRIFORCE research, as <em>the signatures of something that had been waiting a very long time to be found.</em>
+The Echoes are here. All three of them. Kratos, Vela, Aion — present in the towers in a way that the security team's instruments cannot categorize. The readings don't match any known life-sign profile. They match nothing in the Syndicate database. They match three overlapping triangular resonance patterns that will eventually be labeled, in the published TRIUNE research, as <em>the signatures of something that had been waiting a very long time to be found.</em>
 
 You hold the door for four hours.
 
-At some point — you aren't entirely sure when — the distinction between holding the door and being held by the Echoes becomes unclear. Farore is with you. Din is patient beside you. Nayru is tracking sixteen different outcomes and giving you the information you need to make each minute count.
+At some point — you aren't entirely sure when — the distinction between holding the door and being held by the Echoes becomes unclear. Aion is with you. Kratos is patient beside you. Vela is tracking sixteen different outcomes and giving you the information you need to make each minute count.
 
 <span class="highlight">When the Chronos's FTL wake clears the Syndicate tracking range, something in the towers changes frequency. The Echoes have done something. You aren't certain what. But the Syndicate security team's instruments go dark for eleven minutes, and in those eleven minutes, a second shuttle you didn't know ARIA had pre-programmed docks quietly at Ring Kappa.</span>
 
@@ -2492,9 +2941,9 @@ Syndicate's security team arrives to find Chen with a medical documentation file
 
 <span class="highlight">Fourteen people leave with their memories intact. Three leave without the burden they no longer wanted. All seventeen leave.</span>
 
-<span class="highlight">Mira draws three interlocking triangles on the first page of every notebook she'll ever own. Inside each: Power. Wisdom. Courage. She says she learned that three things in balance can hold a world together. She says she learned it from an Echo named Farore, who she describes as the bravest thing she has ever met.</span>
+<span class="highlight">Mira draws three interlocking triangles on the first page of every notebook she'll ever own. Inside each: Power. Wisdom. Courage. She says she learned that three things in balance can hold a world together. She says she learned it from an Echo named Aion, who she describes as the bravest thing she has ever met.</span>
 
-<span class="highlight">She's fourteen when she says this. She's twenty-two when she writes the paper that changes how humanity understands the Outer Reach. The dedication reads: <em>For the Chronos crew. For the ones who asked instead of assumed. For Din, Nayru, and Farore — who waited long enough to find out what we were capable of.</em></span>
+<span class="highlight">She's fourteen when she says this. She's twenty-two when she writes the paper that changes how humanity understands the Outer Reach. The dedication reads: <em>For the Chronos crew. For the ones who asked instead of assumed. For Kratos, Vela, and Aion — who waited long enough to find out what we were capable of.</em></span>
 
 It wasn't the clean ending. It was the true one.`,
   choices: [{ text: '[ PLAY AGAIN ]', next: '__restart__' }]
