@@ -113,12 +113,21 @@ body::after {
   border-bottom: 1px solid #1a1a1a;
   transition: box-shadow 0.4s;
 }
+#portrait-environment {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3;
+  z-index: 0;
+  transition: opacity 0.6s ease;
+}
 #portrait-frame > div { position: absolute; inset: 0; }
 #portrait-frame > div svg {
   width: 100%; height: 100%; display: block;
   transition: opacity 0.3s ease;
   object-fit: contain;
   object-position: center top;
+  z-index: 2;
 }
 #portrait-frame.swap > div svg { opacity: 0; }
 #portrait-scan {
@@ -138,7 +147,7 @@ body::after {
 }
 #portrait-name {
   font-size: 9px; letter-spacing: 2px;
-  color: var(--cyan); text-shadow: var(--glow-cyan); line-height:1.2;
+  color: var(--cyan); line-height:1.2;
 }
 #portrait-class {
   font-size: 8px; letter-spacing: 1px;
@@ -166,10 +175,19 @@ body::after {
   min-height: 0;
 }
 #portrait-frame-2 > div { position: absolute; inset: 0; }
+#portrait-environment-2 {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3;
+  z-index: 0;
+  transition: opacity 0.6s ease;
+}
 #portrait-frame-2 > div svg {
   width: 100%; height: 100%; display: block;
   object-fit: contain;
   object-position: center top;
+  z-index: 2;
 }
 #portrait-scan-2 {
   position: absolute; left:0; width:100%; height:3px;
@@ -188,7 +206,7 @@ body::after {
 }
 #portrait-name-2 {
   font-size: 9px; letter-spacing: 2px;
-  color: var(--cyan); text-shadow: var(--glow-cyan); line-height:1.2;
+  color: var(--cyan); line-height:1.2;
 }
 #portrait-frame-2.swap { opacity: 0; transition: opacity 0.18s; }
 #portrait-frame-2.active { box-shadow: inset 0 0 0 1px var(--cyan), 0 0 10px #00f5ff33; }
@@ -980,6 +998,7 @@ padding-bottom: env(safe-area-inset-bottom);
     <!-- Portrait -->
     <div id="portrait-panel">
       <div id="portrait-frame">
+        <div id="portrait-environment"></div>
         <div id="portrait-scan"></div>
         <div id="portrait-vignette"></div>
         <div id="portrait-nameplate">
@@ -988,6 +1007,7 @@ padding-bottom: env(safe-area-inset-bottom);
         </div>
       </div>
       <div id="portrait-frame-2">
+        <div id="portrait-environment-2"></div>
         <div id="portrait-scan-2"></div>
         <div id="portrait-vignette-2"></div>
         <div id="portrait-nameplate-2">
@@ -1007,27 +1027,9 @@ padding-bottom: env(safe-area-inset-bottom);
     </div>
     <!-- Relationships -->
     <div id="rel-panel">
-      <div class="rel-label">// CREW TRUST</div>
-      <div class="rel-row" id="rel-aria">
-        <div class="rel-name">ARIA <span id="aria-val">50</span></div>
-        <div class="rel-bar-bg"><div class="rel-bar mid" id="aria-bar" style="width:50%"></div></div>
-      </div>
-      <div class="rel-row" id="rel-chen">
-        <div class="rel-name">CHEN <span id="chen-val">50</span></div>
-        <div class="rel-bar-bg"><div class="rel-bar mid" id="chen-bar" style="width:50%"></div></div>
-      </div>
-      <div class="rel-row" id="rel-malik">
-        <div class="rel-name">MALIK <span id="malik-val">50</span></div>
-        <div class="rel-bar-bg"><div class="rel-bar mid" id="malik-bar" style="width:50%"></div></div>
-      </div>
-      <div class="rel-row" id="rel-voss">
-        <div class="rel-name">VOSS <span id="voss-val">50</span></div>
-        <div class="rel-bar-bg"><div class="rel-bar mid" id="voss-bar" style="width:50%"></div></div>
-      </div>
-      <div class="rel-label">// LOYALTY</div>
-      <div class="rel-row">
-        <div class="rel-name">CORPORATE <span id="corp-val">50</span></div>
-        <div class="rel-bar-bg"><div class="rel-bar corp" id="corp-bar" style="width:50%"></div></div>
+      <div class="rel-label">// UNLOCKED PATHS</div>
+      <div id="unlocked-paths" style="font-size:10px;color:#888;letter-spacing:1px;line-height:1.8;">
+        <!-- Dynamically populated based on relationships -->
       </div>
       <div class="rel-label">// PATH</div>
       <div id="path-indicator" style="font-size:10px;color:#444;letter-spacing:1px;line-height:1.6;">UNDECIDED</div>
@@ -1234,6 +1236,7 @@ corporate_morning: {
   label: 'DAY 47 // 0640 HOURS — THE CONFIRMATION',
   progress: 16,
   portrait: 'MALIK',
+  environment: 'chronos-galley',
   text: `You type the confirmation. Your hands don't shake.
 
 <span class="highlight">120,000 standard. Real. Immediate. The funds clear before your message even leaves the buffer.</span>
@@ -1541,6 +1544,8 @@ chen_full_opinion: {
   label: 'DAY 47 // MEDICAL BAY — CHEN\'S ANSWER',
   progress: 22,
   portrait: 'CHEN',
+  relationshipRequired: { chen: 70 },
+  relationshipText: 'Chen will only share this with someone she truly trusts.',
   text: `She's quiet for long enough that you think she won't answer. Then:
 
 <span class="npc-name">"I'd go to EREBUS."</span>
@@ -1818,6 +1823,8 @@ voss_quiet_scene: {
   label: 'DAY 47 // NAVIGATOR\'S TABLE — 0312',
   progress: 25,
   portrait: 'VOSS',
+  relationshipRequired: { voss: 70 },
+  relationshipText: 'Voss only opens up to those he trusts with his darkest truths.',
   text: `You find him where he always is when he can't sleep: at the navigator's table with a pencil and no particular destination to plot. The Reach charts are spread out but he isn't really reading them. He's just doing the thing his hands know how to do while his mind works on something harder.
 
 He looks up. Doesn't look surprised.
@@ -1908,6 +1915,8 @@ aria_interiority: {
   label: 'DAY 47 // SYSTEMS CORE — 0941',
   progress: 34,
   portrait: 'ARIA',
+  relationshipRequired: { aria: 70 },
+  relationshipText: 'ARIA must trust you more to share her deepest thoughts.',
   text: `The systems core is the smallest room on the Chronos — a narrow corridor of servers and heat sinks that smells like warm electronics and the particular ozone of something thinking very hard. ARIA's primary interface terminal is here. You've been in this room dozens of times to run queries, pull logs, authorize overrides.
 
 You sit down in front of the terminal. You don't open a query.
@@ -2600,6 +2609,8 @@ malik_safi_moment: {
   label: 'EREBUS // MALIK — REGISTRY MATCH',
   progress: 63,
   portrait: 'MALIK',
+  relationshipRequired: { malik: 70 },
+  relationshipText: 'Malik only opens his heart to those who understand what Safi means to him.',
   text: `You watch it happen.
 
 Mira looks at Malik with the frank curiosity of an eight-year-old who has been living next to alien intelligences for a month and has decided that what matters is simply: this person, here, now.
@@ -2840,6 +2851,7 @@ erebus_final_choice: {
   label: 'EREBUS // T-MINUS SIX HOURS',
   progress: 68,
   portrait: ['REYES', 'MIRA'],
+  environment: 'erebus-hub',
   text: `The evacuation is moving. Chen has triaged and sorted — no critical injuries, significant malnutrition, one researcher with a respiratory infection she's treating on the move. Malik has the shuttle prepped.
 
 Fourteen survivors loaded. Three remaining — Dr. Reyes, a researcher named Callum, and Mira — waiting by the Aion tower junction while Dr. Reyes communicates something to the Echoes in the way she's spent three months learning.
@@ -2859,6 +2871,7 @@ Mira is at the junction, notebook in hand. She's drawn the three interlocking tr
     { text: 'Get everyone on the shuttle. The Echoes can survive Syndicate — they survived longer.', next: 'ending_rescue_all', relChange: {voss:+10, chen:+10} },
     { text: 'Ask Dr. Reyes if the Echoes can buy us time. Let them help if they choose to.', next: 'erebus_echo_help', relChange: {aria:+12} },
     { text: 'Stay behind. Everyone else leaves. I hold the door.', next: 'erebus_noble_sacrifice', relChange: {voss:+8, chen:+8, malik:+8} },
+    { text: 'Captain. You hold the door. I get them out.', next: 'ending_rescue_sacrifice', relChange: {voss:+22, chen:+18, malik:+18}, danger: true },
     { text: '[WITNESS] Watch what happens when the Goldenrod arrives at an empty station.', next: 'dusek_meets_echoes', relChange: {} },
   ]
 },
@@ -2867,6 +2880,7 @@ dusek_meets_echoes: {
   label: 'EREBUS // SEVEN HOURS LATER — GOLDENROD DOCKING',
   progress: 70,
   portrait: 'DUSEK',
+  environment: 'erebus-hub',
   text: `You stay. You don't board the shuttle. You stay in the central hub and watch the Chronos undock and burn for FTL space. Seventeen survivors. Your crew. Gone into the Wound where Syndicate can't follow in time.
 
 The towers hum. The Echoes are still here. They have always been here.
@@ -3646,7 +3660,7 @@ function setupClassUI() {
   document.getElementById('portrait-class').textContent = `[ ${cls.name} ]`;
   document.getElementById('portrait-class').style.color = cls.color;
   // Render player portrait immediately
-  updatePortrait(null);
+  updatePortrait(null, 'chronos-bridge');
   updateAbilityDisplay();
 }
 
@@ -3660,6 +3674,23 @@ function goToScene(sceneId) {
   if (sceneId === '__restart__') { restartGame(); return; }
   const scene = SCENES[sceneId];
   if (!scene) { console.error('Missing scene:', sceneId); return; }
+
+  // Check relationship requirements
+  if (scene.relationshipRequired) {
+    const unmet = Object.entries(scene.relationshipRequired).find(([char, threshold]) => {
+      return (GS.rel[char] || 50) < threshold;
+    });
+    if (unmet) {
+      // Show blocked scene message
+      document.getElementById('scene-label').textContent = 'ACCESS DENIED';
+      document.getElementById('choices-area').innerHTML = '';
+      const msg = scene.relationshipText || 'You need to build more trust to access this scene.';
+      const storyEl = document.getElementById('story-text');
+      storyEl.innerHTML = `<span style="color:#ff6655;">${msg}</span><br><br><em style="color:#666;">[ This scene unlocks at higher trust levels ]</em>`;
+      storyEl.classList.add('fade-in');
+      return;
+    }
+  }
 
   GS.currentScene = sceneId;
   GS.history.push(sceneId);
@@ -3675,7 +3706,7 @@ function goToScene(sceneId) {
   document.getElementById('progress-bar').style.width = (scene.progress || 0) + '%';
 
   // Portrait
-  updatePortrait(scene.portrait);
+  updatePortrait(scene.portrait, scene.environment);
 
   // Clear choices
   document.getElementById('choices-area').innerHTML = '';
@@ -3688,7 +3719,7 @@ function goToScene(sceneId) {
 
   typeText(storyHtml, () => {
     buildChoices(scene);
-    updateRelBars();
+    updateUnlockedPaths();
     updatePathIndicator();
     updateAbilityDisplay();
     autoSave();
@@ -3776,26 +3807,71 @@ function handleChoice(choice, scene) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// RELATIONSHIP BARS
+// UNLOCKED PATHS
 // ═══════════════════════════════════════════════════════════════════
-function updateRelBars() {
-  const names = ['aria','chen','malik','voss','corp'];
-  names.forEach(name => {
-    const val = GS.rel[name] || 50;
-    const bar = document.getElementById(name + '-bar');
-    const valEl = document.getElementById(name + '-val');
-    if (!bar) return;
-    bar.style.width = val + '%';
-    bar.className = 'rel-bar ' + (val >= 70 ? 'high' : val >= 40 ? 'mid' : 'low');
-    if (name === 'corp') bar.className = 'rel-bar corp';
-    if (valEl) valEl.textContent = val;
-  });
+function updateUnlockedPaths() {
+  const aria = GS.rel.aria || 50;
+  const chen = GS.rel.chen || 50;
+  const malik = GS.rel.malik || 50;
+  const voss = GS.rel.voss || 50;
+  const corp = GS.rel.corp || 50;
+  
+  const paths = [];
+  
+  // ARIA paths
+  if (aria >= 70) paths.push('✦ ARIA INTERIORITY');
+  if (aria >= 60) paths.push('✦ ARIA SPEAKS FIRST');
+  
+  // CHEN paths
+  if (chen >= 70) paths.push('✦ CHEN FULL OPINION');
+  if (chen >= 60) paths.push('✦ CHEN CONFIDE');
+  
+  // MALIK paths
+  if (malik >= 70) paths.push('✦ MALIK SAFI MOMENT');
+  if (malik >= 60) paths.push('✦ MALIK TRUST');
+  
+  // VOSS paths
+  if (voss >= 70) paths.push('✦ VOSS QUIET SCENE');
+  if (voss >= 60) paths.push('✦ VOSS CONFIDE');
+  
+  // Corporate paths
+  if (corp <= 30) paths.push('⚠ CORPORATE SUSPECT');
+  if (corp >= 70) paths.push('✦ CORPORATE FAVOR');
+  
+  // Echo/Experiment paths
+  if (GS.playerClass === 'S' || GS.playerClass === 'X') {
+    if (aria >= 60) paths.push('✦ ECHO CONTACT READY');
+  }
+  
+  const pathsEl = document.getElementById('unlocked-paths');
+  if (pathsEl) {
+    pathsEl.innerHTML = paths.length > 0 
+      ? paths.join('<br>')
+      : '<span style="color:#444;">Build trust to unlock paths...</span>';
+  }
 }
+
 
 
 // ═══════════════════════════════════════════════════════════════════
 // PORTRAIT LIBRARY
 // ═══════════════════════════════════════════════════════════════════
+
+// Environment backgrounds for scenes
+const ENVIRONMENT_BACKGROUNDS = {
+  // Ships
+  'chronos-bridge': 'linear-gradient(135deg, rgba(10,40,50,0.8) 0%, rgba(5,20,30,0.9) 100%), url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23112233" width="100" height="100"/><line x1="10" y1="30" x2="90" y2="30" stroke="%23004488" stroke-width="0.5" opacity="0.3"/><line x1="10" y1="50" x2="90" y2="50" stroke="%23004488" stroke-width="0.5" opacity="0.3"/><line x1="10" y1="70" x2="90" y2="70" stroke="%23004488" stroke-width="0.5" opacity="0.3"/></svg>\')',
+  'chronos-galley': 'linear-gradient(135deg, rgba(20,25,20,0.8) 0%, rgba(15,15,10,0.9) 100%), url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23141410" width="100" height="100"/><circle cx="30" cy="30" r="3" fill="%23556655" opacity="0.4"/><circle cx="70" cy="60" r="2" fill="%23556655" opacity="0.3"/></svg>\')',
+  
+  // EREBUS
+  'erebus-hub': 'linear-gradient(135deg, rgba(40,30,20,0.8) 0%, rgba(20,15,10,0.9) 100%), url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%231a0f0a" width="100" height="100"/><polygon points="50,10 90,60 50,90 10,60" fill="none" stroke="%23665544" stroke-width="0.5" opacity="0.3"/></svg>\')',
+  'erebus-tower': 'linear-gradient(135deg, rgba(50,40,30,0.8) 0%, rgba(30,20,10,0.9) 100%), url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23886644" stroke-width="0.5" opacity="0.2"/></pattern></defs><rect width="100" height="100" fill="%231a0f0a"/><rect width="100" height="100" fill="url(%23grid)"/></svg>\')',
+  'erebus-research': 'linear-gradient(135deg, rgba(30,35,40,0.8) 0%, rgba(15,20,25,0.9) 100%), url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%230f1419" width="100" height="100"/><line x1="20" y1="40" x2="80" y2="40" stroke="%23335566" stroke-width="0.5" opacity="0.3"/><line x1="20" y1="60" x2="80" y2="60" stroke="%23335566" stroke-width="0.5" opacity="0.3"/><circle cx="50" cy="50" r="8" fill="none" stroke="%23335566" stroke-width="0.5" opacity="0.2"/></svg>\')',
+  
+  // Goldenrod
+  'goldenrod-bridge': 'linear-gradient(135deg, rgba(60,20,20,0.8) 0%, rgba(40,10,10,0.9) 100%), url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23280a0a" width="100" height="100"/><rect x="15" y="35" width="70" height="30" fill="none" stroke="%23664444" stroke-width="0.5" opacity="0.3"/></svg>\')',
+};
+
 const IMAGE_PORTRAITS = {
   // Original NPCs
   ARIA: 'assets/aria_portrait.png',
@@ -3838,7 +3914,7 @@ function getPortraitImage(key) {
 }
 
 
-function updatePortrait(npcName) {
+function updatePortrait(npcName, environment) {
   // Normalise: accept string | array | null
   const keys = npcName
     ? (Array.isArray(npcName) ? npcName : [npcName])
@@ -3852,8 +3928,19 @@ function updatePortrait(npcName) {
   const panel = document.getElementById('portrait-panel');
   const frame1 = document.getElementById('portrait-frame');
   const frame2 = document.getElementById('portrait-frame-2');
+  const env1 = document.getElementById('portrait-environment');
+  const env2 = document.getElementById('portrait-environment-2');
   const nameEl  = document.getElementById('portrait-name');
   const name2El = document.getElementById('portrait-name-2');
+
+  // Apply environment background
+  if (environment && ENVIRONMENT_BACKGROUNDS[environment]) {
+    env1.style.backgroundImage = ENVIRONMENT_BACKGROUNDS[environment];
+    env2.style.backgroundImage = ENVIRONMENT_BACKGROUNDS[environment];
+  } else {
+    env1.style.backgroundImage = '';
+    env2.style.backgroundImage = '';
+  }
 
   // Toggle dual mode
   if (keys.length >= 2) {
@@ -3870,7 +3957,7 @@ function updatePortrait(npcName) {
 
     const svgWrap = document.createElement('div');
     svgWrap.className = 'portrait-svg-wrap';
-    svgWrap.style.cssText = 'position:absolute;inset:0;z-index:0;';
+    svgWrap.style.cssText = 'position:absolute;inset:0;z-index:2;';
     const portraitKey = keys[0] || `PLAYER_${GS.playerClass}`;
     const img = getPortraitImage(portraitKey);
     svgWrap.appendChild(img);
@@ -3894,7 +3981,7 @@ function updatePortrait(npcName) {
 
       const svgWrap2 = document.createElement('div');
       svgWrap2.className = 'portrait-svg-wrap';
-      svgWrap2.style.cssText = 'position:absolute;inset:0;z-index:0;';
+      svgWrap2.style.cssText = 'position:absolute;inset:0;z-index:2;';
       const img2 = getPortraitImage(keys[1]);
       svgWrap2.appendChild(img2);
       frame2.insertBefore(svgWrap2, frame2.firstChild);
@@ -3977,7 +4064,7 @@ function restartGame() {
   document.getElementById('quiz-submit-btn').disabled = true;
   Object.keys(quizAnswers).forEach(k => delete quizAnswers[k]);
 
-  updateRelBars();
+  updateUnlockedPaths();
 }
 
 // ═══════════════════════════════════════════════════════════════════
