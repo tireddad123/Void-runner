@@ -125,8 +125,8 @@ body::after {
 #portrait-frame > div svg {
   width: 100%; height: 100%; display: block;
   transition: opacity 0.3s ease;
-  object-fit: contain;
-  object-position: center top;
+  object-fit: cover;
+  object-position: top center;
   z-index: 2;
 }
 #portrait-frame.swap > div svg { opacity: 0; }
@@ -185,8 +185,8 @@ body::after {
 }
 #portrait-frame-2 > div svg {
   width: 100%; height: 100%; display: block;
-  object-fit: contain;
-  object-position: center top;
+  object-fit: cover;
+  object-position: top center;
   z-index: 2;
 }
 #portrait-scan-2 {
@@ -1182,7 +1182,7 @@ You open the message. You already know it will be about EREBUS. You already know
 psion_read_message: {
   label: 'DAY 47 // EMPATHIC LAYER — SYNDICATE ENCRYPTION',
   progress: 9,
-  portrait: ['ARIA', 'REYES'],
+  portrait: 'ARIA',
   text: `You press two fingers to the terminal glass and let your awareness sink beneath the words.
 
 <span class="psion-vision">Corporate communications have a texture — bureaucratic, self-insulating, emotionally sanitized. This one broke before it was sealed. Whoever wrote this was shaking. Not metaphorically. You can feel the physical tremor encoded in their keystroke rhythm, fossilized in the data. Someone sat in a room somewhere and typed this message with their hands unsteady.</span>
@@ -1881,7 +1881,7 @@ He picks up the pencil again. Begins erasing a route annotation.
 neutral_character_time: {
   label: 'DAY 47 // MESS HALL — ONE HOUR OUT',
   progress: 32,
-  portrait: 'REYES',
+  portrait: null,
   text: `An hour before scanner range. The crew in the mess hall by coincidence or by instinct — the Chronos is small enough that most things happen by both.
 
 <span class="npc-name">Malik</span> is making coffee with the last of the real grounds. He does this for significant occasions and says nothing about it.
@@ -2006,7 +2006,7 @@ She pauses for exactly one second.
 psion_signal_read: {
   label: 'DAY 47 // THE SIGNAL — FULL CONTACT',
   progress: 35,
-  portrait: ['REYES', 'MIRA'],
+  portrait: null,
   text: `You let go of every filter. The signal pours in.
 
 <span class="psion-vision">The woman's voice first — Dr. Reyes — exhausted but steady, the voice of someone who has been keeping everyone else alive through sheer refusal to be anything other than calm. Seventeen people. Their emotional states hit you in sequence like a chord: fear, hope, hunger, boredom, the specific despair of waiting for something that may not come. The child again — curious, fascinated, not afraid because she doesn't fully understand, or perhaps because she understands something the adults don't.</span>
