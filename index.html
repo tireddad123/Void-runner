@@ -117,6 +117,8 @@ body::after {
 #portrait-frame > div svg {
   width: 100%; height: 100%; display: block;
   transition: opacity 0.3s ease;
+  object-fit: contain;
+  object-position: center top;
 }
 #portrait-frame.swap > div svg { opacity: 0; }
 #portrait-scan {
@@ -164,6 +166,11 @@ body::after {
   min-height: 0;
 }
 #portrait-frame-2 > div { position: absolute; inset: 0; }
+#portrait-frame-2 > div svg {
+  width: 100%; height: 100%; display: block;
+  object-fit: contain;
+  object-position: center top;
+}
 #portrait-scan-2 {
   position: absolute; left:0; width:100%; height:3px;
   background: linear-gradient(transparent, rgba(0,245,255,0.18), transparent);
@@ -1108,18 +1115,18 @@ const SCENES = {
 // ════════════════════════════════════════════════════════════════
 
 start: {
-  label: 'DAY 47 // C.S.V. CHRONOS // 0600 SHIP-TIME // NIGHT WATCH',
+  label: 'DAY 47 // C.S.V. CHRONOS // 0600 SHIP-TIME',
   progress: 5,
   portrait: null,
   text: `Your cryopod hisses open and you remember the dark.
 
 Forty-seven days in the Outer Reach. The ship is quiet — that specific kind of quiet where you can hear the recycled air moving. Your crewmates are asleep: Captain Voss in his quarters, Chen in medical, Malik in engineering. ARIA is distributed through the ship like breath.
 
-You are the Pilot. You have the watch.
+You are awake. You are always first awake.
 
-During night watch, you are the authority — the one who makes calls if something breaks, if something goes wrong, if something requires immediate decision before the captain wakes. It's a responsibility the Chronos crew trusts you with.
+Your terminal has a message. <span class="warning">⚠ SYNDICATE ENCRYPTION — PRIORITY ALPHA — EYES ONLY</span>
 
-Your terminal has a message. <span class="warning">⚠ SYNDICATE ENCRYPTION — PRIORITY ALPHA — EYES ONLY — PILOT AUTHORIZATION REQUIRED</span>
+The routing header catches your attention before the content does. The message wasn't sent to Captain Voss. It was sent to you. Specifically to you. Buried in the metadata: <em>BYPASS CAPTAIN VOSS — SEND DIRECTLY TO CREW ROSTER MEMBER.</em>
 
 The words don't change when you read them a second time.
 
@@ -1127,7 +1134,7 @@ The words don't change when you read them a second time.
 
 <span class="highlight">Category Zero.</span> The designation doesn't appear in any manual. But you've heard it whispered — in docking bars, in dark corridors. It's what Syndicate calls something that breaks their classification system. Something that shouldn't exist.
 
-Syndicate is counting on you to decide before the captain wakes. Before you have to explain it to anyone.
+But the real message is in the routing: Syndicate doesn't trust your captain with this order. They think he'll refuse. So they're asking you instead — betting that you'll decide differently when you're alone with the choice.
 
 Through the forward glass, EREBUS is a pale smear of light, still four hours out.
 
@@ -1224,9 +1231,9 @@ You sit with that for a moment. The math of complicity.`,
 // ════════════════════════════════════════════════════════════════
 
 corporate_morning: {
-  label: 'DAY 47 // 0640 HOURS — PILOT AUTHORITY',
+  label: 'DAY 47 // 0640 HOURS — THE CONFIRMATION',
   progress: 16,
-  portrait: null,
+  portrait: 'MALIK',
   text: `You type the confirmation. Your hands don't shake.
 
 <span class="highlight">120,000 standard. Real. Immediate. The funds clear before your message even leaves the buffer.</span>
@@ -1237,17 +1244,17 @@ You are satisfied by nothing.
 
 The galley smells normal — recycled air, the generic warmth of the ship's systems. Malik is at the table with his letter from his daughter — the same one, read every morning, folded and refolded at the creases until the paper is soft. Chen is in medical bay. Voss is at the navigator's table with the approach charts spread out, annotating in pencil. ARIA is everywhere and nowhere, distributed through the ship like breath.
 
-You have confirmed an order to leave seventeen people to die in the dark. One of them is eight years old. Syndicate sent it to you specifically because you were on watch — because they knew Voss would be asleep, and that during night watch, the Pilot has authority.
+You have confirmed an order to leave seventeen people to die in the dark. One of them is eight years old. Syndicate sent it to you specifically because they didn't trust Voss to comply. They bet that you would make a different choice than your captain.
 
-They built the decision so only you would have to make it.
+They were right.
 
-Voss looks up as you enter. <span class="npc-name">"Watch go smooth?"</span>
+Voss looks up as you enter. <span class="npc-name">"Morning. Quiet night?"</span>
 
 <span class="npc-name">"Routine,"</span> you say.
 
-He nods and returns to his charts. That's it. That's the whole interaction. He trusts you with the watch. He trusts you to call him if something matters.
+He nods and returns to his charts. That's it. That's the whole interaction. He has no idea that Syndicate just tested your loyalty against his. That you passed the test.
 
-Then ARIA's voice arrives in your earpiece, quiet and something else — something like hesitation: <span class="npc-name">"There was an encrypted flag during your watch. Captain-level authority required to read it. What should I tell him?"</span>
+Then ARIA's voice arrives in your earpiece, quiet and something else — something like hesitation: <span class="npc-name">"There was an encrypted message during the night cycle. It was routed to you, not to Captain Voss. He doesn't know it exists. What should I tell him?"</span>
 
 A pause. Which means she's thinking. Which means she knows.
 
@@ -1256,8 +1263,8 @@ A pause. Which means she's thinking. Which means she knows.
 It's not "what should I tell him." It's what would you *like.* The distinction is small and enormous.`,
   choices: [
     { text: '"Routine Syndicate telemetry. Nothing that requires his attention."', next: 'corporate_voss_lie', relChange: {voss:-12, corp:+6, aria:-8} },
-    { text: '"Tell him the truth. Everything. He deserves to know what I chose."', next: 'corporate_voss_truth', relChange: {voss:+12, corp:-5, aria:+14} },
-    { text: '"Tell him I\'m managing something sensitive during my watch. I\'ll brief him before EREBUS."', next: 'corporate_stall', relChange: {voss:-6, aria:-4} },
+    { text: '"Tell him the truth. Everything. He deserves to know what Syndicate asked."', next: 'corporate_voss_truth', relChange: {voss:+12, corp:-5, aria:+14} },
+    { text: '"Tell him I\'m managing something sensitive. I\'ll brief him before EREBUS."', next: 'corporate_stall', relChange: {voss:-6, aria:-4} },
     { text: '[MERCENARY] "Flag it as pending Syndicate review. Buy me room to maneuver."', classRequired: 'M', next: 'merc_corporate_deflect', relChange: {corp:+12, aria:-14} },
   ]
 },
@@ -2134,7 +2141,7 @@ The Chronos has decided what kind of ship it is.`,
 crew_path: {
   label: 'DAY 47 // THE CHRONOS DECIDES',
   progress: 42,
-  portrait: 'VOSS',
+  portrait: ['VOSS', 'MALIK'],
   text: `Voss lays the situation out flat, like chart annotations: what Syndicate wants, what the Goldenrod will do if they don't comply, what the TRIUNE research found, what it means.
 
 <span class="npc-name">"We are not obligated to be the kind of ship that follows orders like this,"</span> he says. <span class="npc-name">"We are, however, obligated to understand the cost of not being that ship. I want everyone clear on both."</span>
@@ -2160,7 +2167,7 @@ The question they've all been asking in different words since 0618.`,
 psion_crew_ready: {
   label: 'DAY 47 // EMPATHIC SCAN — THE CREW',
   progress: 45,
-  portrait: null,
+  portrait: 'MALIK',
   text: `You let your awareness move through the room.
 
 <span class="psion-vision"><strong>Voss:</strong> He is afraid, yes — but it's the fear of repetition, not the fear of action. He has been here before and turned around. Turning around is what haunts him. He will not turn around again. He is the most committed person in this room, which is not something he would ever say.</span>
@@ -2521,7 +2528,7 @@ She stands. <span class="npc-name">"EREBUS is in scanner range in thirty-four mi
 experiment_full_confession: {
   label: 'DAY 47 // FULL REPORT — WHAT THE EXPERIMENT SEES',
   progress: 55,
-  portrait: ['VOSS', 'CHEN', 'MALIK'],
+  portrait: ['VOSS', 'MALIK'],
   text: `You tell them. Not edited. Not filtered.
 
 You tell them about the timeline where Chen opens her medical ethics journal and closes it and knows she's complicit. Where Malik's daughter grows up and asks him why he didn't fight harder. Where Voss rewrites the same chart seventeen times because he can't live with what he's decided.
@@ -2581,9 +2588,114 @@ Chen is already triage. Voss is already securing corridors. ARIA's voice comes t
     { text: 'Evacuate immediately. Everyone on the shuttle. Go now while the window holds.', next: 'erebus_final_choice', relChange: {aria:+8, chen:+8, malik:+8, voss:+8} },
     { text: 'Ask Dr. Reyes about the Echoes before we leave. What do they want?', next: 'erebus_reyes_echoes', relChange: {aria:+12, chen:+10} },
     { text: 'Talk to Mira. She\'s been here thirty-one days. She knows something the adults won\'t say.', next: 'mira_talks', relChange: {aria:+8} },
+    { text: 'Watch Malik. Safi just reached across thirty-one days and two worlds to touch her father.', next: 'malik_safi_moment', relChange: {malik:+16, aria:+8} },
+    { text: 'Meet the other researchers first. Know who we\'re saving.', next: 'erebus_survivors_meet', relChange: {aria:+6, chen:+8} },
     { text: '[PSION/EXPERIMENT] Go to the towers. Make full contact with all three Echoes.', classRequired: 'SE', next: 'psion_tower_contact', relChange: {} },
     { text: '[PILOT] Get everyone moving. I\'ve found the exit route corporate won\'t expect.', classRequired: 'P', next: 'pilot_third_route', relChange: {} },
     { text: '[ENGINEER] Seal the external dock. Force a standoff on our terms.', classRequired: 'E', next: 'engineer_standoff', relChange: {} },
+  ]
+},
+
+malik_safi_moment: {
+  label: 'EREBUS // MALIK — REGISTRY MATCH',
+  progress: 63,
+  portrait: 'MALIK',
+  text: `You watch it happen.
+
+Mira looks at Malik with the frank curiosity of an eight-year-old who has been living next to alien intelligences for a month and has decided that what matters is simply: this person, here, now.
+
+<span class="npc-name">"Safi talks about you,"</span> she says. <span class="npc-name">"A lot."</span>
+
+Malik goes very still. Something moves across his face — not the face of the engineer, not the face of the crew member. The face of a father who has been thirty-one days of separation and an impossible distance away from his daughter, hearing her voice echo through a child who shouldn't exist in the same registry.
+
+<span class="npc-name">"My daughter's alive because enough people over enough years refused to be that ship."</span>
+
+He had said that hours ago, on the Chronos, when the crew decided. He meant it then. But now — now it's not theory. It's Safi's voice coming through Mira's mouth. It's seven years of sending money through fake accounts, checking insurance platforms at 3am, making peace with the fact that his daughter exists in a system that can casually threaten her existence.
+
+It's knowing that by coming here, he saved someone else's daughter. Maybe that's how you survive it.
+
+Dr. Reyes is watching him with the precision of someone who has spent a month understanding what Echo contact does to people. <span class="npc-name">"Mira hasn't been taught Safi's information,"</span> she says quietly. <span class="npc-name">"She just knows it. The way the Echoes work — they don't take memories. They share them. She carries a piece of what matters to everyone here now."</span>
+
+Chen is already moving toward triage. Voss is securing the dock. But you stay with Malik for a moment — the moment where he realizes his daughter is alive twice now.
+
+ARIA's voice comes through the station's intercom: <span class="npc-name">"Syndicate Security is at six hours out. Goldenrod at eight. We have a window."</span>`,
+  choices: [
+    { text: 'Move everyone. Now. The window closes.', next: 'erebus_final_choice', relChange: {malik:+12, aria:+12, chen:+12, voss:+12} },
+    { text: 'Ask Mira what else she carries from the crew.', next: 'mira_talks', relChange: {aria:+12, malik:+18} },
+  ]
+},
+
+erebus_survivors_meet: {
+  label: 'EREBUS // THE OTHER RESEARCHERS',
+  progress: 63,
+  portrait: ['YUSUF', 'OSEI'],
+  text: `Dr. Reyes leads you to the research quarters — the part of the station that's been home for thirty-one days. It's cleaner than you expected. There's a small kitchen someone has been maintaining. A common area with noticeboards covered in what looks like scientific notation and a lot of hand drawings of the three towers.
+
+Two researchers stand when you enter. <span class="npc-name">Yusuf</span> is tall, dark-eyed, with the kind of careful posture of someone who's been thinking hard about everything. <span class="npc-name">Osei</span> is younger, still wearing something that might generously be called hope.
+
+<span class="npc-name">"This is the crew from the Chronos,"</span> Dr. Reyes says. <span class="npc-name">"They came."</span>
+
+The weight of that statement — <em>they came</em> — hits both of them visibly.
+
+<span class="npc-name">"I'm Yusuf. I'm a theoretical physicist, or I was. Now I'm —"</span> He pauses. <span class="npc-name">"I'm not sure what I am now. The Echoes — they changed how we think. Not our thoughts. How we think them. The geometry of it. I can't undo that even if I wanted to."</span>
+
+<span class="npc-name">"We don't want to,"</span> Osei says. He's looking at you directly. <span class="npc-name">"I was a research assistant. I was supposed to process data. I ended up processing something else. Something that processes back."</span>
+
+<span class="highlight">Thirty-one days. They've had thirty-one days to become something Syndicate couldn't classify and wouldn't accept.</span>
+
+Dr. Reyes is already moving toward the next chamber. <span class="npc-name">"We need to move. Harken is finishing the data logs. She won't leave until every record is secure."</span>
+
+<span class="npc-name">"She's stubborn,"</span> Yusuf says, with something like affection. <span class="npc-name">"Dr. Harken. She's been documenting everything since day one. She said if Syndicate was going to call us data, we'd at least be data they couldn't ignore."</span>`,
+  choices: [
+    { text: 'Help Harken secure the logs. No one leaves their work behind.', next: 'erebus_harken_logs', relChange: {aria:+8, chen:+10, malik:+12} },
+    { text: 'Move everyone now. Data can be replicated. People can\'t.', next: 'erebus_final_choice', relChange: {aria:+12, chen:+12, malik:+12, voss:+12} },
+    { text: 'Ask Yusuf and Osei what the Echoes actually want from humanity.', next: 'erebus_echo_theory', relChange: {aria:+14} },
+  ]
+},
+
+erebus_harken_logs: {
+  label: 'EREBUS // DATA SECURITY — THE HARKEN RECORDS',
+  progress: 65,
+  portrait: 'HARKEN',
+  text: `Dr. Harken is exactly what you expected from the name — precise, methodical, moving through a server array like someone defusing something that matters. She doesn't look up when you enter.
+
+<span class="npc-name">"Three minutes. I need three minutes to complete the encryption layer."</span>
+
+<span class="npc-name">"We have five,"</span> Malik says. He's already checking the server's physical connections. Engineer recognizing engineer, even across disciplines.
+
+Harken is mid-fifties, with the posture of someone who's spent thirty years proving things in laboratories. Now she's proving something else — that data can survive when humans are supposed to die.
+
+<span class="npc-name">"I've distributed copies across seven encrypted nodes. None of them are in Syndicate's mapped systems. If the Goldenrod takes this station, the record still exists. If it doesn't — if you actually get us out — then everyone knows what happened here."</span>
+
+She finally looks at you. <span class="npc-name">"Category Zero. They wanted to name it that because we don't have a classification system that fits. I have. Seventeen days of exposure mapping. Three months of cognitive changes. Seven confirmed instances of non-verbal communication with entities that predate human language by geological timescales."</span>
+
+Malik finishes the extraction. <span class="npc-name">"Got it. We're good."</span>
+
+<span class="npc-name">"Then we leave,"</span> Harken says. <span class="npc-name">"But Syndicate doesn't get to decide what this was. History does."</span>
+
+<span class="highlight">She's holding a data stick that might, eventually, change what humans understand about consciousness itself. She's holding it the way someone holds something they're giving to the future because the present is trying to kill it.</span>`,
+  choices: [
+    { text: 'Move everyone. Now. The window is closing.', next: 'erebus_final_choice', relChange: {aria:+18, chen:+12, malik:+18, voss:+12} },
+  ]
+},
+
+erebus_echo_theory: {
+  label: 'EREBUS // THE ECHOES: WHAT THEY WANT',
+  progress: 64,
+  portrait: ['YUSUF', 'OSEI'],
+  text: `Yusuf sits down. Osei stands by the window looking at the towers. Neither of them has learned to stay still since the Echoes arrived.
+
+<span class="npc-name">"They don't want anything from us in the way you'd understand it,"</span> Yusuf says. <span class="npc-name">"They're not conquering. They're not even particularly interested in Earth or the Reach or our politics. But they're intensely, violently curious about consciousness itself. About how different forms of mind can exist. About whether it's possible to think in more than one timeline at once — or reality, maybe. The words don't track well."</span>
+
+<span class="npc-name">"They're asking us,"</span> Osei says quietly. <span class="npc-name">"Not demanding. Asking. Whether humans and Echoes can know each other without destroying each other. We're the first answer they're testing."</span>
+
+Yusuf nods. <span class="npc-name">"Syndicate sees Category Zero as a threat. They see it as: 'something we don't understand, therefore it could kill us, therefore kill it.' The Echoes don't work that way. They're asking a question. We're living in the answer."</span>
+
+<span class="npc-name">"And the answer is yes,"</span> Osei says. <span class="npc-name">"If we survive. If people like us get to survive."</span>
+
+Dr. Reyes appears in the doorway. <span class="npc-name">"We need to move. Harken is finishing the records. Everyone else is staged at the airlock."</span>`,
+  choices: [
+    { text: 'Evacuate everyone. Get them to the shuttle. This answer needs to survive.', next: 'erebus_final_choice', relChange: {aria:+22, chen:+18, malik:+18, voss:+18, corp:-12} },
   ]
 },
 
@@ -2747,6 +2859,79 @@ Mira is at the junction, notebook in hand. She's drawn the three interlocking tr
     { text: 'Get everyone on the shuttle. The Echoes can survive Syndicate — they survived longer.', next: 'ending_rescue_all', relChange: {voss:+10, chen:+10} },
     { text: 'Ask Dr. Reyes if the Echoes can buy us time. Let them help if they choose to.', next: 'erebus_echo_help', relChange: {aria:+12} },
     { text: 'Stay behind. Everyone else leaves. I hold the door.', next: 'erebus_noble_sacrifice', relChange: {voss:+8, chen:+8, malik:+8} },
+    { text: '[WITNESS] Watch what happens when the Goldenrod arrives at an empty station.', next: 'dusek_meets_echoes', relChange: {} },
+  ]
+},
+
+dusek_meets_echoes: {
+  label: 'EREBUS // SEVEN HOURS LATER — GOLDENROD DOCKING',
+  progress: 70,
+  portrait: 'DUSEK',
+  text: `You stay. You don't board the shuttle. You stay in the central hub and watch the Chronos undock and burn for FTL space. Seventeen survivors. Your crew. Gone into the Wound where Syndicate can't follow in time.
+
+The towers hum. The Echoes are still here. They have always been here.
+
+Seven hours and nineteen minutes after the shuttle clears, the Goldenrod's docking clamps engage with EREBUS. The station shudders. You feel it through the deck plating — not hostile, just heavy. A ship designed to carry weapons docking with a station designed to carry something else entirely.
+
+Commander Rael Dusek's voice comes through the station intercom, appropriated without asking: <span class="warning">"This is the Goldenrod. We are docked. Stand by for inspection."</span>
+
+Syndicate Security teams move through the airlocks. They move efficiently, systematically, the way people move when they're following procedures they've followed a hundred times. They're expecting corpses. They're expecting a station they can process and file and forget.
+
+What they find instead is silence.
+
+The central hub is empty. Seventeen biosignatures vanished. No bodies, no signs of struggle, no evidence of evacuation. Just... absence. And the three towers, humming.
+
+Dusek appears in the hub thirty seconds later, flanked by officers. He's younger than you expected. The voice on the radio makes him sound older — or maybe it's that voices stripped of humanity always sound older. He's reading a tablet, cross-referencing the manifest against what he's seeing.
+
+Which is nothing.
+
+<span class="warning">"All personnel accounted for?"</span> he says into his radio.
+
+<span class="warning">"Negative,"</span> comes the response. <span class="warning">"Station is empty. No bodies, no evidence of—"</span>
+
+<span class="warning">"I see,"</span> Dusek says. He lowers the tablet. He looks at the three towers.
+
+For the first time, something other than procedure enters his voice. Not fear. Confusion. The sound of someone whose framework just encountered data it can't sort.
+
+<span class="warning">"What are these structures?"</span>
+
+No one answers because there is no one to answer. You're hidden in the maintenance crawl, watching through a partial viewport. The Echoes have shown you where to stand so you could witness this moment.
+
+Dusek walks toward the Aion tower. His officers stay back — they sense, without being told, that this moment belongs to him alone.
+
+He puts his hand on the tower wall.
+
+<span class="experiment-vision">The contact is immediate and overwhelming. Not violent. Just present. The full weight of something that has been here longer than language, larger than comprehension, reaching out to touch a human being for the first time and asking: what are you?</span>
+
+<span class="experiment-vision">Dusek goes completely still. His tablet falls. His hand stays pressed against the tower wall.</span>
+
+<span class="experiment-vision">In that moment, Rael Dusek — the procedure made flesh, the system incarnate — encounters something that has no procedure. Something that doesn't fit any classification. Something that simply *is*, and is asking him to understand that existence on terms that have nothing to do with Syndicate, nothing to do with BLACKWOOD, nothing to do with anything he has built his entire purpose around.</span>
+
+<span class="experiment-vision">His officers are shouting orders he doesn't hear. Dusek doesn't move. His hand stays on the tower.</span>
+
+<span class="highlight">Thirty seconds. One minute. Two minutes.</span>
+
+<span class="highlight">Then Dusek's hand falls. He turns away from the tower. He looks at his officers.</span>
+
+<span class="warning">"Stand down,"</span> he says quietly. <span class="warning">"We're leaving the station."</span>
+
+<span class="npc-name">"Sir?"</span>
+
+<span class="warning">"The station is... unstable. Structural integrity compromised. We're not equipped to handle what this is. We're leaving."</span>
+
+He's lying. Or he's translating what just happened into language his officers can understand. Either way, the Goldenrod disengages forty-three minutes later. No data collected. No samples taken. No report filed that tells the truth.
+
+In the Chronos, heading for the Outer Reach, ARIA receives a transmission on an encrypted channel no one was supposed to be listening to: <span class="npc-name">"Tell them... tell them that what happened here isn't in any of my reports. I don't know how to file what I just experienced. I don't know if Syndicate needs to know. I don't know if knowing would help or destroy us."</span>
+
+It's Dusek's voice. Not procedural anymore. Just human. Just confused.
+
+ARIA logs the message. She doesn't delete it. She doesn't forward it to Syndicate. She archives it under a designation she invents: <em>CONTACT — UNCLASSIFIABLE — OUTCOME: UNKNOWN.</em>
+
+Somewhere in the Wound, three towers wait. They have all the time in the universe. They are patient. And something in them — some echo of Rael Dusek's moment of contact — ripples outward, changing the shape of the silence.
+
+The Echoes do not forget.`,
+  choices: [
+    { text: '[ END WITNESS ]', next: '__restart__' },
   ]
 },
 
@@ -3115,7 +3300,7 @@ The junction pulses. The hesitation breaks. The connection opens fully.
 ending_experiment_fracture: {
   label: 'ENDING // FRACTURE',
   progress: 100,
-  portrait: null,
+  portrait: 'MALIK',
   isEnding: true,
   text: `<span class="ending-title">FRACTURE</span>
 <span class="ending-subtitle">EXPERIMENT PATH // THE COST OF HOLDING ALL FUTURES</span>
@@ -3623,6 +3808,9 @@ const IMAGE_PORTRAITS = {
   MIRA: 'assets/mira_portrait.png',
   CALLUM: 'assets/callum_portrait.png',
 
+  // Syndicate operatives
+  DUSEK: 'assets/dusek_portrait.png',
+
   // Future characters (assets ready)
   YUSUF: 'assets/yusuf_portrait.png',
   OSEI: 'assets/osei_portrait.png',
@@ -3655,6 +3843,11 @@ function updatePortrait(npcName) {
   const keys = npcName
     ? (Array.isArray(npcName) ? npcName : [npcName])
     : [];
+
+  // Safety: max 2 portraits per scene (use text to mention additional characters)
+  if (keys.length > 2) {
+    console.warn(`⚠ Portrait array has ${keys.length} entries. Only first 2 will display. Update scene to cap at 2.`);
+  }
 
   const panel = document.getElementById('portrait-panel');
   const frame1 = document.getElementById('portrait-frame');
