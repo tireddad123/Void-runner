@@ -886,6 +886,46 @@ padding-bottom: env(safe-area-inset-bottom);
     font-size: 8px;
   }
 }
+
+/* Desktop: quiz content should start at top, not be centered */
+@media (min-width: 769px) {
+  #quiz-screen {
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+  
+  .quiz-title {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+  
+  .quiz-subtitle {
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+  
+  .quiz-question {
+    margin-bottom: 24px;
+  }
+  
+  .quiz-q-text {
+    font-size: 16px;
+    margin-bottom: 18px;
+    line-height: 1.8;
+  }
+  
+  .quiz-opt {
+    font-size: 15px;
+    margin: 8px 0;
+    padding: 12px 16px;
+  }
+  
+  .quiz-submit {
+    font-size: 14px;
+    padding: 14px;
+    margin-top: 14px;
+  }
+}
 </style>
 </head>
 <body>
@@ -2177,6 +2217,7 @@ psion_crew_ready: {
   label: 'DAY 47 // EMPATHIC SCAN — THE CREW',
   progress: 45,
   portrait: 'MALIK',
+  environment: 'chronos-bridge',
   text: `You let your awareness move through the room.
 
 <span class="psion-vision"><strong>Voss:</strong> He is afraid, yes — but it's the fear of repetition, not the fear of action. He has been here before and turned around. Turning around is what haunts him. He will not turn around again. He is the most committed person in this room, which is not something he would ever say.</span>
@@ -3934,9 +3975,25 @@ function updatePortrait(npcName, environment) {
   const name2El = document.getElementById('portrait-name-2');
 
   // Apply environment background
-  if (environment && ENVIRONMENT_BACKGROUNDS[environment]) {
-    env1.style.backgroundImage = ENVIRONMENT_BACKGROUNDS[environment];
-    env2.style.backgroundImage = ENVIRONMENT_BACKGROUNDS[environment];
+  let envToUse = environment;
+  
+  // Smart defaults if no environment specified
+  if (!envToUse) {
+    // Check if we're at EREBUS (based on current scene or characters present)
+    const isEREBUS = GS.currentScene && GS.currentScene.includes('erebus');
+    const hasEREBUSChar = keys.some(k => ['REYES', 'MIRA', 'CALLUM', 'HARKEN', 'YUSUF', 'OSEI'].includes(k));
+    
+    if (isEREBUS || hasEREBUSChar) {
+      envToUse = 'erebus-hub';
+    } else {
+      // Default to Chronos bridge for crew on ship
+      envToUse = 'chronos-bridge';
+    }
+  }
+  
+  if (envToUse && ENVIRONMENT_BACKGROUNDS[envToUse]) {
+    env1.style.backgroundImage = ENVIRONMENT_BACKGROUNDS[envToUse];
+    env2.style.backgroundImage = ENVIRONMENT_BACKGROUNDS[envToUse];
   } else {
     env1.style.backgroundImage = '';
     env2.style.backgroundImage = '';
@@ -4072,7 +4129,9 @@ function restartGame() {
 // ═══════════════════════════════════════════════════════════════════
 function startFromTitle() {
   document.getElementById('title-screen').style.display = 'none';
-  document.getElementById('quiz-screen').style.display = 'flex';
+  const quizScreen = document.getElementById('quiz-screen');
+  quizScreen.style.display = 'flex';
+  quizScreen.scrollTop = 0; // Reset scroll to top on mobile
 }
 
 // Keyboard navigation
